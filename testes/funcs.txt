@@ -1,0 +1,13 @@
+hwloc_topology_t t;
+
+Cria contexto de topoloia:
+hwloc_topology_init(&t);
+
+Define topologia sintética:
+hwloc_topology_set_synthetic(t, "a:x b:y z");
+
+Define XML com a topologia:
+hwloc_topology_set_xml(t, "caminho/arquivo.xml");
+
+Monta a topologia:
+hwloc_topology_load(t);
