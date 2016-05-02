@@ -1,0 +1,49 @@
+hwloc_topology_t t;
+
+Cria contexto de topologia:
+hwloc_topology_init(&t);
+
+Define topologia sintética:
+hwloc_topology_set_synthetic(t, "a:x b:y z");
+
+Define XML com a topologia:
+hwloc_topology_set_xml(t, "caminho/arquivo.xml");
+
+Monta a topologia:
+hwloc_topology_load(t);
+
+
+Funções de percorrimento (hwloc.h, hwloc/inline.h):
+
+Profundidade da topologia:
+	hwloc_topology_get_depth(hwloc_topology_t)
+Raiz da árvore da topologia:
+	hwloc_get_root_obj(hwloc_topology_t)
+Tipo dos objetos em determinada profundidade:
+	hwloc_get_depth_type(hwloc_topology_t, unsigned depth)
+Profundidade de objetos de determinado tipo:
+	hwloc_get_type_depth(hwloc_topology_t, hwloc_obj_type_t)
+Profundidade de determinado tipo ou algum contido nele:
+	hwloc_get_type_or_below_depth(hwloc_topology_t, hwloc_obj_type_t)
+Profundidade de determinado tipo ou algum que o contém:
+	hwloc_get_type_or_above_depth(hwloc_topology_t, hwloc_obj_type_t)
+
+Número de objetos numa profundidade:
+	hwloc_get_nbobjs_by_depth(hwloc_topology_t, unsigned depth)
+Número de objetos de um tipo na mesma profundidade:
+	hwloc_get_nbobjs_by_type(hwloc_topology_t, hwloc_obj_type_t)
+
+N-ésimo objeto de uma profundidade:
+	hwloc_get_obj_by_depth(hwloc_topology_t, unsigned depth, unsigned idx)
+N-ésimo objeto de um tipo na mesma profundidade:
+	hwloc_get_obj_by_type(hwloc_topology_t, hwloc_obj_type_t, unsigned idx)
+Próximo objeto na profundidade:
+	hwloc_get_next_obj_by_depth(hwloc_topology_t, unsigned depth, hwloc_obj_t prev)
+Próximo objeto do tipo na mesma profundidade:
+	hwloc_get_next_obj_by_type(hwloc_topology_t, hwloc_obj_type_t, hwloc_obj_t prev)
+
+(hwloc/helper.h)
+Ancestral mais próximo de obj1 e obj2:
+	hwloc_get_common_ancestor_obj(hwloc_topology_t t, hwloc_obj_t obj1, hwloc_obj_t obj2);
+- Laços aninhados por causa de profundidades "vazias".
+

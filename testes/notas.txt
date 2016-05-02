@@ -1,38 +1,16 @@
-hwloc_topology_t t;
-
-Cria contexto de topologia:
-hwloc_topology_init(&t);
-
-Define topologia sintética:
-hwloc_topology_set_synthetic(t, "a:x b:y z");
-
-Define XML com a topologia:
-hwloc_topology_set_xml(t, "caminho/arquivo.xml");
-
-Monta a topologia:
-hwloc_topology_load(t);
-
----
-
-CPU set:
-hwloc_obj_t o; o->cpuset
-
-
-hwloc_get_common_ancestor_obj(hwloc_topology_t t, hwloc_obj_t obj1, hwloc_obj_t obj2);
-Encontra ancestral mais próximo de obj1 e obj2.
-Laços aninhados por causa de profundidades "vazias".
-
----
-
 Objetos (struct hwloc_obj) 
 * Relações (<Relação>: <atributos relacionados> (<identificadores>))
 	* Primos (cousins) (objetos de mesmo tipo e profundidade na topologia): Ponteiro para próximo e anterior (next/prev_cousin)
 	* Pai: Ponteiro para o pai (parent)
-	* Irmãos (Filhos do mesmo pai): Rank, ponteiro para o próximo e anterior (sibling_rank, next/prev_sibling) (único entre os filhos de um pai)
-	* Filhos: Quantidade de filhos, array de ponteiros para os filhos, ponteiro para o primeiro e o último filhos (arity, children, first/last_child)
+	* Irmãos (Filhos do mesmo pai): Rank (sibling_rank) (único entre os filhos de um pai), ponteiro para o próximo e anterior (next/prev_sibling)
+	* Filhos: Quantidade de filhos (arity), array de ponteiros para os filhos (children), ponteiro para o primeiro e o último filhos (first/last_child)
 * Conjunto de CPUs cobertas pelo objeto (cpuset)
 ...
 
+Grupos: Objetos usados para representar mais informações da estrutura da topologia (proximidade, afinidade de I/O, ...)
+(https://www.open-mpi.org/projects/hwloc/doc/v1.11.3/a00030.php#faq_groups)
+(https://www.open-mpi.org/projects/hwloc/doc/v1.11.3/a00030.php#faq_asymmetric)
+
 
 Imagem ilustrando relação entre objetos na árvore:
-https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png	
+https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png
