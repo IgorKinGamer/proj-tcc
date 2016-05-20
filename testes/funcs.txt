@@ -15,53 +15,77 @@ hwloc_topology_load(t);
 
 Funções de percorrimento (hwloc/{traversal.c, topology.c}, include/{hwloc.h, hwloc/inline.h}):
 
-Profundidade da topologia:
+Profundidade da topologia: O(1)
 	hwloc_topology_get_depth(hwloc_topology_t) (topology.c)
 	- return topology->nb_levels;
-Raiz da árvore da topologia:
+
+Raiz da árvore da topologia: O(1)
 	hwloc_get_root_obj(hwloc_topology_t) (inlines.h)
 	- return hwloc_get_obj_by_depth(topology, 0, 0);
-Tipo dos objetos em determinada profundidade:
+
+Tipo dos objetos em determinada profundidade: O(1)
 	hwloc_get_depth_type(hwloc_topology_t, unsigned depth) (traversal.c)
 	- return topology->levels[depth][0]->type;
-Profundidade de objetos de determinado tipo:
+
+Profundidade de objetos de determinado tipo: O(1)
 	hwloc_get_type_depth(hwloc_topology_t, hwloc_obj_type_t) (traversal.c)
 	- return topology->type_depth[type];
-Profundidade de determinado tipo ou algum contido nele:
+
+Profundidade de determinado tipo ou algum contido nele: O(altura)
 	hwloc_get_type_or_below_depth(hwloc_topology_t, hwloc_obj_type_t) (inlines.h)
 	- hwloc_get_type_depth(topology, type);
 	- Se não encontra, compara o tipo de cada nível a partir do último para encontrar o mais próximo
-Profundidade de determinado tipo ou algum que o contém:
+
+Profundidade de determinado tipo ou algum que o contém: O(altura)
 	hwloc_get_type_or_above_depth(hwloc_topology_t, hwloc_obj_type_t) (inlines.h)
 	- hwloc_get_type_depth(topology, type);
 	- Se não encontra, compara o tipo de cada nível a partir do primeiro para encontrar o mais próximo
 
-Número de objetos numa profundidade:
+
+Número de objetos numa profundidade: O(1)
 	hwloc_get_nbobjs_by_depth(hwloc_topology_t, unsigned depth) (traversal.c)
 	- Array com número de objetos por profundidade:
 	- return topology->level_nbobjects[depth];
-Número de objetos de um tipo na mesma profundidade:
+
+Número de objetos de um tipo na mesma profundidade: O(1)
 	hwloc_get_nbobjs_by_type(hwloc_topology_t, hwloc_obj_type_t) (inlines.h)
 	- Descobre a profundidade e chama a função acima
 
-N-ésimo objeto de uma profundidade:
+
+N-ésimo objeto de uma profundidade: O(1)
 	hwloc_get_obj_by_depth(hwloc_topology_t, unsigned depth, unsigned idx) (traversal.c)
 	- return topology->levels[depth][idx];
-N-ésimo objeto de um tipo na mesma profundidade:
+
+N-ésimo objeto de um tipo na mesma profundidade: O(1)
 	hwloc_get_obj_by_type(hwloc_topology_t, hwloc_obj_type_t, unsigned idx) (inlines.h)
 	- Descobre a profundidade e chama a função acima
-Próximo objeto na profundidade:
+
+Próximo objeto na profundidade: O(1)
 	hwloc_get_next_obj_by_depth(hwloc_topology_t, unsigned depth, hwloc_obj_t prev) (inlines.h)
 	- Se prev for NULL, retorna primeiro do nível:
 	- return hwloc_get_obj_by_depth(topology, depth, 0);
 	- Senão, próximo primo:
 	- return prev->next_cousin;
-Próximo objeto do tipo na mesma profundidade:
+
+Próximo objeto do tipo na mesma profundidade: O(1)
 	hwloc_get_next_obj_by_type(hwloc_topology_t, hwloc_obj_type_t, hwloc_obj_t prev) (inlines.h)
 	- Descobre a profundidade e chama a função acima
 
+
 (hwloc/helper.h)
+Acestral de obj em dada profundidade*: O(altura)
+	hwloc_get_ancestor_obj_by_depth(hwloc_topology_t, unsigned depth, hwloc_obj_t obj)
+	- "Sobe" (ancestor = ancestor->parent) até profundidade <= depth
+* Ou possivelmente menor, em caso de assimetria (se não houver ancestral naquela profundidade)
+
+Acestral de obj de dado tipo: O(altura)
+	hwloc_get_ancestor_obj_by_type(hwloc_topology_t, hwloc_obj_type_t type, hwloc_obj_t obj)
+	- "Sobe" (ancestor = ancestor->parent) até tipo == type
+
+
+
+
+
 Ancestral mais próximo de obj1 e obj2:
 	hwloc_get_common_ancestor_obj(hwloc_topology_t t, hwloc_obj_t obj1, hwloc_obj_t obj2);
-- Laços aninhados por causa de profundidades "vazias".
-
+	- Laços aninhados por causa de profundidades "vazias".
