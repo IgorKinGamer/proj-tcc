@@ -82,10 +82,17 @@ Acestral de obj de dado tipo: O(altura)
 	hwloc_get_ancestor_obj_by_type(hwloc_topology_t, hwloc_obj_type_t type, hwloc_obj_t obj)
 	- "Sobe" (ancestor = ancestor->parent) até tipo == type
 
+Ancestral mais próximo de obj1 e obj2: O(altura)
+	hwloc_get_common_ancestor_obj(hwloc_topology_t, hwloc_obj_t obj1, hwloc_obj_t obj2)
+	- Laços aninhados por causa de profundidades "vazias" (assimetria).
 
+Próximo filho (incluindo objetos de IO e outros): O(1)
+	hwloc_get_next_child(hwloc_topology_t, hwloc_obj_t parent, hwloc_obj_t prev)
+	- Se prev for NULL, retorna o primeiro filho (parent->first_child)
+	- Senão, próximo filho (prev->next_sibling), se houver
+	- Se não houver, busca outros tipos de filhos (IO, misc (parent->io/misc_first_child))
 
-
-
-Ancestral mais próximo de obj1 e obj2:
-	hwloc_get_common_ancestor_obj(hwloc_topology_t t, hwloc_obj_t obj1, hwloc_obj_t obj2);
-	- Laços aninhados por causa de profundidades "vazias".
+Se um objeto está "dentro" de outro (na subárvore dele): O( max({obj,subtree}->cpuset->ulongs_count) ) (O(quantidade de unsigned longs usados pelo maior cpuset))
+	hwloc_obj_is_in_subtree(hwloc_topology_t, hwloc_obj_t obj, hwloc_obj_t subtree)
+	Se ambos objetos possuem cpuset:
+	- return hwloc_bitmap_isincluded(obj->cpuset, subtree->cpuset);
