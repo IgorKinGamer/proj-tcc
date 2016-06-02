@@ -1,0 +1,10 @@
+> Multi-core and Network Aware MPI Topology Functions
+- Funções MPI_Graph/Crat_create implementadas suportando reordenação dos ranks dos processos baseada em conhecimento da topologia dos nodos e conexões de rede InfiniBand
+- (seção 4.2) hwloc é usado descobrir a topologia, que é usada em conjunto com as distâncias de rede entre nodos (ibtracert)
+
+> A Framework for Performance Modeling and Prediction (01592857.pdf)
+- Framework baseado em
+  - "perfis de máquina" - machine profiles - taxa de execução de operações fundamentais, e
+  - "assinaturas de aplicação" - application signatures - resumo das operações realizadas por uma aplicação,
+usando dois modelos, um de processador único e outro de comunicação
+- (pág. 2 §2) Aplicações científicas -> intenso uso da memória; performance em um só processador dominada pelo uso do subsistema de memória
