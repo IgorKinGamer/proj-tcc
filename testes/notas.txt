@@ -1,16 +1,16 @@
 Objetos (struct hwloc_obj) 
-* Relações (<Relação>: <atributos relacionados> (<identificadores>))
-	* Primos (cousins) (objetos de mesmo tipo e profundidade na topologia): Ponteiro para próximo e anterior (next/prev_cousin)
+* RelaÃ§Ãµes (<RelaÃ§Ã£o>: <atributos relacionados> (<identificadores>))
+	* Primos (cousins) (objetos de mesmo tipo e profundidade na topologia): Ponteiro para prÃ³ximo e anterior (next/prev_cousin)
 	* Pai: Ponteiro para o pai (parent)
-	* Irmãos (Filhos do mesmo pai): Rank (sibling_rank) (único entre os filhos de um pai), ponteiro para o próximo e anterior (next/prev_sibling)
-	* Filhos: Quantidade de filhos (arity), array de ponteiros para os filhos (children), ponteiro para o primeiro e o último filhos (first/last_child)
+	* IrmÃ£os (Filhos do mesmo pai): Rank (sibling_rank) (Ãºnico entre os filhos de um pai), ponteiro para o prÃ³ximo e anterior (next/prev_sibling)
+	* Filhos: Quantidade de filhos (arity), array de ponteiros para os filhos (children), ponteiro para o primeiro e o Ãºltimo filhos (first/last_child)
 * Conjunto de CPUs cobertas pelo objeto (cpuset)
 ...
 
-Grupos: Objetos usados para representar mais informações da estrutura da topologia (proximidade, afinidade de I/O, ...)
+Grupos: Objetos usados para representar mais informaÃ§Ãµes da estrutura da topologia (proximidade, afinidade de I/O, ...)
 (https://www.open-mpi.org/projects/hwloc/doc/v1.11.3/a00030.php#faq_groups)
 (https://www.open-mpi.org/projects/hwloc/doc/v1.11.3/a00030.php#faq_asymmetric)
 
 
-Imagem ilustrando relação entre objetos na árvore:
+Imagem ilustrando relaÃ§Ã£o entre objetos na Ã¡rvore:
 https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png

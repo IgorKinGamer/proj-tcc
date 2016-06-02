@@ -1,10 +1,13 @@
 > Multi-core and Network Aware MPI Topology Functions
-- FunÁıes MPI_Graph/Crat_create implementadas suportando reordenaÁ„o dos ranks dos processos baseada em conhecimento da topologia dos nodos e conexıes de rede InfiniBand
-- (seÁ„o 4.2) hwloc È usado descobrir a topologia, que È usada em conjunto com as dist‚ncias de rede entre nodos (ibtracert)
+- Fun√ß√µes MPI_Graph/Crat_create implementadas suportando reordena√ß√£o dos ranks dos processos baseada em conhecimento da topologia dos nodos e conex√µes de rede InfiniBand
+- (se√ß√£o 4.2) hwloc √© usado descobrir a topologia, que √© usada em conjunto com as dist√¢ncias de rede entre nodos (ibtracert)
 
 > A Framework for Performance Modeling and Prediction (01592857.pdf)
 - Framework baseado em
-  - "perfis de m·quina" - machine profiles - taxa de execuÁ„o de operaÁıes fundamentais, e
-  - "assinaturas de aplicaÁ„o" - application signatures - resumo das operaÁıes realizadas por uma aplicaÁ„o,
-usando dois modelos, um de processador ˙nico e outro de comunicaÁ„o
-- (p·g. 2 ß2) AplicaÁıes cientÌficas -> intenso uso da memÛria; performance em um sÛ processador dominada pelo uso do subsistema de memÛria
+  - "perfis de m√°quina" - machine profiles - taxa de execu√ß√£o de opera√ß√µes fundamentais, e
+  - "assinaturas de aplica√ß√£o" - application signatures - resumo das opera√ß√µes realizadas por uma aplica√ß√£o,
+usando dois modelos, um de processador √∫nico e outro de comunica√ß√£o
+- (p√°g. 2 ¬ß2) Aplica√ß√µes cient√≠ficas -> intenso uso da mem√≥ria; performance em um s√≥ processador dominada pelo uso do subsistema de mem√≥ria
+
+> Servet: A Benchmark Suite for Autotuning on Multicore Clusters
+- Conjunto de programas que detectam/estimam v√°rios aspectos/par√¢metros da m√°quina (tamanho/hierarquia de caches, overheads de comunica√ß√£o, etc.) de maneira port√°vel (sem usar informa√ß√µes disponibilizadas pelo sistema)
