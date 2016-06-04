@@ -9,6 +9,11 @@
 usando dois modelos, um de processador único e outro de comunicação
 - (pág. 2 §2) Aplicações científicas -> intenso uso da memória; performance em um só processador dominada pelo uso do subsistema de memória
 
+> LIKWID: A lightweight performance-oriented tool suite for x86 multicore environments
+- Conjunto de ferramentas de linha de comando para anilisar e melhorar a performance de aplicações (Linux, x86)
+- (II.B, pág. 4) likwid-topology: ferramenta para detectar topologia de threads e caches
+- (IV) Com essas informações, pode-se conseguir grandes melhoras de desempenho (e sem elas, pode haver grandes quedas)
+
 > Servet: A Benchmark Suite for Autotuning on Multicore Clusters
 - Conjunto de programas (benchmarks) que detectam/estimam vários aspectos/parâmetros da máquina (tamanho/hierarquia de caches, overheads de comunicação, etc.) de maneira portável (sem usar informações disponibilizadas pelo sistema)
 - Ferramentas geralmente não são portáveis
