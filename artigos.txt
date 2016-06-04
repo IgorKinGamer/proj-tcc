@@ -1,6 +1,6 @@
 > Multi-core and Network Aware MPI Topology Functions
 - Funções MPI_Graph/Crat_create implementadas suportando reordenação dos ranks dos processos baseada em conhecimento da topologia dos nodos e conexões de rede InfiniBand
-- (seção 4.2) hwloc é usado descobrir a topologia, que é usada em conjunto com as distâncias de rede entre nodos (ibtracert)
+- (Seção 4.2) hwloc é usado para descobrir a topologia, que é usada em conjunto com as distâncias de rede entre nodos (ibtracert)
 
 > A Framework for Performance Modeling and Prediction (01592857.pdf)
 - Framework baseado em
@@ -10,4 +10,7 @@ usando dois modelos, um de processador único e outro de comunicação
 - (pág. 2 §2) Aplicações científicas -> intenso uso da memória; performance em um só processador dominada pelo uso do subsistema de memória
 
 > Servet: A Benchmark Suite for Autotuning on Multicore Clusters
-- Conjunto de programas que detectam/estimam vários aspectos/parâmetros da máquina (tamanho/hierarquia de caches, overheads de comunicação, etc.) de maneira portável (sem usar informações disponibilizadas pelo sistema)
+- Conjunto de programas (benchmarks) que detectam/estimam vários aspectos/parâmetros da máquina (tamanho/hierarquia de caches, overheads de comunicação, etc.) de maneira portável (sem usar informações disponibilizadas pelo sistema)
+- Ferramentas geralmente não são portáveis
+- Características do hardware (tanto estrutura quanto desempenho) podem ser obtidas por meio de benchmarks
+- (Seção I, V) Códigos "autoajustáveis" (autotuning) podem se beneficiar dessas informações
