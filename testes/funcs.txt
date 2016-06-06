@@ -12,6 +12,7 @@ hwloc_topology_set_xml(t, "caminho/arquivo.xml");
 Monta a topologia:
 hwloc_topology_load(t);
 
+--------------------------------
 
 Funções de percorrimento (hwloc/{traversal.c, topology.c}, include/{hwloc.h, hwloc/inline.h}):
 
@@ -71,6 +72,7 @@ Próximo objeto do tipo na mesma profundidade: O(1)
 	hwloc_get_next_obj_by_type(hwloc_topology_t, hwloc_obj_type_t, hwloc_obj_t prev) (inlines.h)
 	- Descobre a profundidade e chama a função acima
 
+--------------------------------
 
 (hwloc/helper.h)
 Acestral de obj em dada profundidade*: O(altura)
@@ -96,3 +98,22 @@ Se um objeto está "dentro" de outro (na subárvore dele): O( max({obj,subtree}-
 	hwloc_obj_is_in_subtree(hwloc_topology_t, hwloc_obj_t obj, hwloc_obj_t subtree)
 	Se ambos objetos possuem cpuset:
 	- return hwloc_bitmap_isincluded(obj->cpuset, subtree->cpuset);
+
+--------------------------------
+
+Bitmaps:
+hwloc/bitmap.c já lista algumas possíveis melhorias:
+/*
+ * possible improvements:
+ * - have a way to change the initial allocation size:
+ *   add hwloc_bitmap_set_foo() to changes a global here,
+ *   and make the hwloc core call based on the early number of PUs
+ * - preallocate inside the bitmap structure (so that the whole structure is a cacheline for instance)
+ *   and allocate a dedicated array only later when reallocating larger
+ * - add a bitmap->ulongs_empty_first which guarantees that some first ulongs are empty,
+ *   making tests much faster for big bitmaps since there's no need to look at first ulongs.
+ *   no need for ulongs_empty_first to be exactly the max number of empty ulongs,
+ *   clearing bits that were set earlier isn't very common.
+ */
+ A última (aparentemente) sugere apenas guardar quantos espaços estão zerados, em vez de não alocar esses espaços
+ 
