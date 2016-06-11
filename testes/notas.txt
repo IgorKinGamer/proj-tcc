@@ -14,3 +14,13 @@ Grupos: Objetos usados para representar mais informações da estrutura da topol
 
 Imagem ilustrando relação entre objetos na árvore:
 https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png
+
+
+Principais chamadas para acesso à informação de custos no HieSchella:
+- hwloc_get_pu_obj_by_os_index
+- hwloc_get_common_ancestor_obj
+- hwloc_get_ancestor_obj_by_type
+
+
+Trabalhos encontrados com representação de topologia
+- LIKWID: Usa hwloc (https://github.com/RRZE-HPC/likwid[/tree/master/src])
