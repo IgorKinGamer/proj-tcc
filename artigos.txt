@@ -19,3 +19,6 @@ usando dois modelos, um de processador único e outro de comunicação
 - Ferramentas geralmente não são portáveis
 - Características do hardware (tanto estrutura quanto desempenho) podem ser obtidas por meio de benchmarks
 - (Seção I, V) Códigos "autoajustáveis" (autotuning) podem se beneficiar dessas informações
+
+> Sequoia: Programming the Memory Hierarchy
+- Linguagem de programação para desenvolvimento de programas paralelos cientes da hierarquia de memória e portáveis
