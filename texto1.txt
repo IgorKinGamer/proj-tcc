@@ -1,10 +1,29 @@
 > Introdução
 
-A necessidade de plataformas para rodar aplicações de alto desempenho tem dado origem às diversas arquiteturas paralelas modernas existentes. Cada uma delas pode possuir uma hierarquia de memória distinta e, portanto, uma topologia própria. A organização e demais características dos elementos dessa hierarquia são aspectos de muita relevância para o desempenho de aplicações.
+Atualmente, 
+arquiteturas seguem modelos hierárquicos
+níveis de cache
+no nível mais baixo dessas hierarquias, unidades de processamento
+complexidade - multicore, multiprocessador, compartilhamento
 
-Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou na degradação do desempenho. Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o tamanho das caches, que podem comportar ou não todos os dados simultaneamente, ou os padrões de troca de mensagens entre tarefas e os meios existentes para realizar essas comunicações, que podem resultar em maior ou menor eficiência. Portanto, uma aplicação precisa conhecer a topologia da máquina e se adaptar a ela, de modo a aproveitar ao máximo os recursos de que ela dispõe.
+A necessidade de plataformas para rodar aplicações de alto desempenho tem dado origem às diversas arquiteturas paralelas modernas existentes. Cada uma delas pode possuir uma hierarquia de memória e distinta. A localização dos núcleos em relação a essa hierarquia define a topologia da máquina.
+A organização e demais características dos elementos dessa hierarquia são aspectos de muita relevância para o desempenho de aplicações.
 
-Disso vem a necessidade de haver alguma representação da topologia para fornecer às aplicações as informações das quais elas precisam. No entanto, o acesso a tais informações gera custos adicionais para a aplicação, sendo necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
+Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou na degradação do desempenho.
+Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o tamanho das caches, que podem comportar ou não todos os dados simultaneamente, ou os padrões de troca de mensagens entre tarefas e a localização delas, além dos meios existentes para realizar essas comunicações, que podem resultar em maior ou menor eficiência.
+
+Ainda, em arquiteturas NUMA, nas quais diferentes regiões da memória possuem diferentes tempos de acesso, é importante que haja proximidade entre os dados acessados por uma thread e o núcleo em que ela reside.
+Portanto, é essencial o conhecimento da topologia da máquina, que possibilita o devido ajuste das aplicações a ela, de modo a aproveitar ao máximo os recursos disponíveis.
+
+Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente. Como exemplos de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia [Sequoia]; e, quanto ao uso dinâmico, posicionamento de threads OpenMP [artigo], balanceamento de carga.
+
+No entanto, a disponibilização de tais informações gera custos adicionais, além de que pode ter outras implicações que afetam o desempenho.
+Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
+Tempos de acesso muito grandes podem acabar anulando os ganhos das otimizações.
+Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos dados referenciados em acessos consecutivos.
+Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia, que estarão espalhadas em diversas linhas da cache, podendo ser substituídas com maior probabilidade, quanto no acesso aos dados pelas aplicações.
+Entretanto, é possível que a adição de algumas informações facilitem certas consultas sobre a topologia sem causar tais prejuízos, que é o desejado.
+
 
 
 Aplicações (científicas)
@@ -13,46 +32,34 @@ Aplicações (científicas)
 - - - Técnicas
 - - - Conhecimento da topologia
 A necessidade de plataformas para aplicações de alto desempenho
-(deu origem a) Diversas arquiteturas para HPC.
+Diversas arquiteturas para HPC.
 cada uma com uma hierarquia de memória.
-(organização) característica muito relevante para o desempenho (deve ser levada em conta) ao desenvolver aplicações para elas (que rodam nelas).
-
-Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou degradação do desempenho. Por exemplo, a quantidade
-
-Portanto, Uma aplicação deve (precisa) conhecer e se adaptar à disposição (topologia) da máquina em que estiver rodando, para aproveitar (explorar) ao(o) máximo (possível) os recursos que ela dispõe.
-Disso vem a necessidade de se representar de alguma forma
-
-É necessário um compromisso entre o tempo gasto para acessar as informações e o espaço ocupado pela sua representação (interna), de modo a minimizar os custos adicionais advindos do tempo de acesso 
-
-Se o comportamento de uma aplicação não levar em conta essas (?)
-o desempenho de aplicações nessas ? depende da distribuição de tarefas no(a)s ?
-O mapeamento das tarefas nas unidades de processamento juntamente o padrão de comunicação entre elas conjun 
-Além disso, outras características como o tamanho do conjunto de dados sobre o qual uma tarefa opera 
-
-Devido à complexidade e Aplicações de alto desempenho (HPC) 
-Aplicações precisam fazer uso eficiente
-conhecimento da hierarquia para evitar degradação do desempenho
+característica muito relevante para o desempenho (deve ser levada em conta) ao desenvolver aplicações para elas (que rodam nelas).
 
 Motivação
 
-- O posicionamento ideal de tarefas nas unidades de processamento d[um]a máquina depende dos padrões de comunicação entre tarefas, .
-
 Objetivos
 
-Assimetria?
+> Fundamentação teórica
+
+
 
 
 > Trabalhos relacionados
 
-Diversos esforços são realizados para 
-
 hwloc predominante
-- Padrão de facto
-- Base
 - Representação
 - - Vantagens?
 - - - Modelagem (natural) que reflete
+- Usado por ...
 
-
+Várias ligações (ponteiros) entre elementos, conforme as suas relações.
+- Para facilitar a navegação
+cpusets
 
 > 
+
+Análise das funções do hwloc
+Funções usadas no hieschella
+Assimetria - Desconsiderar a princípio - Focar em simetria
+Grandes quantidades de núcleos
