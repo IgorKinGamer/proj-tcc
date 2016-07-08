@@ -1,13 +1,23 @@
 > Introdução
 
-Atualmente, 
-arquiteturas seguem modelos hierárquicos
-níveis de cache
-no nível mais baixo dessas hierarquias, unidades de processamento
+Atualmente, arquiteturas de computadores são construídas de forma hierárquica quanto à memória.
+Essa hierarquia diz respeito à passagem de dados entre os diferentes níveis, ou seja, quais caminhos existem para que dados sejam comunicados entre pontos dessa hierarquia.
+Níveis de memória mais altos possuem maior capacidade de armazenamento, porém seu tempo de acesso é maior.
+Parte dessa hierarquia é composta por um ou mais níveis de cache, memórias com capacidade reduzida, mas maior velocidade, permitindo que, em um dado momento, um conjunto de dados qualquer possa ser acessado mais rapidamente.
+No nível mais baixo dessas hierarquias estão as unidades de processamento, acessando e operando sobre os dados em memória.
+Quanto mais próximo for o nível de memória em que esse dados estiverem, menor o tempo de acesso.
+Quando essas unidades precisam se comunicar entre si, elas fazem uso da hierarquia de memória.
+
+A hierarquia pode ser organizada de várias formas, podendo se tornar complexa e de grande profundidade.
+Uma possibilidade na organização é o compartilhamento de alguns níveis de cache, ou seja, duas unidades de processamento ou mais estarão debaixo de uma mesma cache na hierarquia.
+Isso permite, por exemplo, realizar comunicações com eficiência, pois o tempo entre algum dado ser  atualizado e o novo valor ser visto é determinado pelo tempo de acesso à cache compartilhada.
+Uma grande variedade de organizações pode ser encontrada ao se considerar arquiteturas como multicore, em que ..., ou NUMA (Non-Uniform Memory Access), em que mais níveis são acrescentados à hierarquia, os quais compõe a rede de interconexão, a qual, por si só, também pode ser organizada de várias formas distintas.
+Essa organização compreendendo hierarquia de memória e unidades de processamento, na sua totalidade, define uma topologia de máquina.
 complexidade - multicore, multiprocessador, compartilhamento
 
-A necessidade de plataformas para rodar aplicações de alto desempenho tem dado origem às diversas arquiteturas paralelas modernas existentes. Cada uma delas pode possuir uma hierarquia de memória e distinta. A localização dos núcleos em relação a essa hierarquia define a topologia da máquina.
-A organização e demais características dos elementos dessa hierarquia são aspectos de muita relevância para o desempenho de aplicações.
+A necessidade de plataformas para rodar aplicações de alto desempenho tem dado origem às diversas arquiteturas paralelas modernas existentes.
+Suas topologias são as mais variadas, visando atender as necessidades de várias classes de aplicações distintas.
+Diante da crescente complexidade das topologias dessas máquinas, a sua organização e as demais características dos elementos que compõe a hierarquia de memória são aspectos de muita relevância para o desempenho de aplicações.
 
 Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou na degradação do desempenho.
 Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o tamanho das caches, que podem comportar ou não todos os dados simultaneamente, ou os padrões de troca de mensagens entre tarefas e a localização delas, além dos meios existentes para realizar essas comunicações, que podem resultar em maior ou menor eficiência.
@@ -15,18 +25,38 @@ Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o taman
 Ainda, em arquiteturas NUMA, nas quais diferentes regiões da memória possuem diferentes tempos de acesso, é importante que haja proximidade entre os dados acessados por uma thread e o núcleo em que ela reside.
 Portanto, é essencial o conhecimento da topologia da máquina, que possibilita o devido ajuste das aplicações a ela, de modo a aproveitar ao máximo os recursos disponíveis.
 
-Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente. Como exemplos de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia [Sequoia]; e, quanto ao uso dinâmico, posicionamento de threads OpenMP [artigo], balanceamento de carga.
+Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente. Como exemplo de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia [Sequoia], ou posicionamento de processos MPI [hwloc-2010]; e, quanto ao uso dinâmico, posicionamento de threads e dados OpenMP [FGOMP].
+
+[hwloc-2010] http://www.open-mpi.de/papers/pdp-2010/hwloc-pdp-2010.pdf
+[FGOMP] https://hal.inria.fr/inria-00496295/document
+
+------- <bagunça>
+
+Visto que os níveis de cache inferiores são mais rápidos, o ideal é que os dados estejam sempre o mais perto possível. 
+computações serão mais eficientes se dados estiverem em níveis de memória mais próximos
+compilação com conhecimento da hierarquia se vale do fato de que frequentemente problemas podem ser dividos em problemas menores de tamanho variável, e ajustar esses tamanhos à capacidade das caches torna o uso delas mais efetivo.
+dados em níveis mais próximos consecutivos
+dados podem ser contidos em níveis de memória mais próximos
+N
+ideal - dados sempre o mais perto possível
+
+Esses exemplos ilustram como informações sobre a hierarquia podem efetivamente ser usadas para melhorar o desempenho de aplicações que usam modelos ou estratégias realistas.
+Ou seja, com características presentes na solução de problemas reais. Isso diz respeito a, por exemplo, em aplicações científicas.
 
 No entanto, a disponibilização de tais informações gera custos adicionais, além de que pode ter outras implicações que afetam o desempenho.
 Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
 Tempos de acesso muito grandes podem acabar anulando os ganhos das otimizações.
-Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos dados referenciados em acessos consecutivos.
-Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia, que estarão espalhadas em diversas linhas da cache, podendo ser substituídas com maior probabilidade, quanto no acesso aos dados pelas aplicações.
+Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos padrões de dados referenciados em acessos consecutivos.
+Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia, que estarão espalhadas em diversas linhas da cache, podendo ser substituídas com maior probabilidade, quanto no acesso aos dados pelas aplicações. no acesso tanto às informações da topologia quanto aos dados das aplicações.
 Entretanto, é possível que a adição de algumas informações facilitem certas consultas sobre a topologia sem causar tais prejuízos, que é o desejado.
 
+>> Objetivos
 
+O objetivo deste trabalho é o desenvolvimento de uma representação que atinja o compromisso , necessário, como citado, entre tempo de acesso e espaço ocupado na memória pelas estruturas de dados utilizadas.
 
-Aplicações (científicas)
+>> Metodologia
+
+(Aplicações (científicas)
 - Alto desempenho
 - - Uso eficiente dos recursos
 - - - Técnicas
@@ -34,27 +64,70 @@ Aplicações (científicas)
 A necessidade de plataformas para aplicações de alto desempenho
 Diversas arquiteturas para HPC.
 cada uma com uma hierarquia de memória.
-característica muito relevante para o desempenho (deve ser levada em conta) ao desenvolver aplicações para elas (que rodam nelas).
+característica muito relevante para o desempenho (deve ser levada em conta) ao desenvolver aplicações para elas (que rodam nelas).)
 
 Motivação
 
-Objetivos
 
 > Fundamentação teórica
 
+Modelos
+cada um com vantagens
+definem diversos tipos de hierarquias de memória e topologias de máquina
+
+A organização que se encontra em arquiteturas atuais segue usualmente a seguinte cadeia: Máquina -> Interconexão -> Nodos NUMA -> Pacotes -> Caches -> Unidades de processamento
+
+Processadores multicore e caches
+
+Superscalar?
+Threads de hardware
+
+implicações
+
+>> Cache
+Caches são memórias com o próposito de diminuir o tempo médio de acesso a outros níveis de memória. Mais especificamente, é comum haver dois ou três níveis de cache entre as unidades de processamento e a memória principal. Elas são construídas com tecnologias que as tornam mais rápidas que outros níveis acima. Porém, essa velocidade vem em troca de custo mais elevado. Por isso, elas têm espaço de armazenamento menor, além de que memórias maiores podem ter sua velocidade de acesso diminuída, o que motiva a existência de vários níveis de cache.
+Seu princípio de funcionamento é manter à disposição dos programas, de forma rápida, aqueles dados que eles precisam ou estão usando no momento. Esses dados são disponibilizados conforme a capacidade de armazenamento da cache. Esta comumente é menor que o conjunto de todos os dados sobre os quais o programa opera
+
+Dados que não couberem em um nível de cache mas estiverem sendo usados
+
+>>> Localidade espacial
+Quando um programa referencia determinada posição da memória, é comum que logo em seguida os dados nas posições de memória adjcentes sejam necessários também. Isso é a chamada localidade espacial. As caches levam isso em conta para beneficiar as aplicações, trazendo dos níveis de memória acima não só o dado requisitado, mas também os dados que o rodeiam, constituindo um bloco. Portanto, do ponto de vista da cache, a memória é uma sequência de blocos que, quando necessários, são carregados em algum espaço disponível
+
+>>> Localidade temporal?
+A localidade temporal diz respeito a como dados acessados mais recentemente tendem a ser usados no futuro próximo mais do que outros dados.
+
+>>> Associatividade?
+É necessário definir em que posição dados trazidos para a cache serão colocados. A associtividade determina como essa escolha será feita.
+Em uma definição matemática, o conjunto de todas as posições que a cache possui é particionado em subconjuntos de igual tamanho. Quando um bloco da memória deve ser trazido para a cache, uma função do seu endereço determina para qual desses subconjuntos ele irá. Naturalmente, essa função deveria ser simples para não aumentar os custos e, na prática, se resume a pegar certos bits do endereço.
+//Em um caso extremo, a partição tem tantos subconjuntos quantas são as posições de memória 
+
+Essas propriedades ajudam a entender porque ... não funcionaria bem.
+No pior caso, um esquema "esperto" com estruturas muito espaçosas para reduzir muito a quantidade de operações e acessos, acessos consecutivos poderiam ser todos a blocos diferentes, resultando na poluição da cache das aplicações, ou seja, diversos blocos com dados das aplicações seriam substituídos, tornando maor o tempo para acessá-los na próxima vez.
+
+>> Benchmarks
+Usos
+São úteis pois simulam, por exemplo, padrões de comportamento presentes em aplicações reais.
+
+Podem ser úteis para testar representações de topologia 
 
 
 
-> Trabalhos relacionados
+> Trabalhos relacionados / Estado da arte
 
 hwloc predominante
 - Representação
 - - Vantagens?
 - - - Modelagem (natural) que reflete
 - Usado por ...
+- Tamanhos dos dados [hwloc-2014]
 
+[hwloc-2014] http://icl.cs.utk.edu/open-mpi/papers/hpcs-2014-hwloc/hpcs-2014-hwloc.pdf
+
+Objetos
 Várias ligações (ponteiros) entre elementos, conforme as suas relações.
-- Para facilitar a navegação
+- Para facilitar a navegação, em troca do espaço adicional por cada ponteiro nos objetos
+Imagem
+
 cpusets
 
 > 
@@ -62,4 +135,7 @@ cpusets
 Análise das funções do hwloc
 Funções usadas no hieschella
 Assimetria - Desconsiderar a princípio - Focar em simetria
-Grandes quantidades de núcleos
+A princípio, o foco será posto em hierarquias simétricas, possivelmente com eventuais otimizações direcionadas a esse tipo de hierarquias.
+Também, ..., pretende-se considerar a representação de hierarquias com Grandes quantidades de núcleos
+
+</bagunça>
