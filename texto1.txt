@@ -46,10 +46,17 @@ Diante disso, compilação com conhecimento da hierarquia [citar de novo?] se va
 Ainda, quando é possível haver vários níveis de subdivisão do problema, formando também uma espécie de hierarquia de subdivisões, os tamanhos das partes em diferentes níveis podem ser ajustados aos níveis de cache consecutivos.
 Isso pode ser visualizado com facilidade no exemplo de multiplicação de grandes matrizes presente no artigo referenciado [ou aqui].
 
+posicionamento de processos MPI [hwloc-2010]
+
+No contexto de arquiteturas NUMA, para diminuir o tempo de acesso a memórias remotas, há a possibilidade de mover os dados para outro nodo ou as threads para outros núcleos.
+Seguindo o princípio de realizar um combinação dessas opções com base nos níveis da topologia, o posicionamento dinâmico de threads e dados desenvolvido no ForestGOMP [hwloc-2014], uma extensão de uma implementação de OpenMP, se mostrou efetivo.
+Um cenário apresentado é a existência de vários conjuntos de threads e dados com grande afinidade, em que a migração de uma thread para outro núcleo só ocorreria se houvesse um nível de cache compartilhado, de modo a manter a thread próxima dos seus dados, enquanto em outros casos poderia haver a migração de todas as threads e dados relacionados.
+
 ------- <bagunça>
 
 Esses exemplos ilustram como informações sobre a hierarquia podem efetivamente ser usadas para melhorar o desempenho de aplicações que seguem modelos ou estratégias em uso real, ou seja, os benchmarks utilizados possuem características encontradas na solução de problemas reais.
-Isso diz respeito a, por exemplo, em aplicações científicas.
+Isso diz respeito a, por exemplo, os padrões de comunicação, que podem ser definidos pem aplicações científicas.
+Irregularidades
 
 >> Objetivos
 
@@ -66,16 +73,6 @@ Os objetivos específicos são:
 Análise de uma implementação existente amplamente utilizada, a saber, hwloc (Hardware Locality)
 Desenvolvimento de diferentes representações possíveis
 Realização de testes em ... e com ... para verificar o desempenho das representações desenvolvidas
-
-(Aplicações (científicas)
-- Alto desempenho
-- - Uso eficiente dos recursos
-- - - Técnicas? Prever dados (cache)
-- - - Conhecimento da topologia
-A necessidade de plataformas para aplicações de alto desempenho
-Diversas arquiteturas para HPC.
-cada uma com uma hierarquia de memória.
-característica muito relevante para o desempenho (deve ser levada em conta) ao desenvolver aplicações para elas (que rodam nelas).)
 
 
 > Fundamentação teórica
@@ -133,11 +130,26 @@ hwloc predominante
 [hwloc-2014] http://icl.cs.utk.edu/open-mpi/papers/hpcs-2014-hwloc/hpcs-2014-hwloc.pdf
 
 Objetos
-Várias ligações (ponteiros) entre elementos, conforme as suas relações.
-- Para facilitar a navegação, em troca do espaço adicional por cada ponteiro nos objetos
-Imagem
+Objetos são uma abstração usada para representar todos os elementos presentes na topologia, tanto memória quanto núcleos.
+A hierarquia de memória é modelada como uma árvore de objetos, onde cada nível (conjunto de objetos com mesma profundidade) contém objetos de apenas um tipo.
+A topologia por completo é representada de forma mais detalhada por meio de várias ligações (ponteiros) entre objetos, conforme as suas relações na hierarquia.
+Essas relações são definidas como:
+	Pai (parent): nodo pai na estrutura de árvore
+	Filhos (children): nodos filhos na estrutura de árvore
+	Irmãos: nodos com o mesmo pai
+	Primos (cousins): Objetos numa mesma profundidade (e, portanto, de mesmo tipo); todos os objetos que compõe um determinado nível (irmãos ou não) são primos
+A imagem X apresenta um exemplo dessas relações em uma dada topologia.
+Ela ilustra, ainda, no ramo mais a direita, o tratamento de assimetrias utilizado pelo hwloc: objetos de um mesmo tipo são emparelhados de modo a compor um mesmo nível.
+Portanto, objetos irmãos não estarão necessariamente no mesmo nível, e o conceito de profundidade não é exatamente o usado no contexto de estruturas de árvore, sendo possível irmãos terem profundidades diferentes.
+- Para facilitar a navegação, em troca do espaço adicional de cada ponteiro nos objetos.
 
-cpusets
+PUs
+
+Imagem X: https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png
+
+cpusets, que são mapeamentos dos núcleos existentes para bits (bitmaps), usados para determinar quais núcleos estão sob determinado objeto da hierarquia, implementados como uma sequência de variáveis de 32 bits, tantas quantas forem necessárias.
+A implementação dos bitmaps poderia ser otimizada para diminuir a quantidade de variáveis utilizadas em casos em que existam grandes quantidades de núcleos.
+Algo nesse sentido é citado no respectivo arquivo fonte em um comentário sobre otimizações que poderiam ser realizadas.
 
 > 
 
