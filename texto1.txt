@@ -16,7 +16,7 @@ Essa organização compreendendo hierarquia de memória e unidades de processame
 complexidade - multicore, multiprocessador, compartilhamento
 
 A necessidade de plataformas para rodar aplicações de alto desempenho tem dado origem às diversas arquiteturas paralelas modernas existentes.
-Suas topologias são as mais variadas, visando atender as necessidades de várias classes de aplicações distintas.
+Suas topologias são as mais variadas, visando atender às necessidades de várias classes de aplicações com características e comportamentos distintos.
 Diante da crescente complexidade das topologias dessas máquinas, a sua organização e as demais características dos elementos que compõe a hierarquia de memória são aspectos de muita relevância para o desempenho de aplicações.
 
 Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou na degradação do desempenho.
@@ -25,30 +25,32 @@ Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o taman
 Ainda, em arquiteturas NUMA, nas quais diferentes regiões da memória possuem diferentes tempos de acesso, é importante que haja proximidade entre os dados acessados por uma thread e o núcleo em que ela reside.
 Portanto, é essencial o conhecimento da topologia da máquina, que possibilita o devido ajuste das aplicações a ela, de modo a aproveitar ao máximo os recursos disponíveis.
 
-Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente. Como exemplo de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia [Sequoia], ou posicionamento de processos MPI [hwloc-2010]; e, quanto ao uso dinâmico, posicionamento de threads e dados OpenMP [FGOMP].
+Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente.
+Como exemplo de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia [Sequoia], ou posicionamento de processos MPI [hwloc-2010]; e, quanto ao uso dinâmico, posicionamento de threads e dados OpenMP [FGOMP].
 
 [hwloc-2010] http://www.open-mpi.de/papers/pdp-2010/hwloc-pdp-2010.pdf
 [FGOMP] https://hal.inria.fr/inria-00496295/document
 
-------- <bagunça>
-
-Visto que os níveis de cache inferiores são mais rápidos, o ideal é que os dados estejam sempre o mais perto possível. 
-computações serão mais eficientes se dados estiverem em níveis de memória mais próximos
-compilação com conhecimento da hierarquia se vale do fato de que frequentemente problemas podem ser dividos em problemas menores de tamanho variável, e ajustar esses tamanhos à capacidade das caches torna o uso delas mais efetivo.
-dados em níveis mais próximos consecutivos
-dados podem ser contidos em níveis de memória mais próximos
-N
-ideal - dados sempre o mais perto possível
-
-Esses exemplos ilustram como informações sobre a hierarquia podem efetivamente ser usadas para melhorar o desempenho de aplicações que usam modelos ou estratégias realistas.
-Ou seja, com características presentes na solução de problemas reais. Isso diz respeito a, por exemplo, em aplicações científicas.
-
-No entanto, a disponibilização de tais informações gera custos adicionais, além de que pode ter outras implicações que afetam o desempenho.
+No entanto, a disponibilização de tais informações gera custos adicionais, além de ter outras implicações relacionadas ao tamanho das estruturas de dados que podem afetar o desempenho.
 Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
 Tempos de acesso muito grandes podem acabar anulando os ganhos das otimizações.
-Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos padrões de dados referenciados em acessos consecutivos.
-Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia, que estarão espalhadas em diversas linhas da cache, podendo ser substituídas com maior probabilidade, quanto no acesso aos dados pelas aplicações. no acesso tanto às informações da topologia quanto aos dados das aplicações.
+Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos padrões de referência aos dados em acessos consecutivos.
+Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia, que estarão espalhadas em diversas posições da cache, podendo ser substituídas com maior probabilidade, quanto no acesso pelas aplicações aos seus próprios dados.
 Entretanto, é possível que a adição de algumas informações facilitem certas consultas sobre a topologia sem causar tais prejuízos, que é o desejado.
+
+>> Motivação
+
+Os exemplos de usos estáticos e dinâmicos dados acima, além de vários outros existentes, com o uso de benchmarks, servem como justificativa para a realização de esforços para desenvolver reprentações com as características citadas, isto é, bom tempo de acesso e uso eficiente da memória.
+
+Visto que, como dito anteriormente, os níveis de cache inferiores são mais rápidos, o ideal é que os dados estejam sempre nos níveis os mais próximos possíveis, de modo que seu uso nas computações seja mais eficiente.
+Diante disso, compilação com conhecimento da hierarquia [citar de novo?] se vale do fato de que frequentemente problemas podem ser dividos em problemas menores de tamanho variável, e ajustar esses tamanhos à capacidade das caches torna o uso delas mais efetivo, pois todos os dados usados nessas partes menores da computação caberão nelas.
+Ainda, quando é possível haver vários níveis de subdivisão do problema, formando também uma espécie de hierarquia de subdivisões, os tamanhos das partes em diferentes níveis podem ser ajustados aos níveis de cache consecutivos.
+Isso pode ser visualizado com facilidade no exemplo de multiplicação de grandes matrizes presente no artigo referenciado [ou aqui].
+
+------- <bagunça>
+
+Esses exemplos ilustram como informações sobre a hierarquia podem efetivamente ser usadas para melhorar o desempenho de aplicações que seguem modelos ou estratégias em uso real.
+Ou seja, os benchmarks utilizados possuem características encontradas na solução de problemas reais. Isso diz respeito a, por exemplo, em aplicações científicas.
 
 >> Objetivos
 
@@ -59,7 +61,7 @@ O objetivo deste trabalho é o desenvolvimento de uma representação que atinja
 (Aplicações (científicas)
 - Alto desempenho
 - - Uso eficiente dos recursos
-- - - Técnicas
+- - - Técnicas? Prever dados (cache)
 - - - Conhecimento da topologia
 A necessidade de plataformas para aplicações de alto desempenho
 Diversas arquiteturas para HPC.
