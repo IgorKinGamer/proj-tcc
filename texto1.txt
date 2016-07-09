@@ -27,8 +27,8 @@ Portanto, é essencial o conhecimento da topologia da máquina, que possibilita 
 Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente.
 Como exemplo de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia [Sequoia], ou posicionamento de processos MPI [hwloc-2010]; e, quanto ao uso dinâmico, posicionamento de threads e dados OpenMP [FGOMP].
 
-[hwloc-2010] http://www.open-mpi.de/papers/pdp-2010/hwloc-pdp-2010.pdf
-[FGOMP] https://hal.inria.fr/inria-00496295/document
+%[hwloc-2010] http://www.open-mpi.de/papers/pdp-2010/hwloc-pdp-2010.pdf
+%[FGOMP] https://hal.inria.fr/inria-00496295/document
 
 No entanto, a disponibilização de tais informações gera custos adicionais, além de ter outras implicações relacionadas ao tamanho das estruturas de dados que podem afetar o desempenho.
 Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
@@ -69,97 +69,77 @@ Os objetivos específicos são:
 - Testar as representações desenvolvidas, por meio de experimentos em diferentes máquinas, observando o uso da memória e o tempo de execução
 - Disponibilizar uma nova ferramenta para a representação de topologias de máquina
 
-------- <bagunça>
-
 >> Metodologia
 
-Análise de uma implementação existente amplamente utilizada, a saber, hwloc (Hardware Locality)
-Desenvolvimento de diferentes representações possíveis
-Realização de testes com as representações desenvolvidas em diferentes máquinas para verificar o desempenho.
+Estudar organização de computadores com foco na hierarquia de memória
+Estudar como topologias de máquina são representadas em trabalhos e ferramentas do estado da arte
+Entender o protótipo utilizado no ECL (Embedded Computing Lab) até o momento
+Implementar novos métodos de armazenamento e acesso às informações
+Testar os novos métodos e estruturas de dados utilizando máquinas com topologias diferentes e avaliar os resultados
+
+>> Organização do Trabalho
+
+As seções restantes estão organizadas da seguinte forma:
+No capítulo (fund. teór.), serão apresentados alguns conceitos fundamentais relevantes para o trabalho.
+No capítulo (estado da arte), será fornecida uma visão geral do estado da arte em representação de topologias de máquina.
+No capítulo (andamento) constam o progresso atual do trabalho e o planejamento do seu prosseguimento.
 
 
 > Fundamentação teórica
 
-Modelos
-cada um com vantagens
-definem diversos tipos de hierarquias de memória e topologias de máquina
+Uma parte muito importante das hierarquias a ser considerada em questões de desempenho são as memórias cache.
 
-A organização que se encontra em arquiteturas atuais segue usualmente a seguinte cadeia: Máquina -> Interconexão -> Nodos NUMA -> Pacotes -> Caches -> Unidades de processamento
+>> Memórias Cache
 
-Processadores multicore e caches
+Caches são memórias com o próposito de diminuir o tempo médio de acesso a outros níveis de memória. Mais especificamente, é comum haver dois ou três níveis de cache entre as unidades de processamento e a memória principal. Elas são construídas com tecnologias que as tornam mais rápidas que outros níveis acima. Porém, essa velocidade vem em troca de custo mais elevado. Por isso, elas têm espaço de armazenamento menor, além de que memórias maiores podem ter sua velocidade de acesso diminuída, o que também motiva a existência de vários níveis de cache.
 
-Superscalar?
-Threads de hardware
+O princípio de sua funcionalidade é manter à disposição dos programas, de forma rápida, aqueles dados dos quais eles precisam ou que estão usando no momento. Esses dados são disponibilizados conforme a capacidade de armazenamento da cache. Esta comumente é menor que o conjunto de todos os dados sobre os quais o programa opera, resultando na necessidade de remover alguns dados para acomodar outros.
 
-implicações
+>>> Localidade Espacial
 
->> Cache
-Caches são memórias com o próposito de diminuir o tempo médio de acesso a outros níveis de memória. Mais especificamente, é comum haver dois ou três níveis de cache entre as unidades de processamento e a memória principal. Elas são construídas com tecnologias que as tornam mais rápidas que outros níveis acima. Porém, essa velocidade vem em troca de custo mais elevado. Por isso, elas têm espaço de armazenamento menor, além de que memórias maiores podem ter sua velocidade de acesso diminuída, o que motiva a existência de vários níveis de cache.
-Seu princípio de funcionamento é manter à disposição dos programas, de forma rápida, aqueles dados dos quais eles precisam ou que estão usando no momento. Esses dados são disponibilizados conforme a capacidade de armazenamento da cache. Esta comumente é menor que o conjunto de todos os dados sobre os quais o programa opera, resultando na necessidade de remover alguns dados para acomodar outros.
-
-Dados que não couberem em um nível de cache mas estiverem sendo usados
-
->>> Localidade espacial
 Quando um programa referencia determinada posição da memória, é comum que logo em seguida os dados nas posições de memória adjcentes sejam necessários também. Isso é a chamada localidade espacial. As caches levam isso em conta para beneficiar as aplicações, trazendo dos níveis de memória acima não só o dado requisitado, mas também os dados que o rodeiam, constituindo um bloco. Assim, do ponto de vista da cache, a memória é uma sequência de blocos que, quando necessários, são carregados em algum espaço disponível, ou substituem um bloco carregado previamente se não houver espaços disponíveis.
 
->>> Localidade temporal?
-A localidade temporal diz respeito a como dados acessados mais recentemente tendem a ser usados no futuro próximo mais do que outros dados.
-
->>> Associatividade?
-É necessário definir em que posição dados trazidos para a cache serão colocados. A associtividade determina como essa escolha será feita.
-Em uma definição matemática, o conjunto de todas as posições que a cache possui é particionado em subconjuntos de igual tamanho. Quando um bloco da memória deve ser trazido para a cache, uma função do seu endereço determina para qual desses subconjuntos ele irá. Naturalmente, essa função deveria ser simples para não aumentar os custos e, na prática, se resume a pegar certos bits do endereço.
-//Em um caso extremo, a partição tem tantos subconjuntos quantas são as posições de memória 
-
-Essas propriedades ajudam a entender porque ... não funcionaria bem.
-No pior caso, um esquema "esperto" com estruturas muito espaçosas para reduzir muito a quantidade de operações e acessos, acessos consecutivos poderiam ser todos a blocos diferentes, resultando na poluição da cache das aplicações, ou seja, diversos blocos com dados das aplicações seriam substituídos, tornando maior o tempo para acessá-los na próxima vez.
-
->> Benchmarks
-Usos
-São úteis pois simulam, por exemplo, padrões de comportamento presentes em aplicações reais.
-
-Podem ser úteis para testar representações de topologia 
+Analisar as caches ajuda a entender porque um esquema "esperto", com estruturas muito espaçosas para reduzir a quantidade de operações e acessos, poderia não funcionar bem.
+No pior caso, acessos consecutivos poderiam ser todos a blocos diferentes, ocasionando o custo de trazer cada um para a cache e resultando na poluição da cache das aplicações, ou seja, diversos blocos com dados das aplicações seriam substituídos, tornando maior o tempo para acessá-los na próxima vez.
 
 
+> Estado da Arte
 
-> Trabalhos relacionados / Estado da arte
+Hardware Locality (abreviado como hwloc) [citação] é um pacote de software amplamente utilizado para a representação de topologias de máquina com grande portabilidade.
+Ele contém ferramentas de linha de comando, além de permitir que aplicações acessem as informações sobre a topologia por meio de uma API na linguagem C.
 
-hwloc predominante
-- Representação
-- - Vantagens?
-- - - Modelagem (natural) que reflete
-- Usado por ...
-- Tamanhos dos dados [hwloc-2014]
+>> Objetos
 
-[hwloc-2014] http://icl.cs.utk.edu/open-mpi/papers/hpcs-2014-hwloc/hpcs-2014-hwloc.pdf
-
-Objetos
 Objetos são uma abstração usada para representar todos os elementos presentes na topologia, tanto memória quanto núcleos.
 A hierarquia de memória é modelada como uma árvore de objetos, onde cada nível (conjunto de objetos com mesma profundidade) contém objetos de apenas um tipo.
 A topologia por completo é representada de forma mais detalhada por meio de várias ligações (ponteiros) entre objetos, conforme as suas relações na hierarquia.
 Essas relações são definidas como:
 	Pai (parent): nodo pai na estrutura de árvore
 	Filhos (children): nodos filhos na estrutura de árvore
-	Irmãos: nodos com o mesmo pai
+	Irmãos (siblings): nodos com o mesmo pai
 	Primos (cousins): Objetos numa mesma profundidade (e, portanto, de mesmo tipo); todos os objetos que compõe um determinado nível (irmãos ou não) são primos
-A imagem X apresenta um exemplo dessas relações em uma dada topologia.
+A Figura X apresenta um exemplo dessas relações em uma dada topologia.
 Ela ilustra, ainda, no ramo mais a direita, o tratamento de assimetrias utilizado pelo hwloc: objetos de um mesmo tipo são emparelhados de modo a compor um mesmo nível.
 Portanto, objetos irmãos não estarão necessariamente no mesmo nível, e o conceito de profundidade não é exatamente o usado no contexto de estruturas de árvore, sendo possível irmãos terem profundidades diferentes.
-- Para facilitar a navegação, em troca do espaço adicional de cada ponteiro nos objetos.
 
-PUs
+Essas relações acrescentadas à estrutura de árvore facilitam a navegação entre objetos, em troca do espaço adicional ocupado por cada ponteiro nos objetos.
+Por exemplo, como indicado na figura, a partir de qualquer objeto, é possível navegar para o próximo primo (pelo ponteiro next_cousin), ou para o próximo irmão (ponteiro next_sibling), se existirem.
+Além disso, todos os objetos são armazenados numa estrutura de array de arrays de objetos, semelhante a uma matriz, mas com arrays internos de tamanho variável.
+Cada um dos arrays internos contém os objetos de um nível, e eles são organizados no array externo na ordem dos níveis, de modo que é possível acessar o enésimo objeto de um dado nível diretamente usando essa estrutura.
 
-Imagem X: https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png
+%Figura X: https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png
 
-cpusets, que são mapeamentos dos núcleos existentes para bits (bitmaps), usados para determinar quais núcleos estão sob determinado objeto da hierarquia, implementados como uma sequência de variáveis de 32 bits, tantas quantas forem necessárias.
+>> Conjuntos de CPUs (cpusets)
+
+Cada objeto pode ter um cpuset (conjunto de CPUs), que é um mapeamento dos núcleos existentes para bits (bitmap), usado para determinar quais núcleos estão sob o objeto na hierarquia, implementados como uma sequência de variáveis de 32 bits, tantas quantas forem necessárias.
 A implementação dos bitmaps poderia ser otimizada para diminuir a quantidade de variáveis utilizadas em casos em que existam grandes quantidades de núcleos.
 Algo nesse sentido é citado no respectivo arquivo fonte em um comentário sobre otimizações que poderiam ser realizadas.
 
-> 
+> Andamento do Trabalho
 
-Análise das funções do hwloc
-Funções usadas no hieschella
-Assimetria - Desconsiderar a princípio - Focar em simetria
-A princípio, o foco será posto em hierarquias simétricas, possivelmente com eventuais otimizações direcionadas a esse tipo de hierarquias.
-Também, ..., pretende-se considerar a representação de hierarquias com Grandes quantidades de núcleos
+Até o momento, foi feita uma análise de diversas funções do hwloc e suas complexidades.
+Para alguns pontos em específico, já estão sendo consideradas ideias que poderiam torná-los mais eficientes.
 
-</bagunça>
+Quanto aos próximos passos, pretende-se dar atenção a funções de mais relevância: Foram identificadas as chamadas mais importantes a funções do hwloc no HieSchella [ref] e, sendo viável, uma análise semelhante poderá ser feita em outros projetos com código aberto que usam o hwloc.
+A princípio, o foco será posto em hierarquias simétricas, podendo haver eventuais otimizações direcionadas a esse tipo de hierarquias, tratando-se assimetria se possível posteriormente.
+Além disso, pretende-se levar em consideração a representação de hierarquias com grandes quantidades de núcleos, com as quais se tornarão mais visíveis as diferenças nos resultados de testes com implementações mais ou menos eficientes.
