@@ -34,7 +34,7 @@ No entanto, a disponibilização de tais informações gera custos adicionais, a
 Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
 Tempos de acesso muito grandes podem acabar anulando os ganhos das otimizações.
 Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos padrões de referência aos dados em acessos consecutivos.
-Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia, que estarão espalhadas em diversas posições da cache, podendo ser substituídas com maior probabilidade, quanto no acesso pelas aplicações aos seus próprios dados.
+Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia quanto no acesso pelas aplicações aos seus próprios dados.
 Entretanto, é possível que a adição de algumas informações facilitem certas consultas sobre a topologia sem causar tais prejuízos, que é o desejado.
 
 >> Motivação
