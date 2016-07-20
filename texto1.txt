@@ -50,8 +50,8 @@ A velocidade de níveis de cache mais próximos também beneficia a comunicaçã
 Portanto, em conjunto com dados sobre os padrões de comunicação entre processos, as informações sobre compartilhamento de caches podem ser usadas para definir um posicionamento de processos MPI que favoreça as comunicações [hwloc-2010].
 Outra otimização possível é o uso de metódos específicos do hardware para realizar comunicações dentro de um nodo.
 
-No contexto de arquiteturas NUMA, para diminuir o tempo de acesso a memórias remotas, há a possibilidade de mover os dados para outro nodo ou as threads para outros núcleos.
-Seguindo o princípio de realizar um combinação dessas opções com base nos níveis da topologia, o posicionamento dinâmico de threads e dados desenvolvido no ForestGOMP [hwloc-2014], uma extensão de uma implementação de OpenMP, se mostrou efetivo.
+No contexto de arquiteturas NUMA, para diminuir o número de acessos a memórias remotas, há a possibilidade de mover os dados para outro nodo ou as threads para outros núcleos.
+Seguindo o princípio de realizar uma combinação dessas opções com base nos níveis da topologia, o posicionamento dinâmico de threads e dados desenvolvido no ForestGOMP [hwloc-2014], uma extensão de uma implementação de OpenMP, se mostrou efetivo.
 Um cenário apresentado é a existência de vários conjuntos de threads e dados com grande afinidade, em que a migração de uma thread para outro núcleo só ocorreria se houvesse um nível de cache compartilhado, de modo a manter a thread próxima dos seus dados, enquanto em outros casos poderia haver a migração de todas as threads e dados relacionados.
 
 Esses exemplos ilustram como informações sobre a hierarquia podem efetivamente ser usadas para melhorar o desempenho de aplicações que seguem modelos ou estratégias em uso real, ou seja, os benchmarks utilizados possuem características encontradas na solução de problemas reais.
