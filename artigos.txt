@@ -22,3 +22,10 @@ usando dois modelos, um de processador único e outro de comunicação
 
 > Sequoia: Programming the Memory Hierarchy
 - Linguagem de programação para desenvolvimento de programas paralelos cientes da hierarquia de memória e portáveis
+
+> Exposing the Locality of Heterogeneous Memory Architectures to HPC Applications
+- Novas arquiteturas de memória heterogêneas fogem do que os modelos atuais conseguem expressar ao representar topologias.
+- Novo modelo proposto para representar caches "por memória" (memory-side) no hwloc:
+  - Os elementos de computação, da máquina às unidades de processamento, compõe os ramos principais
+  - A alguns objetos são adicionados descendentes que compõem ramos de memória, semelhante a como é feito com os ramos de IO
+  - Assim é possível representar que acessos a uma memória específica (e não simplesmente de um conjunto de CPUs) passam por uma cache, enquanto acessos a outra memória não passam.
