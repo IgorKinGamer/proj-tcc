@@ -1,0 +1,62 @@
+Cada nó da árvore recebe um id.
+Os ids podem ser tratados como strings binárias, mas são simplesmente números,
+então 0s a esquerda não alteram o id, só servem para facilitar a explicação
+de como os ids são formados.
+
+Se houver níveis cujos nós têm só 1 filho, tais níveis podem ser "comprimidos"
+ou ignorados na hora de atribuir ids.
+Ou seja, a árvore é tratada como se cada nó A de um nível assim não existisse
+e o filho de A fosse filho do pai de A.
+Isto porque, se A tem um só filho, não existem dois nós distintos na árvore
+que tenham A como ancestral mais próximo.
+(Se A tem um só filho, quaisquer dois nós distintos que têm A como ancestral
+comum também têm o filho de A como ancestral comum.)
+
+A raiz tem id 0.
+
+Se ela tem f_r filhos, o id do i-ésimo filho dela é uma string binária
+de tamanho f_r com o i-ésimo bit ativo.
+(Se a raiz tem 3 filhos, os ids deles são: 001, 010, 100).
+
+A partir daí, se os nós do nível n têm no máximo f filhos, os filhos deles
+(ie., os nós do nível n+1) tem id formado assim:
+O id do i-ésimo filho de um nó do nível n é
+	uma string binária de tamanho f com apenas o i-ésimo bit ativo
+	concatenada com o id do pai dele
+(Se os nós do nível 1 têm no máximo 4 filhos e o nó 001 tem exatamente 4 filhos,
+os filhos dele são 0001 001, 0010 001, 0100 001 e 1000 001 (espaços só para
+facilitar a visualização))
+
+
+Dados dois nós, a sequência de bits antes do primeiro bit que difere é o id
+do ancestral comum mais próximo.
+(100 010 0010 e 100 100 0010 -> 0010 (zeros a esquerda podem ser ignorados)).
+
+Sabendo-se o nível e o id desse ancestral (com poucas operações simples),
+é necessário "transformar" esse par (nível, id) na referência para o objeto
+em si.
+
+Uma solução ingênua e impraticável é usar o id como índice em um array
+(imagine buscar o nó 10 10 100000 0010 em um array de mais de dez mil posições
+com apenas 2*2*6*4 = 96 delas ocupadas...).
+
+Uma possível solução é colocar os nós em um array menor e usar uma função
+que traga todos os valores de id possíveis para os limites desse array.
+Naturalmente, essa função pode ser módulo m, para algum m.
+O problema é que podem ocorrer colisões (valores congruentes mod m).
+Então, usando apenas mod m, m tem que ser escolhido de modo que não haja
+colisões.
+No entanto, é desejável que m seja o menor possível.
+
+A seguir estão alguns dados (descobertos por força bruta) de qual o menor m
+que não causa colisões para os nós do i-ésimo nível (abaixo da raiz) de uma
+árvore n-ária:
+
+n = 2:
+- i = 2: m = 
+- i = : m = 
+- i = : m = 
+- i = : m = 
+
+(Com esses dados podemos montar os testes, usando o m descoberto para uma dada
+lista de graus. Programa ??? do octave faz isso.)
