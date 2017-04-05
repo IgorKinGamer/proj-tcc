@@ -5,8 +5,6 @@
 #ifndef ARV_MOD_H
 #define ARV_MOD_H
 
-#include <cmath>
-
 /*
  * Verifica se os valores no array módulo m resultam todos em valores
  * diferentes.
@@ -31,5 +29,7 @@ bool moduloInjetor(int tam, unsigned long valores[], unsigned long m)
 	// Não houve colisões
 	return true;
 }
+
+// Buscar o menor m
 
 #endif /* ARV_MOD_H */
