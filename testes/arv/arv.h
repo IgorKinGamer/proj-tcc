@@ -1,3 +1,6 @@
+#ifndef ARV_H
+#define ARV_H
+
 #include <iostream>
 #include <bitset>
 #include <climits>
@@ -38,6 +41,8 @@ class Arvore
 	// Módulo usado para cada nível da árvore
 	// Raiz e folhas não precisam
 	unsigned long *mods;
+	
+	
 };
 
 
@@ -100,7 +105,7 @@ No* ancestralSimples(No* a, No* b)
 }
 
 ////////////////////////////////////////
-No* ancestral(Arvore* a, No* a, No* b)
+No* ancestral(Arvore* arv, No* a, No* b)
 {
 	/* Opções:
 	 * 	mascaras[bsf(dif)] // bit scan forward (__builtin_ctz(x))
@@ -120,3 +125,5 @@ No* ancestral(Arvore* a, No* a, No* b)
 	// TODO Encontrar nó
 	
 }
+
+#endif /* ARV_H */
