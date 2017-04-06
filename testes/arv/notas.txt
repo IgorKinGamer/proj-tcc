@@ -84,6 +84,12 @@ n = 6
 - i = 3: m = 2910 (13.47)
 
 Nota:
+	O array não precisa ser de tamanho m; com os ajustes necessários, pode
+	ser de tamanho max(img)-min(img), onde img é o conjunto dos ids mod m.
+	É possível que esse valor diminua ao se usar um m que não seja o
+	menor possível.
+
+Nota:
 	Com esses dados podemos montar os testes, usando o m descoberto para uma
 	dada lista de graus.
 	A função buscar (arquivo buscar.m) no octave faz isso.
