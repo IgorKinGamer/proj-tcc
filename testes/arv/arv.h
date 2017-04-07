@@ -5,6 +5,8 @@
 #include <bitset>
 #include <climits>
 
+#include <algorithm>
+
 #include "defs.h"
 #include "arv_mod.h"
 
@@ -46,11 +48,21 @@ class Arvore
 	
 	// Quantidade de níveis
 	unsigned numNiveis;
-	// Arranjos por nível
-	No **hashNiveis;
+	// Arranjos por nível com nós na posição resultante
+	No ***imagemNiveis;
+	// NOTA: Níveis cujos nós têm um só filho poderiam ser totalmente
+	// omitidos na busca do ancestral mais próximo, desde o bit ocupado
+	// desnecessariamente no id até as estruturas (pois não são ancestral
+	// mais próximo de nenhum par de nós distintos), mas isso exigiria um
+	// tratamento todo especial...
+	// A não ser que os nós tenham um No **filhosEspecial.
+	
+	// nivelDosBits[i]: Nível do ancestral mais próximo de a e b quando
+	// o primeiro bit que difere entre a->id e b->id é i
+	unsigned *nivelDosBits;
 	
 	// Módulo usado para cada nível da árvore
-	// Raiz e folhas não precisam
+	// Folhas não precisam
 	DadosFuncao *dadosFuncao;
 	
 	Arvore(No* r, unsigned nNiveis)
@@ -62,9 +74,9 @@ class Arvore
 	
 	~Arvore()
 	{
-		for (unsigned i = 0; i < numNiveis; i++)
-			delete hashNiveis[i];
-		delete hashNiveis;
+		for (unsigned i = 0; i < numNiveis-1; i++)
+			delete imagemNiveis[i];
+		delete imagemNiveis;
 		delete raiz;
 		delete dadosFuncao;
 	}
@@ -73,20 +85,51 @@ class Arvore
 	// Descobrir quantos níveis são realmente necessários
 	// Pegar todos os nós de um nível em um array e descobrir o m
 	
+	unsigned bitParaNivel(ID bit)
+	{
+		unsigned pos = __builtin_ctz(bit); // Primeiro bit 1
+		return nivelDosBits[pos];
+	}
+	
 	void montarEstruturas()
 	{
-		// Descobre quantos nós há em cada nivel
-		unsigned* nosPorNivel = new unsigned[numNiveis](); // Inicia com 0
-		preencherNosPorNivel(nosPorNivel, raiz);
+		// Descobre quantos nós há em cada nivel e o grau máximo
+		unsigned *nosPorNivel = new unsigned[numNiveis] (); // Inicia com 0
+		unsigned *grauPorNivel = new unsigned[numNiveis] (); // Inicia com 0
+		preencherNosGrauPorNivel(nosPorNivel, grauPorNivel, raiz);
 		
-		// Cria um arranjo por nível com os ids do nivel para descobrir os módulos
+		// Preenche mapeamento (primeiro bit diferente -> nivel do ancestral)
+		// Se os graus (da raiz, filhos e netos) são [2, 3, 3]: [0, 0, 1, 1, 1, 2, 2, 2]
+		unsigned *grau = grauPorNivel, somaGraus = 0;
+		while (*grau != 0)
+			somaGraus += *(grau++);
+		cout << "Somatório dos graus: " << somaGraus << '\n';
+		nivelDosBits = new unsigned[somaGraus];
+		unsigned *bit = nivelDosBits, nivelAnc = 0;
+		while (grau[nivelAnc] != 0)
+		{
+			for (unsigned i = 0; i < grau[nivelAnc]; i++)
+				*(bit++) = nivelAnc;
+			nivelAnc++;
+		}
+		
+		// Se os nós ainda não têm ids, atribuir aqui... (agora têm-se os graus)
+		// (Árvores geradas com construirArvore() já têm os ids)
+		// TODO
+		
+		// Cria um arranjo por nível com os ids e outro com os nós
+		// do nivel para descobrir os módulos e distribuir os nós
+		No** nosNiveis[numNiveis];
 		ID* idsNiveis[numNiveis];
 		for (unsigned nivel = 0; nivel < numNiveis; nivel++)
+		{
+			nosNiveis[nivel] = new No*[nosPorNivel[nivel]];
 			idsNiveis[nivel] = new ID[nosPorNivel[nivel]];
+		}
 		// Próxima posição a preencher de cada nível
-		unsigned *proxPos = new unsigned[numNiveis]();
+		unsigned *proxPos = new unsigned[numNiveis] (); // Zerado
 		// Pega os ids
-		preencherIdsNiveis(idsNiveis, proxPos, raiz);
+		preencherNosIdsNiveis(nosNiveis, idsNiveis, proxPos, raiz);
 		// !!! Mostra ids
 		/*for (int i = 0; i < numNiveis; i++)
 		{
@@ -95,35 +138,49 @@ class Arvore
 			cout << '\n';
 		}*/
 		
-		// Descobrir o módulo para cada nível (menos raiz e último nível)
-		for (unsigned nivel = 1; nivel < numNiveis-1; nivel++)
+		// Descobrir o módulo para cada nível (menos último nível)
+		imagemNiveis = new No**[numNiveis-1];
+		imagemNiveis[0] = 0;
+		for (unsigned nivel = 0; nivel < numNiveis-1; nivel++)
 		{
 			unsigned numNos = nosPorNivel[nivel];
+			No **nos = nosNiveis[nivel];
 			ID *ids = idsNiveis[nivel];
-			// Saídas (img = ((<id> & mascE ^ mascXor | mascOu) + ad) % m)
-			buscarFuncaoIdeal(numNos, ids, &dadosFuncao[nivel]);
+			DadosFuncao *dadosNivel = &dadosFuncao[nivel];
+			// Encontra valores para a função que distribui os nós
+			buscarFuncaoIdeal(numNos, ids, dadosNivel);
+			// Coloca os nós nas posições resultantes da função
+			No **imagemNivel = new No*[dadosNivel->tam] (); // Zerado
+			for (unsigned no = 0; no < numNos; no++)
+				imagemNivel[dadosNivel->aplicar(ids[no])] = nos[no];
+			imagemNiveis[nivel] = imagemNivel;
 		}
 		
 		// Libera
-		for (unsigned nivel = 0; nivel < numNiveis; nivel++)
-			delete idsNiveis[nivel];
 		delete nosPorNivel;
+		for (unsigned nivel = 0; nivel < numNiveis; nivel++)
+		{
+			delete nosNiveis[nivel];
+			delete idsNiveis[nivel];
+		}
 		delete proxPos;
 	}
 	
-	void preencherNosPorNivel(unsigned *nosPorNivel, No *no)
+	void preencherNosGrauPorNivel(unsigned *nosPorNivel, unsigned *grauPorNivel, No *no)
 	{
 		++nosPorNivel[no->nivel];
+		grauPorNivel[no->nivel] = std::max(grauPorNivel[no->nivel], no->numFilhos);
 		for (int i = 0; i < no->numFilhos; i++)
-			preencherNosPorNivel(nosPorNivel, no->filhos[i]);
+			preencherNosGrauPorNivel(nosPorNivel, grauPorNivel, no->filhos[i]);
 	}
 	
-	void preencherIdsNiveis(ID **idsNiveis, unsigned *proxPos, No *no)
+	void preencherNosIdsNiveis(No ***nosNiveis, ID **idsNiveis, unsigned *proxPos, No *no)
 	{
-		// Coloca id na próxima posição da linha do nível do nó
+		// Coloca nó e id na próxima posição da linha do nível do nó
+		nosNiveis[no->nivel][proxPos[no->nivel]  ] = no;
 		idsNiveis[no->nivel][proxPos[no->nivel]++] = no->id;
 		for (unsigned i = 0; i < no->numFilhos; i++)
-			preencherIdsNiveis(idsNiveis, proxPos, no->filhos[i]);
+			preencherNosIdsNiveis(nosNiveis, idsNiveis, proxPos, no->filhos[i]);
 	}
 };
 

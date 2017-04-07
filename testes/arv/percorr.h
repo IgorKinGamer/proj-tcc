@@ -29,7 +29,7 @@ No* ancestral(Arvore* arv, No* a, No* b)
 	 * 	(signed) ((dif-1) ^ dif) >> 1
 	 * 	((dif-1) | dif) ^ dif
 	 */
-	unsigned long dif, bit, masc, id;
+	ID dif, bit, masc, id;
 	// Bits que diferem
 	dif = a->id ^ b->id;
 	// Primeiro diferente (usar para encontrar o array do nível?)
@@ -39,8 +39,10 @@ No* ancestral(Arvore* arv, No* a, No* b)
 	// Id do ancestral comum mais próximo
 	id = a->id & masc; // a->id ou b->id, tanto faz
 	
-	// TODO Encontrar nó
-	
+	// Encontra o nó
+	unsigned nivel = arv->bitParaNivel(bit);
+	No **imagemNivel = arv->imagemNiveis[nivel];
+	return imagemNivel[arv->dadosFuncao[nivel].aplicar(id)];
 }
 
 #endif /* PERCORR_H */
