@@ -28,7 +28,7 @@ struct DadosFuncao
 	 */
 	ID mascE, mascOuEx, mascOu, ad, m;
 	// Tamanho do arranjo necessário (pode ser < m)
-	unsigned tam;
+	int tam;
 	
 	ID aplicar(ID id)
 	{
@@ -48,7 +48,7 @@ bool moduloInjetor(int tam, ID valores[], ID m)
 	// Aplica módulo a cada valor
 	for (ID *valor = valores; valor < valores+tam; valor++)
 	{
-		unsigned long res = *valor % m;
+		ID res = *valor % m;
 		// Valor já foi atingido
 		if (imagem[res])
 			return false;
@@ -62,7 +62,7 @@ bool moduloInjetor(int tam, ID valores[], ID m)
 }
 
 // Buscar os valores ideais da função
-void buscarFuncaoIdeal(unsigned numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
+void buscarFuncaoIdeal(int numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 {
 	// Busca m
 	ID m = numNos;
@@ -76,7 +76,7 @@ void buscarFuncaoIdeal(unsigned numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 		
 		/*// Imagem
 		ID imagem[numNos];
-		for (unsigned i = 0; i < numNos; i++)
+		for (int i = 0; i < numNos; i++)
 			imagem[i] = ids[i] % m;
 		// TODO Analisa imagem para descobrir os melhores valores para ad e tam
 		std::sort(imagem, imagem+numNos);

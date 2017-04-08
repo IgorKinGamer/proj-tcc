@@ -40,7 +40,7 @@ No* ancestral(Arvore* arv, No* a, No* b)
 	id = a->id & masc; // a->id ou b->id, tanto faz
 	
 	// Encontra o nó
-	unsigned nivel = arv->bitParaNivel(bit);
+	int nivel = arv->bitParaNivel(bit);
 	No **imagemNivel = arv->imagemNiveis[nivel];
 	return imagemNivel[arv->dadosFuncao[nivel].aplicar(id)];
 }
