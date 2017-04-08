@@ -28,18 +28,19 @@ struct estr_No
 	// Nível do nó: 0 -> raiz
 	int nivel;
 	
-	void imprimir() { imprimir(0); }
+	void imprimir(int nBits = sizeof(id)*CHAR_BIT) { imprimir(0, nBits); }
 	
 	friend inline ostream& operator<<(ostream &o, const No n) { o << n->id; return o; } // !!!
 	
-	void imprimir(int ind)
+	void imprimir(int ind, int nBits)
 	{
 		for (int i = 0; i < ind; i++)
 			cout << '|'; // Indentação
-		cout << "No " << bitset<sizeof(id)*CHAR_BIT>(id) << " (" << nivel << ' ' << numFilhos << ')' << endl;
+		cout << "No " << bitset<sizeof(id)*CHAR_BIT>(id).to_string().substr(sizeof(id)*CHAR_BIT - nBits)
+			/*<< " (" << nivel << ' ' << numFilhos << ')'*/ << '\n';
 		++ind;
 		for (int f = 0; f < numFilhos; f++)
-			filhos[f]->imprimir(ind);
+			filhos[f]->imprimir(ind, nBits);
 	}
 	
 	// TODO Destrutor
@@ -65,7 +66,7 @@ class Arvore
 	// o primeiro bit que difere entre a->id e b->id é i
 	int *nivelDosBits;
 	
-	// Módulo usado para cada nível da árvore
+	// Função usada para cada nível da árvore
 	// Folhas não precisam
 	DadosFuncao *dadosFuncao;
 	
@@ -74,6 +75,8 @@ class Arvore
 		raiz = r;
 		numNiveis = nNiveis;
 		dadosFuncao = new DadosFuncao[numNiveis];
+		
+		montarEstruturas();
 	}
 	
 	~Arvore()
@@ -97,6 +100,8 @@ class Arvore
 	
 	void montarEstruturas()
 	{
+		cout << "<Arvore::montarEstruturas>\n";
+		
 		// Descobre quantos nós há em cada nivel e o grau máximo
 		int *nosPorNivel = new int[numNiveis] (); // Inicia com 0
 		int *grauPorNivel = new int[numNiveis] (); // Inicia com 0
@@ -104,9 +109,6 @@ class Arvore
 		
 		// Preenche mapeamento (primeiro bit diferente -> nivel do ancestral)
 		// Se os graus (da raiz, filhos e netos) são [2, 3, 3]: [0, 0, 1, 1, 1, 2, 2, 2]
-		//int *grau = grauPorNivel, somaGraus = 0;
-		//while (*grau != 0)
-		//	somaGraus += *(grau++);
 		int somaGraus = std::accumulate(grauPorNivel, grauPorNivel + numNiveis-1, 0);
 		cout << "Somatório dos graus: " << somaGraus << '\n';
 		nivelDosBits = new int[somaGraus];
@@ -173,6 +175,8 @@ class Arvore
 			delete idsNiveis[nivel];
 		}
 		delete proxPos;
+		
+		cout << "<fim Arvore::montarEstruturas>\n";
 	}
 	
 	void preencherNosGrauPorNivel(int *nosPorNivel, int *grauPorNivel, No no)
