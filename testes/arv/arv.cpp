@@ -5,11 +5,11 @@ int main()
 	cout << "Oi!" << endl;
 
 	int graus[] = {3, 2, 1, 5};
-	No *raiz = construirArvore(4, graus);
+	No raiz = construirArvore(4, graus);
 	raiz->imprimir();
 	
-	No *a = raiz->filhos[0]->filhos[1]->filhos[0];
-	No *b = raiz->filhos[0]->filhos[0]->filhos[0]->filhos[3];
+	No a = raiz->filhos[0]->filhos[1]->filhos[0];
+	No b = raiz->filhos[0]->filhos[0]->filhos[0]->filhos[3];
 	
 	cout << a << ' ' << b << endl;
 	

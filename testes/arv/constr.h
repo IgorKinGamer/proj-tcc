@@ -6,7 +6,7 @@
 // e graus[i] filhos para cada nó no nível i (nível 0 = raiz).
 // <raiz> deve ser um nó (até então folha) válido (pai, id e nivel válidos)
 // numFilhos e filhos (se necessário) de raiz são atribuídos.
-static void construirSubArvore(No *raiz, int niveis, int *graus, int soma)
+static void construirSubArvore(No raiz, int niveis, int *graus, int soma)
 {
 	if (niveis == 0) // Nó folha
 		raiz->numFilhos = 0;
@@ -16,10 +16,10 @@ static void construirSubArvore(No *raiz, int niveis, int *graus, int soma)
 		++graus;
 		--niveis;
 		// Cria filhos
-		No **filhos = new No*[grau];
+		No *filhos = new No[grau];
 		for (int i = 0; i < grau; i++)
 		{
-			No *f = new No();
+			No f = new estr_No();
 			f->id = raiz->id | (1 << (soma+i));
 			f->pai = raiz;
 			f->nivel = nivelF;
@@ -33,9 +33,9 @@ static void construirSubArvore(No *raiz, int niveis, int *graus, int soma)
 
 ////////////////////////////////////////
 // Constrói árvore simétrica
-No* construirArvore(int niveis, int *graus)
+No construirArvore(int niveis, int *graus)
 {
-	No *raiz = new No();
+	No raiz = new estr_No();
 	raiz->id = 0;
 	raiz->pai = NULL;
 	raiz->nivel = 0;

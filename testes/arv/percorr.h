@@ -7,7 +7,7 @@
 /*
  * Encontra o ancestral comum mais próximo "subindo" a árvore.
  */
-No* ancestralSimples(No* a, No* b)
+No ancestralSimples(No a, No b)
 {
 	while (a->nivel > b->nivel)
 		a = a->pai;
@@ -22,7 +22,7 @@ No* ancestralSimples(No* a, No* b)
 }
 
 ////////////////////////////////////////
-No* ancestral(Arvore* arv, No* a, No* b)
+No ancestral(Arvore* arv, No a, No b)
 {
 	/* Opções:
 	 * 	mascaras[bsf(dif)] // bit scan forward (__builtin_ctz(x))
@@ -41,7 +41,7 @@ No* ancestral(Arvore* arv, No* a, No* b)
 	
 	// Encontra o nó
 	int nivel = arv->bitParaNivel(bit);
-	No **imagemNivel = arv->imagemNiveis[nivel];
+	No *imagemNivel = arv->imagemNiveis[nivel];
 	return imagemNivel[arv->dadosFuncao[nivel].aplicar(id)];
 }
 
