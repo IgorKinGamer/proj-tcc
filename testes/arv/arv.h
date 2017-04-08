@@ -82,10 +82,11 @@ class Arvore
 	~Arvore()
 	{
 		for (int i = 0; i < numNiveis-1; i++)
-			delete imagemNiveis[i];
-		delete imagemNiveis;
+			delete[] imagemNiveis[i];
+		delete[] imagemNiveis;
 		delete raiz;
-		delete dadosFuncao;
+		delete[] nivelDosBits;
+		delete[] dadosFuncao;
 	}
 	
 	// Descobrir quantos nós por nível
@@ -103,8 +104,10 @@ class Arvore
 		cout << "<Arvore::montarEstruturas>\n";
 		
 		// Descobre quantos nós há em cada nivel e o grau máximo
-		int *nosPorNivel = new int[numNiveis] (); // Inicia com 0
-		int *grauPorNivel = new int[numNiveis] (); // Inicia com 0
+		int nosPorNivel[numNiveis];
+		int grauPorNivel[numNiveis];
+		std::fill(nosPorNivel, nosPorNivel+numNiveis, 0);
+		std::fill(grauPorNivel, grauPorNivel+numNiveis, 0);
 		preencherNosGrauPorNivel(nosPorNivel, grauPorNivel, raiz);
 		
 		// Preenche mapeamento (primeiro bit diferente -> nivel do ancestral)
@@ -138,7 +141,8 @@ class Arvore
 			idsNiveis[nivel] = new ID[nosPorNivel[nivel]];
 		}
 		// Próxima posição a preencher de cada nível
-		int *proxPos = new int[numNiveis] (); // Zerado
+		int proxPos[numNiveis];
+		std::fill(proxPos, proxPos+numNiveis, 0);
 		// Pega os ids
 		preencherNosIdsNiveis(nosNiveis, idsNiveis, proxPos, raiz);
 		// !!! Mostra ids
@@ -151,7 +155,6 @@ class Arvore
 		
 		// Descobrir o módulo para cada nível (menos último nível)
 		imagemNiveis = new No*[numNiveis-1];
-		imagemNiveis[0] = 0;
 		for (int nivel = 0; nivel < numNiveis-1; nivel++)
 		{
 			int numNos = nosPorNivel[nivel];
@@ -168,13 +171,11 @@ class Arvore
 		}
 		
 		// Libera
-		delete nosPorNivel;
 		for (int nivel = 0; nivel < numNiveis; nivel++)
 		{
-			delete nosNiveis[nivel];
-			delete idsNiveis[nivel];
+			delete[] nosNiveis[nivel];
+			delete[] idsNiveis[nivel];
 		}
-		delete proxPos;
 		
 		cout << "<fim Arvore::montarEstruturas>\n";
 	}
