@@ -1,57 +1,57 @@
-Cada nó da árvore recebe um id.
-Os ids podem ser tratados como strings binárias, mas são simplesmente números,
-então 0s a esquerda não alteram o id, só servem para facilitar a explicação
-de como os ids são formados.
+Cada nÃ³ da Ã¡rvore recebe um id.
+Os ids podem ser tratados como strings binÃ¡rias, mas sÃ£o simplesmente nÃºmeros,
+entÃ£o 0s a esquerda nÃ£o alteram o id, sÃ³ servem para facilitar a explicaÃ§Ã£o
+de como os ids sÃ£o formados.
 
-Se houver níveis cujos nós têm só 1 filho, tais níveis podem ser "comprimidos"
+Se houver nÃ­veis cujos nÃ³s tÃªm sÃ³ 1 filho, tais nÃ­veis podem ser "comprimidos"
 ou ignorados na hora de atribuir ids.
-Ou seja, a árvore é tratada como se cada nó A de um nível assim não existisse
+Ou seja, a Ã¡rvore Ã© tratada como se cada nÃ³ A de um nÃ­vel assim nÃ£o existisse
 e o filho de A fosse filho do pai de A.
-Isto porque, se A tem um só filho, não existem dois nós distintos na árvore
-que tenham A como ancestral mais próximo.
-(Se A tem um só filho, quaisquer dois nós distintos que têm A como ancestral
-comum também têm o filho de A como ancestral comum.)
+Isto porque, se A tem um sÃ³ filho, nÃ£o existem dois nÃ³s distintos na Ã¡rvore
+que tenham A como ancestral mais prÃ³ximo.
+(Se A tem um sÃ³ filho, quaisquer dois nÃ³s distintos que tÃªm A como ancestral
+comum tambÃ©m tÃªm o filho de A como ancestral comum.)
 
 A raiz tem id 0.
 
-Se ela tem f_r filhos, o id do i-ésimo filho dela é uma string binária
-de tamanho f_r com o i-ésimo bit ativo.
-(Se a raiz tem 3 filhos, os ids deles são: 001, 010, 100).
+Se ela tem f_r filhos, o id do i-Ã©simo filho dela Ã© uma string binÃ¡ria
+de tamanho f_r com o i-Ã©simo bit ativo.
+(Se a raiz tem 3 filhos, os ids deles sÃ£o: 001, 010, 100).
 
-A partir daí, se os nós do nível n têm no máximo f filhos, os filhos deles
-(ie., os nós do nível n+1) tem id formado assim:
-O id do i-ésimo filho de um nó do nível n é
-	uma string binária de tamanho f com apenas o i-ésimo bit ativo
+A partir daÃ­, se os nÃ³s do nÃ­vel n tÃªm no mÃ¡ximo f filhos, os filhos deles
+(ie., os nÃ³s do nÃ­vel n+1) tem id formado assim:
+O id do i-Ã©simo filho de um nÃ³ do nÃ­vel n Ã©
+	uma string binÃ¡ria de tamanho f com apenas o i-Ã©simo bit ativo
 	concatenada com o id do pai dele
-(Se os nós do nível 1 têm no máximo 4 filhos e o nó 001 tem exatamente 4 filhos,
-os filhos dele são 0001 001, 0010 001, 0100 001 e 1000 001 (espaços só para
-facilitar a visualização))
+(Se os nÃ³s do nÃ­vel 1 tÃªm no mÃ¡ximo 4 filhos e o nÃ³ 001 tem exatamente 4 filhos,
+os filhos dele sÃ£o 0001 001, 0010 001, 0100 001 e 1000 001 (espaÃ§os sÃ³ para
+facilitar a visualizaÃ§Ã£o))
 
 
-Dados dois nós, a sequência de bits antes do primeiro bit que difere é o id
-do ancestral comum mais próximo.
+Dados dois nÃ³s, a sequÃªncia de bits antes do primeiro bit que difere Ã© o id
+do ancestral comum mais prÃ³ximo.
 (100 010 0010 e 100 100 0010 -> 0010 (zeros a esquerda podem ser ignorados)).
 
-Sabendo-se o nível e o id desse ancestral (com poucas operações simples),
-é necessário "transformar" esse par (nível, id) na referência para o objeto
+Sabendo-se o nÃ­vel e o id desse ancestral (com poucas operaÃ§Ãµes simples),
+Ã© necessÃ¡rio "transformar" esse par (nÃ­vel, id) na referÃªncia para o objeto
 em si.
 
-Uma solução ingênua e impraticável é usar o id como índice em um array
-(imagine buscar o nó 10 10 100000 0010 em um array de mais de dez mil posições
+Uma soluÃ§Ã£o ingÃªnua e impraticÃ¡vel Ã© usar o id como Ã­ndice em um array
+(imagine buscar o nÃ³ 10 10 100000 0010 em um array de mais de dez mil posiÃ§Ãµes
 com apenas 2*2*6*4 = 96 delas ocupadas...).
 
-Uma possível solução é colocar os nós em um array menor e usar uma função
-que traga todos os valores de id possíveis para os limites desse array.
-Naturalmente, essa função pode ser módulo m, para algum m.
-O problema é que podem ocorrer colisões (valores congruentes mod m).
-Então, usando apenas mod m, m tem que ser escolhido de modo que não haja
-colisões.
-No entanto, é desejável que m seja o menor possível.
+Uma possÃ­vel soluÃ§Ã£o Ã© colocar os nÃ³s em um array menor e usar uma funÃ§Ã£o
+que traga todos os valores de id possÃ­veis para os limites desse array.
+Naturalmente, essa funÃ§Ã£o pode ser mÃ³dulo m, para algum m.
+O problema Ã© que podem ocorrer colisÃµes (valores congruentes mod m).
+EntÃ£o, usando apenas mod m, m tem que ser escolhido de modo que nÃ£o haja
+colisÃµes.
+No entanto, Ã© desejÃ¡vel que m seja o menor possÃ­vel.
 
-A seguir estão alguns dados (descobertos por força bruta) de qual o menor m
-que não causa colisões para os nós do i-ésimo nível (abaixo da raiz) de uma
-árvore n-ária (o qual tem n^i nós), e a razão m/(n^i) (1 seria o ótimo:
-o menor espaço possível alocado e, portanto, dados menos esparsos):
+A seguir estÃ£o alguns dados (descobertos por forÃ§a bruta) de qual o menor m
+que nÃ£o causa colisÃµes para os nÃ³s do i-Ã©simo nÃ­vel (abaixo da raiz) de uma
+Ã¡rvore n-Ã¡ria (o qual tem n^i nÃ³s), e a razÃ£o m/(n^i) (1 seria o Ã³timo:
+o menor espaÃ§o possÃ­vel alocado e, portanto, dados menos esparsos):
 
 n = 2:
 - i = 2: m =  6 (1.50)
@@ -83,21 +83,23 @@ n = 6
 - i = 2: m =  145 ( 4.03)
 - i = 3: m = 2910 (13.47)
 
-Nota:
-	O array não precisa ser de tamanho m; com os ajustes necessários, pode
-	ser de tamanho max(img)-min(img), onde img é o conjunto dos ids mod m.
-	É possível que esse valor diminua ao se usar um m que não seja o
-	menor possível.
+**Nota:**
+O array nÃ£o precisa ser de tamanho m; com os ajustes necessÃ¡rios, pode
+ser de tamanho max(img)-min(img), onde img Ã© o conjunto dos ids mod m.
+Ã‰ possÃ­vel que esse valor diminua ao se usar um m que nÃ£o seja o
+menor possÃ­vel.
 
-Nota:
-	Com esses dados podemos montar os testes, usando o m descoberto para uma
-	dada lista de graus.
-	A função buscar (arquivo buscar.m) no octave faz isso.
-	Dados os ids do último nível de uma árvore com os graus gs = [a b ...],
-	ie., a raiz tem a filhos, cada um com b filhos... (o que pode ser obtido
-	com ids = arv(gs)),
-		> buscar(ids)
-	encontra o m.
-	Ex.:
-		> m = buscar( arv( [2 3 5] ) )  ->  m = 86
+**Nota:**
+Com esses dados podemos montar os testes, usando o m descoberto para uma
+dada lista de graus.
+A funÃ§Ã£o buscar (arquivo buscar.m) no octave faz isso.
+Dados os ids do Ãºltimo nÃ­vel de uma Ã¡rvore com os graus gs = [a b ...],
+ie., a raiz tem a filhos, cada um com b filhos... (o que pode ser obtido
+com ids = arv(gs)),
 
+	> buscar(ids)
+encontra o m.
+
+Ex.:
+
+	> m = buscar( arv( [2 3 5] ) )  ->  m = 86
