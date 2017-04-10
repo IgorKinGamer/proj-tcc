@@ -1,3 +1,10 @@
+/*
+ * Testes com as estruturas para encontrar o ancestral comum.
+ *
+ * TODO: Testar as estruturas em si, construídas em Arvore::montarEstruturas()
+ * (apenas os resultados finais estão sendo testados)
+ */
+
 #include <algorithm>
 #include <vector>
 

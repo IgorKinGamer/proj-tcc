@@ -1,1 +1,1 @@
-@g++ -std=c++11 arv.cpp %*
+@g++ -std=c++11 tst_estr.cpp %*

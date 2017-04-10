@@ -5,11 +5,14 @@
 // Constrói árvore simétrica com niveis níveis abaixo da raiz
 // e graus[i] filhos para cada nó no nível i (nível 0 = raiz).
 // <raiz> deve ser um nó (até então folha) válido (pai, id e nivel válidos)
-// numFilhos e filhos (se necessário) de raiz são atribuídos.
+// numFilhos e filhos de raiz são atribuídos.
 static void construirSubArvore(No raiz, int niveis, int *graus, int soma)
 {
 	if (niveis == 0) // Nó folha
+	{
 		raiz->numFilhos = 0;
+		raiz->filhos = NULL;
+	}
 	else
 	{
 		int grau = *graus, nivelF = raiz->nivel + 1;

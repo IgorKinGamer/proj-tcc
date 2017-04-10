@@ -81,10 +81,10 @@ class Arvore
 	
 	~Arvore()
 	{
+		delete raiz;
 		for (int i = 0; i < numNiveis-1; i++)
 			delete[] imagemNiveis[i];
 		delete[] imagemNiveis;
-		delete raiz;
 		delete[] nivelDosBits;
 		delete[] dadosFuncao;
 	}
