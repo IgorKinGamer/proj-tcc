@@ -1,5 +1,10 @@
 # Projeto TCC
 
+## Ancestral comum
+
+- Testes com as estrutras: [tst_estr.cpp](testes/arv/tst_estr.cpp)
+- Testes de desempenho: ...
+
 ## To Do:
 
 * Entender o armazenamento e organização das estruturas de dados para representação de topologias de máquina
