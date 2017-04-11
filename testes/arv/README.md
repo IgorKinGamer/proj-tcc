@@ -1,3 +1,7 @@
 # Testes de ancestral comum
 
-- Testes com a estrutura: [tst_estr.cpp](testes/arv/tst_estr.cpp)
+- arv.h: Estruturas
+- arv_mod.h: Definição da função que distribui os nós de um nível
+- constr.h: Construção de árvores sintéticas
+- percorr.h: Funções de ancestral comum ("normal" e nova)
+- tst_estr.cpp: Testes com as estruturas
