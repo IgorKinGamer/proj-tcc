@@ -53,6 +53,13 @@ class Arvore
 	
 	// Quantidade de níveis
 	int numNiveis;
+	
+	// Quantidade de nós e grau de cada nível
+	int *nosPorNivel, *grauPorNivel;
+	
+	// Nós de cada nível
+	No **nosNiveis;
+	
 	// Arranjos por nível com nós na posição resultante
 	No **imagemNiveis;
 	// NOTA: Níveis cujos nós têm um só filho poderiam ser totalmente
@@ -82,6 +89,13 @@ class Arvore
 	~Arvore()
 	{
 		delete raiz;
+		
+		delete[] nosPorNivel;
+		delete[] grauPorNivel;
+		for (int i = 0; i < numNiveis; i++)
+			delete[] nosNiveis[i];
+		delete[] nosNiveis;
+		
 		for (int i = 0; i < numNiveis-1; i++)
 			delete[] imagemNiveis[i];
 		delete[] imagemNiveis;
@@ -104,10 +118,8 @@ class Arvore
 		cout << "<Arvore::montarEstruturas>\n";
 		
 		// Descobre quantos nós há em cada nivel e o grau máximo
-		int nosPorNivel[numNiveis];
-		int grauPorNivel[numNiveis];
-		std::fill(nosPorNivel, nosPorNivel+numNiveis, 0);
-		std::fill(grauPorNivel, grauPorNivel+numNiveis, 0);
+		nosPorNivel = new int[numNiveis] (); // Zerado
+		grauPorNivel = new int[numNiveis] (); // Zerado
 		preencherNosGrauPorNivel(nosPorNivel, grauPorNivel, raiz);
 		
 		// Preenche mapeamento (primeiro bit diferente -> nivel do ancestral)
@@ -133,7 +145,7 @@ class Arvore
 		
 		// Cria um arranjo por nível com os ids e outro com os nós
 		// do nivel para descobrir os módulos e distribuir os nós
-		No* nosNiveis[numNiveis];
+		nosNiveis = new No*[numNiveis];
 		ID* idsNiveis[numNiveis];
 		for (int nivel = 0; nivel < numNiveis; nivel++)
 		{
@@ -172,10 +184,7 @@ class Arvore
 		
 		// Libera
 		for (int nivel = 0; nivel < numNiveis; nivel++)
-		{
-			delete[] nosNiveis[nivel];
 			delete[] idsNiveis[nivel];
-		}
 		
 		cout << "<fim Arvore::montarEstruturas>\n";
 	}

@@ -36,6 +36,7 @@ static void construirSubArvore(No raiz, int niveis, int *graus, int soma)
 
 ////////////////////////////////////////
 // Constrói árvore simétrica
+// niveis: Níveis *abaixo* da raiz
 No construirArvore(int niveis, int *graus)
 {
 	No raiz = new estr_No();
