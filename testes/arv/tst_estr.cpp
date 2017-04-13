@@ -2,7 +2,7 @@
  * Testes com as estruturas para encontrar o ancestral comum.
  *
  * TODO: Testar as estruturas em si, construídas em Arvore::montarEstruturas()
- * (apenas os resultados finais estão sendo testados)
+ * (apenas os resultados finais e a distribuição dos nós estão sendo testados)
  */
 
 #include <algorithm>
@@ -14,9 +14,12 @@
 
 using namespace std;
 
-void testarAncestralComum(Arvore*, No, vector<int>, vector<int>, vector<int>);
+void testarDistribuicaoNos(Arvore*);
+void testarAncestralComum(Arvore*, vector<int>, vector<int>, vector<int>);
 No descendente(No, vector<int>);
-void erro(const char*);
+
+void erro(string);
+template <class T> void testarIgual(T, T, string);
 
 int main()
 {
@@ -30,6 +33,8 @@ int main()
 	//raiz->imprimir(nBits);
 	Arvore arv(raiz, niveis);
 	
+	testarDistribuicaoNos(&arv);
+	
 	// descendente() funcionando
 	cout << "descendente() funcionando: ";
 	cout << (raiz == descendente(raiz, {})) << ' ';
@@ -42,16 +47,36 @@ int main()
 	cout << ancestralSimples(a, b)->idBin(nBits) << '\n';
 	cout << ancestral(&arv, a, b)->idBin(nBits) << '\n';
 	
-	testarAncestralComum(&arv, raiz, {1}, {2, 1, 4}, {1, 1, 1});
-	testarAncestralComum(&arv, raiz, {3}, {2, 1, 4}, {1});
-	testarAncestralComum(&arv, raiz, {3, 2, 1}, {4}, {3});
-	testarAncestralComum(&arv, raiz, {}, {1}, {});
-	testarAncestralComum(&arv, raiz, {}, {1}, {2});
+	testarAncestralComum(&arv, {1}, {2, 1, 4}, {1, 1, 1});
+	testarAncestralComum(&arv, {3}, {2, 1, 4}, {1});
+	testarAncestralComum(&arv, {3, 2, 1}, {4}, {3});
+	testarAncestralComum(&arv, {}, {1}, {});
+	testarAncestralComum(&arv, {}, {1}, {2});
 	
 	//int n;
 	//cout << "Ó: " << __builtin_ctz(n) << endl;
 	
 	return 0;
+}
+
+void testarDistribuicaoNos(Arvore *a, No no)
+{
+	// Último nível (folhas) não tem
+	if (no->numFilhos == 0)
+		return;
+	
+	int nivel = no->nivel;
+	No imagem = a->imagemNiveis[nivel][ a->dadosFuncao[nivel].aplicar(no->id) ];
+	testarIgual(no, imagem, "testarDistribuicaoNos()");
+	
+	for (No filho : vector<No>(no->filhos, no->filhos + no->numFilhos))
+		testarDistribuicaoNos(a, filho);
+}
+
+void testarDistribuicaoNos(Arvore *a)
+{
+	testarDistribuicaoNos(a, a->raiz);
+	cout << "Distribuição dos nós correta\n";
 }
 
 /*
@@ -60,13 +85,13 @@ int main()
  * cam1, cam2: Caminho do ancestral até os descendentes
  * cam1[0] != cam2[0]
  */
-void testarAncestralComum(Arvore *arv, No raiz, vector<int> camAnc, vector<int> cam1, vector<int> cam2)
+void testarAncestralComum(Arvore *arv, vector<int> camAnc, vector<int> cam1, vector<int> cam2)
 {
 	if (cam1.size() > 0 && cam2.size() > 0 && cam1[0] == cam2[0])
 		erro("testarAncestralComum(): caminhos dos filhos devem começar com valores diferentes");
 	
 	No anc, desc1, desc2;
-	anc = descendente(raiz, camAnc);
+	anc = descendente(arv->raiz, camAnc);
 	desc1 = descendente(anc, cam1);
 	desc2 = descendente(anc, cam2);
 	
@@ -94,8 +119,17 @@ No descendente(No no, vector<int> caminho)
 	return no;
 }
 
-void erro(const char* msg)
+
+// TODO Refatorar!
+
+void erro(string msg)
 {
 	cout << "### ERRO ###\n" << msg << "\n############\n";
 	throw 0;
+}
+
+template <class T> void testarIgual(T a, T b, string msg)
+{
+	if (a != b)
+		erro("Teste de igualdade falhou: " + msg);
 }
