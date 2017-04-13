@@ -37,12 +37,12 @@ struct DadosFuncao
 	
 	friend inline std::ostream& operator<<(std::ostream &o, const DadosFuncao d)
 	{
-		o << "E:"    << idBin(d.mascE)    << ", ";
-		o << "OuEx:" << idBin(d.mascOuEx) << ", ";
-		o << "Ou:"   << idBin(d.mascOu)   << ", ";
-		o << "ad:"   << d.ad              << ", ";
-		o << "m:"    << d.m               << ", ";
-		o << "tam:"  << d.tam;
+		o << "E: "    << idBin(d.mascE)    << ", ";
+		o << "OuEx: " << idBin(d.mascOuEx) << ", ";
+		o << "Ou: "   << idBin(d.mascOu)   << ", ";
+		o << "ad: "   << d.ad              << ", ";
+		o << "m: "    << d.m               << ", ";
+		o << "tam: "  << d.tam;
 		
 		return o;
 	}

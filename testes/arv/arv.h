@@ -132,8 +132,6 @@ class Arvore
 		// Preenche mapeamento (primeiro bit diferente -> nivel do ancestral)
 		// Se os graus (da raiz, filhos e netos) são [2, 3, 3]: [0, 0, 1, 1, 1, 2, 2, 2]
 		int somaGraus = std::accumulate(grauPorNivel, grauPorNivel + numNiveis-1, 0);
-		if (DEBUG)
-			std::cout << "Somatório dos graus: " << somaGraus << '\n';
 		nivelDosBits = new int[somaGraus];
 		int *bit = nivelDosBits, nivelAnc = 0;
 		while (grauPorNivel[nivelAnc] != 0)
@@ -144,6 +142,15 @@ class Arvore
 		}
 		if (DEBUG)
 		{
+			std::cout << "Nós por nível:";
+			for (int nos : std::vector<int>(nosPorNivel, nosPorNivel+numNiveis))
+				std::cout << ' ' << nos;
+			std::cout << '\n';
+			std::cout << "Grau por nível:";
+			for (int grau : std::vector<int>(grauPorNivel, grauPorNivel+numNiveis))
+				std::cout << ' ' << grau;
+			std::cout << '\n';
+			std::cout << "Somatório dos graus: " << somaGraus << '\n';
 			std::cout << "Nível dos bits:";
 			for (int nivel : std::vector<int>(nivelDosBits, nivelDosBits+somaGraus))
 				std::cout << ' ' << nivel;
