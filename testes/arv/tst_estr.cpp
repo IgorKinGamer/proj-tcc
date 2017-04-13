@@ -12,9 +12,10 @@
 #include "constr.h"
 #include "percorr.h"
 
+using namespace std;
+
 void testarAncestralComum(Arvore*, No, vector<int>, vector<int>, vector<int>);
 No descendente(No, vector<int>);
-string id(int, No);
 void erro(const char*);
 
 int main()
@@ -26,7 +27,7 @@ int main()
 	nBits = std::accumulate(graus, graus+niveis-1, 0);
 	
 	No raiz = construirArvore(niveis-1, graus);
-	raiz->imprimir(nBits);
+	//raiz->imprimir(nBits);
 	Arvore arv(raiz, niveis);
 	
 	// descendente() funcionando
@@ -37,9 +38,9 @@ int main()
 	No b = raiz->filhos[0]->filhos[0]->filhos[0]->filhos[3];
 	cout << (b == descendente(raiz, {1, 1, 1, 4})) << '\n';
 	
-	cout << "a e b: " << id(nBits, a) << ' ' << id(nBits, b) << '\n';
-	cout << id(nBits, ancestralSimples(a, b)) << '\n';
-	cout << id(nBits, ancestral(&arv, a, b)) << '\n';
+	cout << "a e b: " << a->idBin(nBits) << ' ' << b->idBin(nBits) << '\n';
+	cout << ancestralSimples(a, b)->idBin(nBits) << '\n';
+	cout << ancestral(&arv, a, b)->idBin(nBits) << '\n';
 	
 	testarAncestralComum(&arv, raiz, {1}, {2, 1, 4}, {1, 1, 1});
 	testarAncestralComum(&arv, raiz, {3}, {2, 1, 4}, {1});
@@ -91,12 +92,6 @@ No descendente(No no, vector<int> caminho)
 		else
 			no = no->filhos[f-1];
 	return no;
-}
-
-string id(int tam, No no)
-{
-	string repr = bitset<64>(no->id).to_string();
-	return repr.substr(repr.size() - tam);
 }
 
 void erro(const char* msg)

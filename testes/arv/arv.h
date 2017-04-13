@@ -4,14 +4,13 @@
 #include <iostream>
 #include <bitset>
 #include <climits>
+#include <string>
 #include <vector>
 
 #include <algorithm>
 
 #include "defs.h"
 #include "arv_mod.h"
-
-using namespace std;
 
 struct estr_No;
 typedef estr_No* No;
@@ -30,17 +29,22 @@ struct estr_No
 	
 	void imprimir(int nBits = sizeof(id)*CHAR_BIT) { imprimir(0, nBits); }
 	
-	friend inline ostream& operator<<(ostream &o, const No n) { o << n->id; return o; } // !!!
+	friend inline std::ostream& operator<<(std::ostream &o, const No n) { o << n->id; return o; } // !!!
 	
 	void imprimir(int ind, int nBits)
 	{
 		for (int i = 0; i < ind; i++)
-			cout << '|'; // Indentação
-		cout << "No " << bitset<sizeof(id)*CHAR_BIT>(id).to_string().substr(sizeof(id)*CHAR_BIT - nBits)
+			std::cout << '|'; // Indentação
+		std::cout << "No " << idBin(nBits)
 			/*<< " (" << nivel << ' ' << numFilhos << ')'*/ << '\n';
 		++ind;
 		for (int f = 0; f < numFilhos; f++)
 			filhos[f]->imprimir(ind, nBits);
+	}
+	
+	std::string idBin(int bits)
+	{
+		return ::idBin(id, bits);
 	}
 	
 	// TODO Destrutor
@@ -48,6 +52,8 @@ struct estr_No
 
 class Arvore
 {
+	const bool DEBUG = true;
+	
 	public:
 	No raiz;
 	
@@ -115,7 +121,8 @@ class Arvore
 	
 	void montarEstruturas()
 	{
-		cout << "<Arvore::montarEstruturas>\n";
+		if (DEBUG)
+			std::cout << "<Arvore::montarEstruturas>\n";
 		
 		// Descobre quantos nós há em cada nivel e o grau máximo
 		nosPorNivel = new int[numNiveis] (); // Zerado
@@ -125,7 +132,8 @@ class Arvore
 		// Preenche mapeamento (primeiro bit diferente -> nivel do ancestral)
 		// Se os graus (da raiz, filhos e netos) são [2, 3, 3]: [0, 0, 1, 1, 1, 2, 2, 2]
 		int somaGraus = std::accumulate(grauPorNivel, grauPorNivel + numNiveis-1, 0);
-		cout << "Somatório dos graus: " << somaGraus << '\n';
+		if (DEBUG)
+			std::cout << "Somatório dos graus: " << somaGraus << '\n';
 		nivelDosBits = new int[somaGraus];
 		int *bit = nivelDosBits, nivelAnc = 0;
 		while (grauPorNivel[nivelAnc] != 0)
@@ -134,10 +142,13 @@ class Arvore
 				*(bit++) = nivelAnc;
 			nivelAnc++;
 		}
-		cout << "Nível dos bits:";
-		for (int nivel : vector<int>(nivelDosBits, nivelDosBits+somaGraus))
-			cout << ' ' << nivel;
-		cout << '\n';
+		if (DEBUG)
+		{
+			std::cout << "Nível dos bits:";
+			for (int nivel : std::vector<int>(nivelDosBits, nivelDosBits+somaGraus))
+				std::cout << ' ' << nivel;
+			std::cout << '\n';
+		}
 		
 		// Se os nós ainda não têm ids, atribuir aqui... (agora têm-se os graus)
 		// (Árvores geradas com construirArvore() já têm os ids)
@@ -157,13 +168,18 @@ class Arvore
 		std::fill(proxPos, proxPos+numNiveis, 0);
 		// Pega os ids
 		preencherNosIdsNiveis(nosNiveis, idsNiveis, proxPos, raiz);
-		// !!! Mostra ids
-		/*for (int i = 0; i < numNiveis; i++)
+		// Mostra ids
+		if (DEBUG)
 		{
-			for (int j = 0; j < nosPorNivel[i]; j++)
-				cout << bitset<sizeof(ID)*CHAR_BIT>(idsNiveis[i][j]) << '\n';
-			cout << '\n';
-		}*/
+			std::cout << "####### IDS DOS NÓS #######\n";
+			for (int i = 0; i < numNiveis; i++)
+			{
+				std::cout << "Nível " << i << '\n';
+				for (int j = 0; j < nosPorNivel[i]; j++)
+					std::cout << idBin(idsNiveis[i][j], somaGraus) << '\n';
+			}
+			std::cout << '\n';
+		}
 		
 		// Descobrir o módulo para cada nível (menos último nível)
 		imagemNiveis = new No*[numNiveis-1];
@@ -181,12 +197,20 @@ class Arvore
 				imagemNivel[dadosNivel->aplicar(ids[no])] = nos[no];
 			imagemNiveis[nivel] = imagemNivel;
 		}
+		// Mostra dados da função para cada nível (que tem)
+		if (DEBUG)
+		{
+			std::cout << "####### DADOS DAS FUNÇÕES #######\n";
+			for (int i = 0; i < numNiveis-1; i++)
+				std::cout << "Nível " << i << '\n' << dadosFuncao[i] << '\n';
+		}
 		
 		// Libera
 		for (int nivel = 0; nivel < numNiveis; nivel++)
 			delete[] idsNiveis[nivel];
 		
-		cout << "<fim Arvore::montarEstruturas>\n";
+		if (DEBUG)
+			std::cout << "<fim Arvore::montarEstruturas>\n";
 	}
 	
 	void preencherNosGrauPorNivel(int *nosPorNivel, int *grauPorNivel, No no)
