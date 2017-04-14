@@ -21,19 +21,41 @@ No descendente(No, vector<int>);
 void erro(string);
 template <class T> void testarIgual(T, T, string);
 
+void testes();
 int main()
+{
+	try { testes(); }
+	catch (string &erro) { cout << erro; }
+	
+	return 0;
+}
+
+void testes()
 {
 	cout << "Oi!" << endl;
 
-	int graus[] = {3, 2, 2, 5}, niveis, nBits;
-	niveis = sizeof(graus)/sizeof(int) + 1;
-	nBits = std::accumulate(graus, graus+niveis-1, 0);
+	vector<int> graus = {3, 2, 2, 5};
+	int niveis, nBits;
+	niveis = graus.size() + 1;
+	nBits = std::accumulate(graus.begin(), graus.end(), 0);
 	
-	No raiz = construirArvore(niveis-1, graus);
+	No raiz = construirArvore(graus);
 	//raiz->imprimir(nBits);
 	Arvore arv(raiz, niveis);
 	
 	testarDistribuicaoNos(&arv);
+	try // Exceções...?
+	{
+		try
+		{
+			Arvore arvErro(construirArvore(graus), niveis);
+			arvErro.dadosFuncao[3].ad--; // Deve dar erro
+			testarDistribuicaoNos(&arvErro);
+		}
+		catch (std::string str) { throw 0; } // Deu erro: ok
+		erro("Mutação nas estruturas deveria causar erro"); // Não deu erro
+	}
+	catch (int i) { cout << "Erro (mutação nas estruturas) corretamente detectado\n"; }
 	
 	// descendente() funcionando
 	cout << "descendente() funcionando: ";
@@ -55,8 +77,6 @@ int main()
 	
 	//int n;
 	//cout << "Ó: " << __builtin_ctz(n) << endl;
-	
-	return 0;
 }
 
 void testarDistribuicaoNos(Arvore *a, No no)
@@ -120,12 +140,9 @@ No descendente(No no, vector<int> caminho)
 }
 
 
-// TODO Refatorar!
-
 void erro(string msg)
 {
-	cout << "### ERRO ###\n" << msg << "\n############\n";
-	throw 0;
+	throw (string("### ERRO ###\n") + msg + string("\n############\n"));
 }
 
 template <class T> void testarIgual(T a, T b, string msg)

@@ -1,6 +1,8 @@
 #ifndef CONSTR_H
 #define CONSTR_H
 
+#include <vector>
+
 ////////////////////////////////////////
 // Constrói árvore simétrica com niveis níveis abaixo da raiz
 // e graus[i] filhos para cada nó no nível i (nível 0 = raiz).
@@ -45,6 +47,11 @@ No construirArvore(int niveis, int *graus)
 	raiz->nivel = 0;
 	construirSubArvore(raiz, niveis, graus, 0);
 	return raiz;
+}
+
+No construirArvore(std::vector<int> graus)
+{
+	return construirArvore(graus.size(), graus.data());
 }
 
 #endif /* CONSTR_H */
