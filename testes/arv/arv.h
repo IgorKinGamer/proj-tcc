@@ -11,6 +11,7 @@
 
 #include "id.h"
 #include "arv_mod.h"
+#include "config_dbg.h"
 
 struct estr_No;
 typedef estr_No* No;
@@ -52,7 +53,8 @@ struct estr_No
 
 class Arvore
 {
-	const bool DEBUG = true;
+	static const bool DEBUG = ConfigDebug::Arvore::DEBUG;
+	static const int DEBUG_MAX_LINHAS_IDS = ConfigDebug::Arvore::DEBUG_MAX_LINHAS_IDS;
 	
 	public:
 	No raiz;
@@ -178,10 +180,17 @@ class Arvore
 		// Mostra ids
 		if (DEBUG)
 		{
+			int total = 0;
 			std::cout << "####### IDS DOS NÓS #######\n";
 			for (int i = 0; i < numNiveis; i++)
 			{
 				std::cout << "Nível " << i << '\n';
+				total += nosPorNivel[i];
+				if (total > DEBUG_MAX_LINHAS_IDS)
+				{
+					std::cout << "Grande demais\n";
+					break;
+				}
 				for (int j = 0; j < nosPorNivel[i]; j++)
 					std::cout << idBin(idsNiveis[i][j], somaGraus) << '\n';
 			}
