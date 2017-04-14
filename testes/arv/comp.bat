@@ -1,1 +1,5 @@
-@g++ -std=c++11 tst_estr.cpp %*
+@echo off
+
+rem Compila os testes
+call compestr
+call comptmp

@@ -5,7 +5,7 @@ struct ConfigDebug
 {
 	struct Arvore
 	{
-		static const bool DEBUG = true;
+		static const bool DEBUG = false;
 		static const int DEBUG_MAX_LINHAS_IDS = 100;
 	};
 };
