@@ -24,9 +24,3 @@ function mascs = mascsE(graus)
 	end
 
 end
-
-function semi = semiMascsE(graus)
-
-	
-
-end
