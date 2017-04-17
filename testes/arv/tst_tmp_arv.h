@@ -16,7 +16,7 @@ class TesteAncestralComumArvore : public BaseTesteAncestralComum<Arvore*, No, NU
 {
 	Arvore* criarArvore(std::vector<int> graus)
 	{
-		return new Arvore(construirArvore(graus.size(), graus.data()), graus.size()+1);
+		return new Arvore(construirArvore(graus), graus.size()+1);
 	}
 	
 	std::vector<No> pegarFolhas(Arvore *a)
