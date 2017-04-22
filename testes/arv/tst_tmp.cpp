@@ -24,10 +24,10 @@ int main(int argc, char *argv[])
 	vector<int> graus({4, 4, 1, 3, 2, 1, 1, 1});
 	
 	int vezesFora = 2, vezesDentro = 3;
-	/*if (argc > 1)
+	if (argc > 1)
 		vezesFora = stoi(argv[1]);
 	if (argc > 2)
-		vezesDentro = stoi(argv[2]);*/
+		vezesDentro = stoi(argv[2]);
 	
 	executarTestes<10000, 1000>(graus, vezesFora, vezesDentro);
 }
