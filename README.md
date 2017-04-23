@@ -3,7 +3,7 @@
 ## Ancestral comum
 
 - Testes com as estrutras: [tst_estr.cpp](testes/arv/tst_estr.cpp)
-- Testes de desempenho: ...
+- Testes de desempenho: [tst_tmp.cpp](testes/arv/tst_tmp.cpp)
 
 ## To Do:
 
