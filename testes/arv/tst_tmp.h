@@ -5,12 +5,16 @@
 #include <random>
 #include <vector>
 
-template <class Arv, class No, int NUM_ITER = 1000, int NUM_ITER_AQUEC = NUM_ITER>
+template <class Arv, class No>
 class BaseTesteAncestralComum
 {
 	using Par = std::pair<No, No>;
 	
+	int numIter, numIterAquec;
+	
 	public:
+	
+	BaseTesteAncestralComum(int nI, int nIA) : numIter(nI), numIterAquec(nIA) {}
 	
 	virtual Arv criarArvore(std::vector<int> graus);
 	virtual std::vector<No> pegarFolhas(Arv a);
@@ -30,7 +34,7 @@ class BaseTesteAncestralComum
 		volatile No n;
 		
 		// Aquecer?
-		for (int i = 0; i < NUM_ITER_AQUEC; i++)
+		for (int i = 0; i < numIterAquec; i++)
 			for (Par par : pares)
 				n = ancestralComum(a, par.first, par.second);
 		
@@ -41,7 +45,7 @@ class BaseTesteAncestralComum
 		relogio::time_point t0 = relogio::now();
 		
 		// Roda
-		for (int i = 0; i < NUM_ITER; i++)
+		for (int i = 0; i < numIter; i++)
 			for (Par par : pares)
 				n = ancestralComum(a, par.first, par.second);
 		

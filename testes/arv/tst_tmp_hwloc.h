@@ -10,9 +10,12 @@
 #include <string>
 
 // Teste usando hwloc
-template <int... NUM_ITER>
-class TesteAncestralComumHwloc : public BaseTesteAncestralComum<hwloc_topology_t, hwloc_obj_t, NUM_ITER...>
+class TesteAncestralComumHwloc : public BaseTesteAncestralComum<hwloc_topology_t, hwloc_obj_t>
 {
+	public:
+	
+	TesteAncestralComumHwloc(int nI, int nIA) : BaseTesteAncestralComum(nI, nIA) {};
+	
 	hwloc_topology_t criarArvore(std::vector<int> graus)
 	{
 		// Descrição da topologia sintética

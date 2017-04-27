@@ -11,9 +11,12 @@
 #include "tst_tmp.h"
 
 // Teste usando Arvore e No
-template <int... NUM_ITER>
-class TesteAncestralComumArvore : public BaseTesteAncestralComum<Arvore*, No, NUM_ITER...>
+class TesteAncestralComumArvore : public BaseTesteAncestralComum<Arvore*, No>
 {
+	public:
+	
+	TesteAncestralComumArvore(int nI, int nIA) : BaseTesteAncestralComum(nI, nIA) {};
+	
 	Arvore* criarArvore(std::vector<int> graus)
 	{
 		return new Arvore(construirArvore(graus), graus.size()+1);
@@ -33,9 +36,12 @@ class TesteAncestralComumArvore : public BaseTesteAncestralComum<Arvore*, No, NU
 };
 
 // Teste usando ancestral comum simples
-template <int... NUM_ITER>
-class TesteAncestralComumSimples : public TesteAncestralComumArvore<NUM_ITER...>
+class TesteAncestralComumSimples : public TesteAncestralComumArvore
 {
+	public:
+	
+	TesteAncestralComumSimples(int nI, int nIA) : TesteAncestralComumArvore(nI, nIA) {};
+	
 	No ancestralComum(Arvore *arv, No a, No b)
 	{
 		return ancestralSimples(a, b);
@@ -43,9 +49,12 @@ class TesteAncestralComumSimples : public TesteAncestralComumArvore<NUM_ITER...>
 };
 
 // Teste usando ancestral comum novo (usando as estruturas)
-template <int... NUM_ITER>
-class TesteAncestralComumNovo : public TesteAncestralComumArvore<NUM_ITER...>
+class TesteAncestralComumNovo : public TesteAncestralComumArvore
 {
+	public:
+	
+	TesteAncestralComumNovo(int nI, int nIA) : TesteAncestralComumArvore(nI, nIA) {};
+	
 	No ancestralComum(Arvore *arv, No a, No b)
 	{
 		return ancestral(arv, a, b);
@@ -53,9 +62,12 @@ class TesteAncestralComumNovo : public TesteAncestralComumArvore<NUM_ITER...>
 };
 
 // Teste que não usa nada: Mede o overhead do loop
-template <int... NUM_ITER>
-class TesteAncestralComumOverhead : public TesteAncestralComumArvore<NUM_ITER...>
+class TesteAncestralComumOverhead : public TesteAncestralComumArvore
 {
+	public:
+	
+	TesteAncestralComumOverhead(int nI, int nIA) : TesteAncestralComumArvore(nI, nIA) {};
+	
 	No ancestralComum(Arvore *arv, No a, No b)
 	{
 		return nullptr;
