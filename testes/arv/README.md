@@ -25,4 +25,5 @@ Omitindo argumentos, os padrões são `tmp i10000 a1000 r3 R2 - 4 4 1 3 2 1 1 1`
 
 ### Notas e resultados
 
-[Resultados](res_tmp.md)
+[Notas](res_tmp.md)
+[Resultados](Resultados.txt)
