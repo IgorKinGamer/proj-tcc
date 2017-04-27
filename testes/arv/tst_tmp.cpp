@@ -30,6 +30,12 @@ int main(int argc, char *argv[])
 		vezesFora = stoi(argv[1]);
 	if (argc > 2)
 		vezesDentro = stoi(argv[2]);
+	if (argc > 3)
+	{
+		graus = vector<int>();
+		for (auto i = 3; i < argc; i++)
+			graus.push_back(stoi(argv[i]));
+	}
 	
 	executarTestes<10000, 1000>(graus, vezesFora, vezesDentro);
 }
@@ -55,13 +61,13 @@ void executarTestes(const vector<int> &graus, int vezesFora, int vezesDentro)
 	TesteAncestralComumOverhead<NUM_ITER...> overhead;
 	for (auto i = 0; i < vezesFora; i++)
 	{
-		cout << "Simples:\n";
+		cout << "Simples: ";
 		testar(simples, graus, vezesDentro);
-		cout << "Novo:\n";
+		cout << "Novo:    ";
 		testar(novo, graus, vezesDentro);
-		cout << "Hwloc:\n";
+		cout << "Hwloc:   ";
 		testar(hwloc, graus, vezesDentro);
-		cout << "Overhead:\n";
+		cout << "Overhead:";
 		testar(overhead, graus, vezesDentro);
 		cout << '\n';
 	}

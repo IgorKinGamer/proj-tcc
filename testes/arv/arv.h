@@ -18,6 +18,9 @@ typedef estr_No* No;
 
 struct estr_No
 {
+	// "Preenchimento" para testes
+	//char preenchimento[ConfigDebug::No::PREENCHIMENTO];
+	
 	// Id usado para encontrar ancestral mais próximo
 	ID id;
 	
@@ -201,6 +204,13 @@ class Arvore
 		imagemNiveis = new No*[numNiveis-1];
 		for (int nivel = 0; nivel < numNiveis-1; nivel++)
 		{
+			// Níveis com grau 1 não precisam
+			if (grauPorNivel[nivel] == 1)
+			{
+				imagemNiveis[nivel] = nullptr;
+				continue;
+			}
+			
 			int numNos = nosPorNivel[nivel];
 			No *nos = nosNiveis[nivel];
 			ID *ids = idsNiveis[nivel];
