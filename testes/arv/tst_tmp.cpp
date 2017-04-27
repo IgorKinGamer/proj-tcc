@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "arv.h"
+#include "arv/arv.h"
 #include "tst_tmp.h"
 #include "tst_tmp_arv.h"
 #include "tst_tmp_hwloc.h"

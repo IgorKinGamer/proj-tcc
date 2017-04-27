@@ -5,9 +5,9 @@
 #ifndef TST_TMP_ARV_H
 #define TST_TMP_ARV_H
 
-#include "arv.h"
-#include "constr.h"
-#include "percorr.h"
+#include "arv/arv.h"
+#include "arv/constr.h"
+#include "arv/percorr.h"
 #include "tst_tmp.h"
 
 // Teste usando Arvore e No
