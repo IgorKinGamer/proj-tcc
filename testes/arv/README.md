@@ -19,13 +19,16 @@
 
         tmp [i<iterações>] [a<aquecimento>] [r<m>] [R<n>] [- graus]
 
-onde m é o número de execuções seguidas com cada tipo de ancestral comum,
-n é o número de repetições dos testes por inteiro
-e graus é uma sequência de inteiros que representam os graus da árvore.
-Omitindo argumentos, os padrões são `tmp i10000 a1000 r3 R2 - 4 4 1 3 2 1 1 1`.
+  - `m`: número de execuções seguidas com cada tipo de ancestral comum
+  - `n`: número de repetições dos testes por inteiro
+  - `graus`: sequência de inteiros que representam os graus da árvore
+  - `iterações` e `aquecimento`: quantidade de vezes que o ancestral comum
+    será encontrado (com cada algoritmo) durante a medição e antes da medição,
+    respectivamente, para todos os pares de folhas da árvore.
+  - Omitindo argumentos, os padrões são `tmp i10000 a1000 r3 R2 - 4 4 1 3 2 1 1 1`.
   - Script de testes ([Linux](testes_tempo.sh), [Windows](testes_tempo.bat))
     - Mesmos argumentos do programa tmp (exceto graus, que são lidos do arquivo
-graus_testes.txt), por exemplo, `testes_tempo i1000 R1`
+      graus_testes.txt), por exemplo, `testes_tempo i1000 R1`
 
 ### Notas e resultados
 
