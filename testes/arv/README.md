@@ -16,6 +16,7 @@
   - [Windows](comptmp.bat) (com a pasta do hwloc compilado na variável `hwloc`)
 - Adicionar pasta bin do hwloc à variável `PATH`
 - Executar (`tmp` representa o executável gerado)
+
         tmp [i<iterações>] [a<aquecimento>] [r<m>] [R<n>] [- graus]
 
 onde m o número de execuções seguidas com cada tipo de ancestral comum,
@@ -25,5 +26,5 @@ Omitindo argumentos, os padrões são `tmp i10000 a1000 r3 R2 - 4 4 1 3 2 1 1 1`
 
 ### Notas e resultados
 
-- [Notas](res_tmp.md)
+- [Notas](Notas.md)
 - [Resultados](Resultados.txt)
