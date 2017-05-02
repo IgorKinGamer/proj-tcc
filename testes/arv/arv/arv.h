@@ -228,7 +228,10 @@ class Arvore
 		{
 			std::cout << "####### DADOS DAS FUNÇÕES #######\n";
 			for (int i = 0; i < numNiveis-1; i++)
-				std::cout << "Nível " << i << '\n' << dadosFuncao[i] << '\n';
+				if (grauPorNivel[i] > 1)
+					std::cout << "Nível " << i << '\n' << dadosFuncao[i] << '\n';
+				else
+					std::cout << "Nível " << i << "\nSEM DADOS\n";
 		}
 		
 		// Libera

@@ -33,7 +33,7 @@ struct DadosFuncao
 	 */
 	ID mascOuEx, mascOu, ad, m;
 	// Tamanho do arranjo necessário (pode ser < m)
-	int tam;
+	unsigned tam;
 	
 	ID aplicar(ID id) const
 	{
@@ -42,8 +42,8 @@ struct DadosFuncao
 	
 	friend inline std::ostream& operator<<(std::ostream &o, const DadosFuncao d)
 	{
-		o << "OuEx: " << idBin(d.mascOuEx) << ", ";
-		o << "Ou: "   << idBin(d.mascOu)   << ", ";
+		o << "OuEx: " << idBin(d.mascOuEx) << "\n";
+		o << "Ou:   " << idBin(d.mascOu)   << "\n";
 		o << "ad: "   << d.ad              << ", ";
 		o << "m: "    << d.m               << ", ";
 		o << "tam: "  << d.tam;
@@ -82,12 +82,16 @@ void buscarFuncaoIdeal(int numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 	// Busca função
 	DadosFuncao dados;
 	dados.mascOu = dados.mascOuEx = dados.ad = 0;
-	dados.m = numNos;
+	dados.m = numNos-1;
 	
 	// Para fazer buscas mais elaboradas (verificar vários dados)
 	bool continuar = true;
+	sai_dadosFuncao->tam = ~0u; // Maior possível
 	while (continuar)
 	{
+		// Próxima tentativa
+		dados.m++;
+		
 		// A função não satisfaz
 		while (!funcaoInjetora(numNos, ids, dados))
 			dados.m++;
@@ -115,11 +119,14 @@ void buscarFuncaoIdeal(int numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 			}
 		}
 		
+		// Conseguiu tamanho melhor
+		if (dados.tam < sai_dadosFuncao->tam)
+			*sai_dadosFuncao = dados;
+			
+		
 		// TODO Por enquanto, pega o primeiro e pronto...
-		continuar = false;
+		continuar = dados.m < numNos*numNos;
 	}
-	
-	*sai_dadosFuncao = dados;
 }
 
 #endif /* ARV_MOD_H */
