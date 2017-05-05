@@ -1,6 +1,7 @@
 #ifndef TST_TMP_H
 #define TST_TMP_H
 
+#include <algorithm>
 #include <chrono>
 #include <random>
 #include <vector>

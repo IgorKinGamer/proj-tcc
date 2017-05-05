@@ -1,18 +1,19 @@
 /*
  * Testes de desempenho temporal das funções de ancestral comum
- * NUM_ITER = [<iterações> [, <iterações de aquecimento>]]
  */
 
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "arv/arv.h"
-#include "tst_tmp.h"
-#include "tst_tmp_arv.h"
-#include "tst_tmp_hwloc.h"
+#include "tmp/tst_tmp.h"
+#include "tmp/tst_tmp_arv.h"
+#include "tmp/tst_tmp_hwloc.h"
+#include "tmp/tst_tmp_matriz.h"
 
 using namespace std;
+
+using matriz::TesteAncestralComumMatriz;
 
 void executarTestes(
 	const vector<int> &graus,
@@ -81,6 +82,7 @@ void executarTestes(
 	TesteAncestralComumSimples  simples (iter, iterAquec);
 	TesteAncestralComumNovo     novo    (iter, iterAquec);
 	TesteAncestralComumHwloc    hwloc   (iter, iterAquec);
+	TesteAncestralComumMatriz   matriz  (iter, iterAquec);
 	TesteAncestralComumOverhead overhead(iter, iterAquec);
 	for (auto i = 0; i < vezesFora; i++)
 	{
@@ -90,6 +92,8 @@ void executarTestes(
 		testar(novo, graus, vezesDentro);
 		cout << "Hwloc:   ";
 		testar(hwloc, graus, vezesDentro);
+		cout << "Matriz:  ";
+		testar(matriz, graus, vezesDentro);
 		cout << "Overhead:";
 		testar(overhead, graus, vezesDentro);
 		cout << '\n';
