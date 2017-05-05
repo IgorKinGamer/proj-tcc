@@ -1,3 +1,4 @@
+% Lista IDs das folhas da Ã¡rvore com graus gs
 function f = arv(gs)
 	global GRAUS = [2 2 2];
 	global graus alt nums fols;
@@ -7,21 +8,21 @@ function f = arv(gs)
 	else
 		graus = gs;
 	end
-	% Altura da árvore
+	% Altura da Ã¡rvore
 	alt = length(graus);
-
-	% Cria todos os nós
+	
+	% Cria todos os nÃ³s
 	nums = [];
 	fols = [];
 	ad(0, 1, 0);
-
-	% Mostra os números
+	
+	% Mostra os nÃºmeros
 	if nargout == 0
 		fprintf("Todos:\n");
 		disp(dec2bin(nums));
 		fprintf("\nFolhas:\n");
 		disp(dec2bin(fols));
 	end
-
+	
 	if (nargout == 1) f = fols; end
 end

@@ -1,10 +1,10 @@
 # Testes de ancestral comum
 
-- arv/arv.h: Estruturas
-- arv/arv_mod.h: Definição da função que distribui os nós de um nível
-- arv/constr.h: Construção de árvores sintéticas
-- arv/percorr.h: Funções de ancestral comum ("normal" e nova)
-- tst_estr.cpp: Testes com as estruturas
+Pasta | Conteúdo
+----- | --------
+arv, matriz | Estruturas novas
+tmp | Classes para os testes
+
 - tst_tmp.cpp: Testes de desempenho
 
 ## Testes de tempo
@@ -20,7 +20,8 @@
         tmp [i<iterações>] [a<aquecimento>] [r<m>] [R<n>] [- graus]
 
   - `m`: número de execuções seguidas com cada tipo de ancestral comum
-  - `n`: número de repetições dos testes por inteiro
+  - `n`: número de repetições dos testes por inteiro (para intercalar
+    os algoritmos e evitar que condições temporárias afetem um só)
   - `graus`: sequência de inteiros que representam os graus da árvore
   - `iterações` e `aquecimento`: quantidade de vezes que o ancestral comum
     será encontrado (com cada algoritmo) durante a medição e antes da medição,

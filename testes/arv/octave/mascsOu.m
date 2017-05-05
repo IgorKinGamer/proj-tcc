@@ -1,7 +1,7 @@
-% Gera todas as m·scaras Ou possÌveis
-function mascs = mascsE(graus)
-
-	% Nenhum ou um bit para cada nÌvel (2 ou mais garantem colis„o)
+% Gera todas as m√°scaras Ou poss√≠veis
+function mascs = mascsOu(graus)
+	
+	% Nenhum ou um bit para cada n√≠vel (2 ou mais garantem colis√£o)
 	mascs(1) = 0;
 	soma = 0;
 	for nivel = 1:length(graus)
@@ -15,12 +15,12 @@ function mascs = mascsE(graus)
 		
 		% Cada grupo do antigo mascs (exceto o primeiro, 0)
 		for i = 1:grau
-			% Cada m·scara do grupo i recebe bit do grupo (soma+i-1)
+			% Cada m√°scara do grupo i recebe bit do grupo (soma+i-1)
 			pos = (i*n+1):((i+1)*n);
 			mascs(pos) = bitxor(mascs(pos), bitshift(1, soma+i-1));
 		end
 		
 		soma += grau;
 	end
-
+	
 end

@@ -1,12 +1,12 @@
-% Adiciona id com seus filhos, que têm o nível dado, com deslocamento de bits soma
+% Adiciona id com seus filhos, que tÃªm o nÃ­vel dado, com deslocamento de bits soma
 function ad(id, nivel, soma)
 	global graus;
 	global nums fols;
 	global alt;
 	
-	% Adiciona o próprio id
+	% Adiciona o prÃ³prio id
 	nums = [nums id];
-	% Não tem filhos
+	% NÃ£o tem filhos
 	if nivel > alt
 		fols(end+1) = id;
 		return;
