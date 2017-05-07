@@ -8,9 +8,9 @@
 #include <algorithm>
 #include <vector>
 
-#include "arv/arv.h"
-#include "arv/constr.h"
-#include "arv/percorr.h"
+#include "arv.h"
+#include "constr.h"
+#include "percorr.h"
 
 using namespace std;
 

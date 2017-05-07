@@ -1,5 +1,5 @@
 /*
- * FunÁıes para descobrir os valores de mÛdulo ideais para uma ·rvore.
+ * Fun√ß√µes para descobrir os valores de m√≥dulo ideais para uma √°rvore.
  */
 
 #ifndef ARV_MOD_H
@@ -10,34 +10,45 @@
 #include "id.h"
 
 /*
- *
+ * Guarda dados da fun√ß√£o para um n√≠vel da √°rvore e aplica a fun√ß√£o.
  */
 struct DadosFuncao
 {
 	/*
-	 * Possivelmente, as operaÁıes OuEx e Ou em conjunto minimizam o m.
-	 * Pode-se provar que E e Ou tÍm o mesmo efeito sob mÛdulo m, seja qual
+	 * Possivelmente, as opera√ß√µes OuEx e Ou em conjunto minimizam o m.
+	 * Pode-se provar que E e Ou t√™m o mesmo efeito sob m√≥dulo m, seja qual
 	 * for o m.
-	 * ( Aplicar "& 0" apÛs "| 1" È o mesmo que apenas "& 0".
+	 * ( Aplicar "& 0" ap√≥s "| 1" √© o mesmo que apenas "& 0".
 	 *   Fazendo isso, subrai-se 2^bit de todo mundo, apenas "rodando" todos
-	 *   os valores mÛdulo m.
-	 *   Portanto, "& 0" apÛs "| 1" È o mesmo (mÛdulo m) que apenas "| 1".
+	 *   os valores m√≥dulo m.
+	 *   Portanto, "& 0" ap√≥s "| 1" √© o mesmo (m√≥dulo m) que apenas "| 1".
 	 *   Logo, "& 0" tem o mesmo efeito que "| 1". )
-	 * A ordem n„o importa: um bit pode estar ativo (1) em apenas uma das
-	 * duas m·scaras, pois n„o h· sentido estar ativo nas duas.
+	 * A ordem n√£o importa: um bit pode estar ativo (1) em apenas uma das
+	 * duas m√°scaras, pois n√£o h√° sentido estar ativo nas duas.
 	 *     (x | 1) ^ 1 == x & 0,  (x ^ 1) | 1 == x | 1
-	 * Outras questıes devem ser observadas com respeito ao Ou,
-	 * pois a maioria das combinaÁıes de bits *garantem* colisıes (devido
-	 * a como os ids s„o formados).
+	 * Outras quest√µes devem ser observadas com respeito ao Ou,
+	 * pois a maioria das combina√ß√µes de bits *garantem* colis√µes (devido
+	 * a como os ids s√£o formados).
 	 * Pouco foi testado com respeito a isso ainda.
 	 */
 	ID mascOuEx, mascOu, ad, m;
-	// Tamanho do arranjo necess·rio (pode ser < m)
+	// Tamanho do arranjo necess√°rio (pode ser < m)
 	unsigned tam;
+	// Dados para aplicar o m√≥dulo
+	// Outro m√©todo pode ser necess√°rio caso a multiplica√ß√£o
+	// seja muito cara.
+	// Usar __int128_t para multiplica√ß√µes maiores?
+	ID mult, desl;
 	
 	ID aplicar(ID id) const
 	{
-		return ((id ^ mascOuEx | mascOu) + ad) % m;
+		ID v = ((id ^ mascOuEx | mascOu) + ad);
+		return v - (v * mult >> desl)*m; // v % m
+	}
+	
+	ID testar(ID id) const
+	{
+		return (id ^ mascOuEx | mascOu) % m;
 	}
 	
 	friend inline std::ostream& operator<<(std::ostream &o, const DadosFuncao d)
@@ -46,64 +57,68 @@ struct DadosFuncao
 		o << "Ou:   " << idBin(d.mascOu)   << "\n";
 		o << "ad: "   << d.ad              << ", ";
 		o << "m: "    << d.m               << ", ";
-		o << "tam: "  << d.tam;
+		o << "tam: "  << d.tam             << "\n";
+		o << "mult: " << d.mult            << "\n";
+		o << "desl: " << d.desl            << "\n";
 		
 		return o;
 	}
 };
 
 /*
- * Verifica se os valores no array mÛdulo m resultam todos em valores
+ * Verifica se os valores no array m√≥dulo m resultam todos em valores
  * diferentes.
  */
 bool funcaoInjetora(int tam, ID valores[], const DadosFuncao &f)
 {
-	// Valores j· atingidos
+	// Valores j√° atingidos
 	bool imagem[f.m];
 	std::fill(imagem, imagem+f.m, false);
 	
-	// Aplica a funÁ„o a cada valor
+	// Aplica a fun√ß√£o a cada valor
 	for (ID *valor = valores; valor < valores+tam; valor++)
 	{
-		ID res = f.aplicar(*valor);
-		// Valor j· foi atingido
+		ID res = f.testar(*valor);
+		// Valor j√° foi atingido
 		if (imagem[res])
 			return false;
 		imagem[res] = true;
 	}
 	
-	// N„o houve colisıes
+	// N√£o houve colis√µes
 	return true;
 }
 
-// Buscar os valores ideais da funÁ„o
+void dadosModulo(int numNos, ID *ids, DadosFuncao *dadosFuncao);
+
+// Buscar os valores ideais da fun√ß√£o
 void buscarFuncaoIdeal(int numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 {
-	// Busca funÁ„o
+	// Busca fun√ß√£o
 	DadosFuncao dados;
 	dados.mascOu = dados.mascOuEx = dados.ad = 0;
 	dados.m = numNos-1;
 	
-	// Para fazer buscas mais elaboradas (verificar v·rios dados)
+	// Para fazer buscas mais elaboradas (verificar v√°rios dados)
 	bool continuar = true;
-	sai_dadosFuncao->tam = ~0u; // Maior possÌvel
+	sai_dadosFuncao->tam = ~0u; // Maior poss√≠vel
 	while (continuar)
 	{
-		// PrÛxima tentativa
+		// Pr√≥xima tentativa
 		dados.m++;
 		
-		// A funÁ„o n„o satisfaz
+		// A fun√ß√£o n√£o satisfaz
 		while (!funcaoInjetora(numNos, ids, dados))
 			dados.m++;
 		
-		// Imagem da funÁ„o
+		// Imagem do m√≥dulo
 		ID imagem[numNos];
 		for (int i = 0; i < numNos; i++)
-			imagem[i] = dados.aplicar(ids[i]);
+			imagem[i] = dados.testar(ids[i]);
 		// Analisa a imagem para descobrir o melhor ad (que resulta em menor tam)
-		// Ideia: encontrar o maior "buraco" na imagem ordenada e
-		// "empurr·-lo" para cima, de modo que o maior valor da imagem
-		// seja o menor possÌvel
+		// Ideia: encontrar o maior "buraco" na imagem do m√≥dulo ordenada e
+		// "empurr√°-lo" para cima, de modo que o maior valor da imagem
+		// seja o menor poss√≠vel
 		std::sort(imagem, imagem+numNos);
 		ID difMax = (dados.m+imagem[0]) - (imagem[numNos-1]);
 		dados.ad = dados.m-imagem[0];
@@ -124,8 +139,63 @@ void buscarFuncaoIdeal(int numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 			*sai_dadosFuncao = dados;
 			
 		
-		// TODO Por enquanto, pega o primeiro e pronto...
+		// TODO Encontrar condi√ß√£o melhor
 		continuar = dados.m < numNos*numNos;
+	}
+	
+	dadosModulo(numNos, ids, sai_dadosFuncao);
+}
+
+/* Retorna dados para calculcar o m√≥dulo sem usar divis√£o */
+void dadosModulo(int numNos, ID *ids, DadosFuncao *dadosFuncao)
+{
+	// Conta bits
+	ID id = *std::max_element(ids, ids+numNos);
+	int bits = 0;
+	while (id)
+	{
+		id >>= 1;
+		bits++;
+	}
+	
+	// Expans√£o fracion√°ria
+	// Mais precis√£o pode ser necess√°ria?
+	ID m = dadosFuncao->m;
+	double r = 1.d/m;
+	// Zeros na frente
+	int z = 0;
+	while ((int) (2*r) == 0) // Pr√≥ximo bit ser√° 0
+	{
+		r *= 2;
+		z++;
+	}
+	// Pega (bits+1) bits significativos
+	ID mult = 0;
+	for (int i = 0; i < bits+1; i++)
+	{
+		r *= 2;
+		int bit = (int) r;
+		mult = (mult << 1) + bit;
+		r -= bit;
+	}
+	
+	// Arredondamento
+	mult++;
+	// Deslocamento
+	int desl = z + bits + 1;
+	
+	// Atribui valores
+	dadosFuncao->mult = mult;
+	dadosFuncao->desl = desl;
+	
+	// Verifica se deu certo
+	for (auto i = 0; i < numNos; i++)
+	{
+		if (mult*ids[i] >> desl != ids[i]/m)
+		{
+			dadosFuncao->mult = dadosFuncao->desl = 0;
+			break;
+		}
 	}
 }
 
