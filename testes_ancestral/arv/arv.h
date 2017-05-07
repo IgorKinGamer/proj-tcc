@@ -51,7 +51,12 @@ struct estr_No
 		return ::idBin(id, bits);
 	}
 	
-	// TODO Destrutor
+	~estr_No()
+	{
+		for (auto i = 0; i < numFilhos; i++)
+			delete filhos[i];
+		delete filhos;
+	}
 };
 
 class Arvore

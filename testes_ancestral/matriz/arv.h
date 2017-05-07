@@ -48,7 +48,12 @@ namespace matriz
 				filhos[f]->imprimir(ind);
 		}
 		
-		// TODO Destrutor
+		~estr_No()
+		{
+			for (auto i = 0; i < numFilhos; i++)
+				delete filhos[i];
+			delete filhos;
+		}
 	};
 
 	No ancestralSimples(No a, No b);

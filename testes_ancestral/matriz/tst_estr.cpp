@@ -1,8 +1,5 @@
 /*
- * Testes com as estruturas para encontrar o ancestral comum.
- *
- * TODO: Testar as estruturas em si, construídas em Arvore::montarEstruturas()
- * (apenas os resultados finais e a distribuição dos nós estão sendo testados)
+ * Testes com a matriz para encontrar o ancestral comum.
  */
 
 #include <algorithm>
@@ -60,9 +57,6 @@ void testes()
 	testarAncestralComum(&arv, {3, 2, 1}, {4}, {3});
 	testarAncestralComum(&arv, {}, {1}, {});
 	testarAncestralComum(&arv, {}, {1}, {2});
-	
-	//int n;
-	//cout << "Ó: " << __builtin_ctz(n) << endl;
 }
 
 /*
