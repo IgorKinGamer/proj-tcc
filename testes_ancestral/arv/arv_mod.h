@@ -58,8 +58,8 @@ struct DadosFuncao
 		o << "ad: "   << d.ad              << ", ";
 		o << "m: "    << d.m               << ", ";
 		o << "tam: "  << d.tam             << "\n";
-		o << "mult: " << d.mult            << "\n";
-		o << "desl: " << d.desl            << "\n";
+		o << "mult: " << d.mult            << ", ";
+		o << "desl: " << d.desl;
 		
 		return o;
 	}

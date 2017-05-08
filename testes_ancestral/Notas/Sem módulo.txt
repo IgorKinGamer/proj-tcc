@@ -1,0 +1,38 @@
+Cálculo do índice de diferentes formas (nem todas corretas,
+apenas para ilustrar a variação do tempo devido às operações).
+(Note A) A multiplicação não tem grande custo (mas o módulo sim!).
+Parece não haver diferença significativa entre duas multiplicações
+((v * mult >> desl)*mascOu) e duas somas ((v + mult >> (desl+20)))
+
+
+Linha de comando: tmp a0 R1
+
+# v % m
+
+Simples:  (1007.67 ms) (1011.42 ms) (997.347 ms) Simples:  (1018.43 ms) (997.839 ms) (993.784 ms)
+Novo:     (1844.64 ms) (1859.84 ms) (1835.29 ms) Novo:     (1875.26 ms) (1840.72 ms) (1844.8 ms)
+Hwloc:    (2312.3 ms) (2822.17 ms) (2930.11 ms)  Hwloc:    (2308.87 ms) (2877.41 ms) (2831.69 ms)
+
+# v - (v * mult >> desl)*m
+
+Simples:  (992.315 ms) (1047.22 ms) (981.537 ms) Simples:  (997.509 ms) (980.31 ms) (975.551 ms)
+Novo:     (910.112 ms) (919.007 ms) (923.546 ms) Novo:     (948.295 ms) (918.057 ms) (923.327 ms)
+Hwloc:    (2403.72 ms) (2826.6 ms) (2857.19 ms)  Hwloc:    (2370.71 ms) (2814.58 ms) (2816.3 ms)
+
+# (v * mult >> desl)*mascOu
+
+Simples:  (1014.3 ms) (1041.54 ms) (1176.75 ms)  Simples:  (1005.34 ms) (994.729 ms) (1099.75 ms) Simples:  (1006.2 ms) (1033.28 ms) (997.588 ms)
+Novo:     (885.701 ms) (882.81 ms) (876.411 ms)  Novo:     (873.392 ms) (869.591 ms) (877.319 ms) Novo:     (866.02 ms) (867.479 ms) (869.1 ms)
+Hwloc:    (2312.37 ms) (2842.86 ms) (2861.03 ms) Hwloc:    (2310.62 ms) (2838.39 ms) (3069.7 ms)  Hwloc:    (2300.96 ms) (2840.66 ms) (2822.23 ms)
+
+# (v + mult >> desl)*mascOu
+
+Simples:  (1088.44 ms) (1008.36 ms) (1024.21 ms) 
+Novo:     (972.799 ms) (986.763 ms) (997.69 ms)
+Hwloc:    (2538.42 ms) (2840.05 ms) (2837.52 ms)
+
+# (v + mult >> (desl+20))
+
+Simples:  (1007.01 ms) (994.538 ms) (1001.72 ms) Simples:  (1011.23 ms) (995.348 ms) (993.931 ms)
+Novo:     (905.45 ms) (880.818 ms) (856.135 ms)  Novo:     (835.724 ms) (836.91 ms) (838.683 ms)
+Hwloc:    (2354.4 ms) (2799.8 ms) (2889.03 ms)   Hwloc:    (2312.84 ms) (2852.34 ms) (2838.94 ms)

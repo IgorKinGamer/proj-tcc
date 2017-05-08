@@ -1,0 +1,83 @@
+Motivação
+
+Analisei hwloc
+Vi complexidade das funções
+Em geral O(1) ou O(altura)
+Uso no HieSchella
+
+A função que encontra o ancestral comum mais próximo
+recebe dois nós como entrada e retorna um nó (o ancestral) como saída.
+
+(Definir ancestral e descendente?)
+
+Abordagem simples - complexidade - questões relacionadas à memória
+Tratamento de hierarquias assimétricas
+
+Considerando a estrutura de árvore apenas, a única informação
+que relaciona um nó aos seus ancestrais são as "ligações" {{palavra certa?}}
+Ideia para encontrar outra maneira de implementar a função de ancestral comum
+Para uma dada árvore, que representa uma topologia:
+- Atribuir um valor (chamado de ID) a cada nó da árvore.
+- Definir uma função que receba o ID de dois nós distintos
+e tenha como resultado o nó ancestral comum mais próximo
+Esses IDs (em conjunto com outras informações associadas
+a cada nó individualmente ou à árvore como um todo conforme necessário)
+podem estabelecer alguma relação entre um nó e seus ancestrais
+além da que já existe por meio das ligações da árvore.
+
+Idealmente, essa função deveria ser *processada* em tempo constante.
+Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
+Ressalva: mesmo que a quantidade de instruções executadas pelo processador
+seja constante, a maneira como a memória é acessada pode aumentar o tempo,
+especialmente quando há outras tarefas fazendo uso da memória.
+(? Isso ser visto... (exemplo à frente))
+
+Com isso em mente, podemos definir tais funções usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais.
+
+Uma tentativa possível é atribuir a cada um dos n nós da árvore um ID único entre 0 e n-1
+e usar esses IDs como índices em uma matriz n x n A que possui, na posição A(i,j),
+o ancestral comum entre o nó de ID i e o nó de ID j.
+No entanto, ingênua, pois esse espaço O(n^2) ocupado na memória resultaria em problemas
+como sujar a cache da aplicação.
+
+Outra possibilidade idealizada:
+Dois passos:
+- dados os IDs de dois nós, descobrir o ID do ancestral,
+- encontrar o nó que possui esse ID.
+
+Em linhas gerais
+- O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
+- O ID de um dado nó é mais comprido que o de todos os nós de todos os níveis acima
+- Os IDs são formados de maneira que, dados dois nós a e b, b descendente de a,
+os n bits menos significativos de a são iguais ao ID de b,
+onde n é o comprimento do ID de b.
+- Desse modo, dados dois descendentes de um nó c, todos os bits menos significativos deles que coincidem
+(todos os que vêm antes do primeiro que difere) são iguais ao ID de c (ignorando zeros à esquerda).
+- Usando apenas as operações ???,
+para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais,
+pode-se descobrir o ID do ancestral comum
+- A quantidade de instruções é fixa, portanto, a complexidade é constante
+
+Encontrar o nó a partir do ID
+- Usar os IDs como índices em um arranjo seria simples, mas impraticável:
+poderiam ser necessários arranjos com milhões de posições e apenas algumas centenas ocupadas.
+- Usar uma função de espalhamento (hash): podem haver colisões
+- Buscar uma função que não cause colisões
+
+Detalhes de como os IDs são formados
+Função (algoritmo) em si
+Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve
+
+Medições de tempo (repetições):
+Resultados, comparação
+O novo método se mostrou, em geral, mais demorado que o método simples, mas mais rápido que o hwloc.
+No entanto, ele funciona em casos de hierarquias assimétricas, assim como o hwloc, diferentemente do método simples.
+
+Outras medições?
+
+Culpado é o módulo! Módulo sem divisões.
+
+Melhorias e alternativas não testadas:
+- Eliminar multiplicações (mas testes feitos mostram que não têm grande custo)
+- Todos os nós em um só arranjo
+- Máscaras Ou e OuExclusivo
