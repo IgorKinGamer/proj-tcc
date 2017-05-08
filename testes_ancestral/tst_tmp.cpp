@@ -23,11 +23,22 @@ void executarTestes(
 template <class A, class N>
 void testar(BaseTesteAncestralComum<A, N> &tst, const vector<int> &graus, int vezes = 1);
 
+const int ALG_SIMPLES  = 0,
+          ALG_NOVO     = 1,
+          ALG_HWLOC    = 2,
+          ALG_MATRIZ   = 3,
+          ALG_OVERHEAD = 4,
+          NUM_ALGS     = 5;
+bool algoritmo[5] = {};
+
 int main(int argc, char *argv[])
 {
 	// Graus de https://www.open-mpi.org/projects/hwloc/lstopo/images/16XeonX7400.v1.11.png
 	vector<int> graus({4, 4, 1, 3, 2, 1, 1, 1});
 	int vezesFora = 2, vezesDentro = 3, iteracoes = 10000, aquecimento = 1000;
+	algoritmo[ALG_SIMPLES] = true;
+	algoritmo[ALG_NOVO   ] = true;
+	algoritmo[ALG_HWLOC  ] = true;
 	
 	int i = 1;
 	string arg;
@@ -37,17 +48,23 @@ int main(int argc, char *argv[])
 		string resto = arg.substr(1);
 		switch (arg.front())
 		{
-			case 'i': // Iterações
-				iteracoes = stoi(resto);
-				break;
-			case 'a': // Aquecimento
-				aquecimento = stoi(resto);
-				break;
-			case 'r': // Repetições de cada algoritmo
-				vezesDentro = stoi(resto);
-				break;
-			case 'R': // Repetições de tudo
-				vezesFora = stoi(resto);
+			case 'i': iteracoes   = stoi(resto); break; // Iterações
+			case 'a': aquecimento = stoi(resto); break; // Aquecimento
+			case 'r': vezesDentro = stoi(resto); break; // Repetições de cada algoritmo
+			case 'R': vezesFora   = stoi(resto); break; // Repetições de tudo
+			case 'A': // Algoritmos
+				for (bool &b : algoritmo) b = false;
+				for (char &alg : resto)
+					switch (alg)
+					{
+						case 's': algoritmo[ALG_SIMPLES ] = true; break; // Simples
+						case 'n': algoritmo[ALG_NOVO    ] = true; break; // Novo
+						case 'h': algoritmo[ALG_HWLOC   ] = true; break; // Hwloc
+						case 'm': algoritmo[ALG_MATRIZ  ] = true; break; // Matriz
+						case 'o': algoritmo[ALG_OVERHEAD] = true; break; // Overhead
+						case '*': for (bool &b : algoritmo) b = true; break; // Todos
+						default: cout << "Algoritmo não reconhecido: " << alg << '\n';
+					}
 				break;
 			case '-': // Graus
 				graus = vector<int>();
@@ -86,16 +103,31 @@ void executarTestes(
 	TesteAncestralComumOverhead overhead(iter, iterAquec);
 	for (auto i = 0; i < vezesFora; i++)
 	{
-		cout << "Simples: ";
-		testar(simples, graus, vezesDentro);
-		cout << "Novo:    ";
-		testar(novo, graus, vezesDentro);
-		cout << "Hwloc:   ";
-		testar(hwloc, graus, vezesDentro);
-		cout << "Matriz:  ";
-		testar(matriz, graus, vezesDentro);
-		cout << "Overhead:";
-		testar(overhead, graus, vezesDentro);
+		if (algoritmo[ALG_SIMPLES])
+		{
+			cout << "Simples: ";
+			testar(simples, graus, vezesDentro);
+		}
+		if (algoritmo[ALG_NOVO])
+		{
+			cout << "Novo:    ";
+			testar(novo, graus, vezesDentro);
+		}
+		if (algoritmo[ALG_HWLOC])
+		{
+			cout << "Hwloc:   ";
+			testar(hwloc, graus, vezesDentro);
+		}
+		if (algoritmo[ALG_MATRIZ])
+		{
+			cout << "Matriz:  ";
+			testar(matriz, graus, vezesDentro);
+		}
+		if (algoritmo[ALG_OVERHEAD])
+		{
+			cout << "Overhead:";
+			testar(overhead, graus, vezesDentro);
+		}
 		cout << '\n';
 	}
 }
