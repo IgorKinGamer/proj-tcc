@@ -2,6 +2,7 @@
  * Testes de desempenho temporal das funções de ancestral comum
  */
 
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -99,14 +100,35 @@ int main(int argc, char *argv[])
 	
 	executarTestes(graus, iteracoes, aquecimento, vezesFora, vezesDentro);
 	
-	// TODO Escrever em um arquivo em uma pasta única
-	// com um arquivo descrevendo a configuração
-	ofstream saida("resultados.csv");
+	// Escreve em um arquivo em uma pasta definida pela configuração
+	string pasta, iniNome, iniCom;
+	// Define nome da pasta
+	pasta += 'i' + to_string(iteracoes);
+	pasta += 'a' + to_string(aquecimento);
+	pasta += '-';
+	for (const int &g : graus)
+		pasta += to_string(g) + '.';
+	pasta.pop_back();
+	// Cria a pasta
+	#ifdef _WIN32
+		iniCom = "mkdir res\\";
+	#else
+		iniCom = "mkdir -p res/";
+	#endif
+	system((iniCom + pasta).data());
+	// Descobre nome não usado
+	iniNome = "res/" + pasta + "/resultados";
+	int n = -1;
+	while (ifstream(iniNome + to_string(++n) + ".csv")); // Existe
+	// Cria o arquivo
+	ofstream saida(iniNome + to_string(n) + ".csv");
 	if (!saida)
 	{
 		cerr << "Impossível criar o arquivo\n";
 		return 0;
 	}
+	
+	// Escreve no arquivo
 	int ult_alg = algs_ativos.back();
 	algs_ativos.pop_back();
 	// Cabeçalho
@@ -122,7 +144,7 @@ int main(int argc, char *argv[])
 		saida << tempos[ult_alg][i] << '\n';
 	}
 	
-	saida.close();
+	cout << "Arquivo \"" << iniNome + to_string(n) + ".csv" << "\" criado\n";
 }
 
 template <class A, class N>
