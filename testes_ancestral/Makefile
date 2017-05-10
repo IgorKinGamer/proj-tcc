@@ -5,8 +5,8 @@ EXEC=tmp
 
 all: ${EXEC}
 
-tmp: tst_tmp.cpp
-	${CC} tst_tmp.cpp -o ${EXEC} ${LIBS} ${OPTS} 
+tmp: tst_tmp/tst_tmp.cpp
+	${CC} tst_tmp/tst_tmp.cpp -o ${EXEC} ${LIBS} ${OPTS} 
 
 clear:
 	rm ${EXEC}

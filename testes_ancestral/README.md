@@ -3,9 +3,7 @@
 Pasta | Conteúdo
 ----- | --------
 arv, matriz | Estruturas novas
-tmp | Classes para os testes
-
-- tst_tmp.cpp: Testes de desempenho
+tst_tmp | Testes de tempo
 
 ## Testes de tempo
 

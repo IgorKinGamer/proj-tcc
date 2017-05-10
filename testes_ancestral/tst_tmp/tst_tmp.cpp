@@ -7,10 +7,10 @@
 #include <string>
 #include <vector>
 
-#include "tmp/tst_tmp.h"
-#include "tmp/tst_tmp_arv.h"
-#include "tmp/tst_tmp_hwloc.h"
-#include "tmp/tst_tmp_matriz.h"
+#include "tst_tmp.h"
+#include "tst_tmp_arv.h"
+#include "tst_tmp_hwloc.h"
+#include "tst_tmp_matriz.h"
 
 using namespace std;
 
