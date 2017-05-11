@@ -39,5 +39,5 @@ tst_tmp | Testes de tempo
 
 ### Notas e resultados
 
-- [Notas](Notas.md)
-- [Resultados](Resultados.txt)
+- [Notas](Notas)
+- [Resultados](res)
