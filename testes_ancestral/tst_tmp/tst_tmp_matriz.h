@@ -46,6 +46,11 @@ namespace matriz
 			return ancestral(arv, a, b);
 		}
 		
+		int acessar(No n)
+		{
+			return int(n->id);
+		}
+		
 		void destruirArvore(Arvore *a)
 		{
 			delete a;

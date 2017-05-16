@@ -49,6 +49,8 @@ int main(int argc, char *argv[])
 {
 	// Graus de https://www.open-mpi.org/projects/hwloc/lstopo/images/16XeonX7400.v1.11.png
 	vector<int> graus({4, 4, 1, 3, 2, 1, 1, 1});
+	string maquina;
+	bool suprimir = false;
 	int vezesFora = 2, vezesDentro = 3, iteracoes = 10000, aquecimento = 1000;
 	alg_ativo[ALG_SIMPLES] = true;
 	alg_ativo[ALG_NOVO   ] = true;
@@ -62,6 +64,8 @@ int main(int argc, char *argv[])
 		string resto = arg.substr(1);
 		switch (arg.front())
 		{
+			case 's': suprimir = true;           break; // Suprimir saída para arquivo
+			case 'M': maquina = resto;           break; // Identificador da máquina rodando os testes
 			case 'i': iteracoes   = stoi(resto); break; // Iterações
 			case 'a': aquecimento = stoi(resto); break; // Aquecimento
 			case 'r': vezesDentro = stoi(resto); break; // Repetições de cada algoritmo
@@ -100,24 +104,34 @@ int main(int argc, char *argv[])
 	
 	executarTestes(graus, iteracoes, aquecimento, vezesFora, vezesDentro);
 	
+	if (suprimir)
+		return 0;
+	
 	// Escreve em um arquivo em uma pasta definida pela configuração
-	string pasta, iniNome, iniCom;
+	string sep, pasta, iniNome, iniCmd;
+	#ifdef _WIN32
+		sep = "\\";
+		iniCmd = "mkdir res";
+	#else
+		sep = "/";
+		iniCmd = "mkdir -p res";
+	#endif
+	
 	// Define nome da pasta
+	if (!maquina.empty())
+		pasta += maquina + sep;
 	pasta += 'i' + to_string(iteracoes);
 	pasta += 'a' + to_string(aquecimento);
 	pasta += '-';
 	for (const int &g : graus)
 		pasta += to_string(g) + '.';
 	pasta.pop_back();
+	
 	// Cria a pasta
-	#ifdef _WIN32
-		iniCom = "mkdir res\\";
-	#else
-		iniCom = "mkdir -p res/";
-	#endif
-	system((iniCom + pasta).data());
+	system((iniCmd + sep + pasta).data());
+	
 	// Descobre nome não usado
-	iniNome = "res/" + pasta + "/resultados";
+	iniNome = "res" + sep + pasta + sep + "resultados";
 	int n = -1;
 	while (ifstream(iniNome + to_string(++n) + ".csv")); // Existe
 	// Cria o arquivo

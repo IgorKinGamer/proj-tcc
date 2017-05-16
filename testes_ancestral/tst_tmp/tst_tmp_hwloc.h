@@ -53,6 +53,11 @@ class TesteAncestralComumHwloc : public BaseTesteAncestralComum<hwloc_topology_t
 		return hwloc_get_common_ancestor_obj(t, a, b);
 	}
 	
+	int acessar(hwloc_obj_t n)
+	{
+		return int(n->depth);
+	}
+	
 	void destruirArvore(hwloc_topology_t t)
 	{
 		hwloc_topology_destroy(t);

@@ -20,6 +20,7 @@ class BaseTesteAncestralComum
 	virtual Arv criarArvore(std::vector<int> graus);
 	virtual std::vector<No> pegarFolhas(Arv a);
 	virtual No ancestralComum(Arv arv, No a, No b);
+	virtual int acessar(No n); // Acessa qualquer coisa no nó
 	virtual void destruirArvore(Arv a);
 	
 	// Tempo em milissegundos
@@ -31,13 +32,14 @@ class BaseTesteAncestralComum
 		std::vector<Par> pares = gerarPares(fs);
 		embaralhar(pares);
 		
-		// Evita otimizações?
-		volatile No n;
+		// Acumulador (evita otimizações)
+		int acumulador = 0;
+		volatile int saida;
 		
 		// Aquecer?
 		for (int i = 0; i < numIterAquec; i++)
 			for (Par par : pares)
-				n = ancestralComum(a, par.first, par.second);
+				acumulador += acessar(ancestralComum(a, par.first, par.second));
 		
 		// Mede o tempo
 		using namespace std::chrono;
@@ -48,11 +50,12 @@ class BaseTesteAncestralComum
 		// Roda
 		for (int i = 0; i < numIter; i++)
 			for (Par par : pares)
-				n = ancestralComum(a, par.first, par.second);
+				acumulador += acessar(ancestralComum(a, par.first, par.second));
 		
 		// Mede o tempo
 		relogio::time_point t1 = relogio::now();
 		
+		saida = acumulador;
 		destruirArvore(a);
 		
 		double tempo = duration_cast<milisDouble>(t1 - t0).count();

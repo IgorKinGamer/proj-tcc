@@ -29,6 +29,11 @@ class TesteAncestralComumArvore : public BaseTesteAncestralComum<Arvore*, No>
 		return std::vector<No>(folhas, folhas + a->nosPorNivel[ultNivel]);
 	}
 	
+	int acessar(No n)
+	{
+		return int(n->id);
+	}
+	
 	void destruirArvore(Arvore *a)
 	{
 		delete a;
@@ -71,6 +76,11 @@ class TesteAncestralComumOverhead : public TesteAncestralComumArvore
 	No ancestralComum(Arvore *arv, No a, No b)
 	{
 		return nullptr;
+	}
+	
+	int acessar(No n)
+	{
+		return 0;
 	}
 };
 

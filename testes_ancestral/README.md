@@ -15,8 +15,13 @@ tst_tmp | Testes de tempo
 - Adicionar pasta bin do hwloc à variável `PATH`
 - Executar (`tmp` representa o executável gerado)
 
-        tmp [i<iterações>] [a<aquecimento>] [r<m>] [R<n>] [A<algs>] [- graus]
+        tmp [M<máquina>] [s] [i<iterações>] [a<aquecimento>] [r<m>] [R<n>] [A<algs>] [- graus]
 
+  - Os resultados serão escritos em um arquivo CSV numa pasta
+    determinada pela configuração
+  - `máquina`: Identificador da máquina em que se está rodando, usado apenas
+    para definir a pasta em que os resultados serão colocados
+  - `s` impede (suprime) a criação do arquivo com os resultados
   - `m`: número de execuções seguidas com cada tipo de ancestral comum
   - `n`: número de repetições dos testes por inteiro (para intercalar
     os algoritmos e evitar que condições temporárias afetem um só)
