@@ -1,25 +1,62 @@
 Motivação
 
-Analisei hwloc
+(Analisei hwloc
 Vi complexidade das funções
 Em geral O(1) ou O(altura)
-Uso no HieSchella
+Uso no HieSchella)
+
+Conceitos:
+- Grau de um nível: o maior entre os graus dos nós de um nível.
+É comum todos os graus dos nós de um nível serem iguais, mas, em hierarquias assimétricas, isso não ocorre.
+
+O hwloc possui diversas funções de percorrimento.
+Estas permitem acessar nós da árvore que representa a hierarquia de forma absoluta ou relativa a outros nós.
+Por exemplo, é possível encontrar o nó com um determinado índice dentro de um dado nível,
+ou, a partir de algum nó, o próximo no mesmo nível.
+Essas funções foram analisadas quanto à complexidade com o objetivo de identificar pontos que poderiam ser melhorados do ponto de vista do desempenho.
+Essa análise revelou que, em geral, elas têm tempo constante (O(1)) ou linear na altura da árvore (O(altura)).
+. [(Nota?) Em análises de complexidade, a altura de uma árvore é comumente associada com log N, onde N é o número de nós.
+. Entretanto, isso é válido para árvores com o mesmo grau em todos os níveis.
+. Em árvores que representam hierarquias, os níveis podem ter graus diferentes, logo, essa associação não é possível.]
+Além disso, foi analisado um projeto de código aberto que utiliza o hwloc, HieSchella [ref],
+cujo objetivo é prover portabilidade de performance, característica presente quando se consegue que
+uma mesma aplicação rode em diferentes plataformas utilizando os núcleos com eficiência.
+Foram identificadas as chamadas mais importantes a funções do hwloc no HieSchella para se ter uma referência
+de quais funções são mais relevantes para o desempenho dentro de um projeto real.
+
+identificado que ela é uma
+
+Diante dessas considerações, a função que encontra o ancestral comum mais próximo entre dois nós foi escolhida como alvo de otimizações.
+Ela é uma das funções implementadas no hwloc com complexidade O(altura) e está entre as de uso mais significativo no HieSchella.
+
+
+
+ um método 
 
 A função que encontra o ancestral comum mais próximo
-recebe dois nós como entrada e retorna um nó (o ancestral) como saída.
+recebe dois nós como entrada (e possivelmente algumas estruturas adicionais, se houver necessidade)
+e retorna um nó (o ancestral) como saída.
+Cada par de nós em uma árvore tem exatamente um ancestral mais próximo.
 
 (Definir ancestral e descendente?)
 
 Abordagem simples - complexidade - questões relacionadas à memória
+A maneira provavelmente mais intuitiva para se descobrir o nó ancestral desejado
+é "subir" pela árvore, isto é.
+No entanto, é necessário 
+Por ser uma , será referida como método simples.
 Tratamento de hierarquias assimétricas
 
-Considerando a estrutura de árvore apenas, a única informação
-que relaciona um nó aos seus ancestrais são as "ligações" {{palavra certa?}}
-Ideia para encontrar outra maneira de implementar a função de ancestral comum
+Considerando a estrutura de árvore apenas, a única informação que relaciona um nó aos seus ancestrais
+são as ligações entre um nó e seus filhos (ou, no outro sentido, entre cada nó e seu pai).
+Todas as sequências de uma ou mais ligações de filho para pai a partir de um nó, ou seja,
+entre o nó e seu pai, entre este e o pai dele, e assim por diante, definem os ancestrais do nó dado.
+Isto indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
+para haver outra maneira além da simples de se encontrar o ancestral comum ACMP
+Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
 Para uma dada árvore, que representa uma topologia:
 - Atribuir um valor (chamado de ID) a cada nó da árvore.
-- Definir uma função que receba o ID de dois nós distintos
-e tenha como resultado o nó ancestral comum mais próximo
+- Definir uma função que receba o ID de dois nós distintos e tenha como resultado o nó ancestral comum mais próximo.
 Esses IDs (em conjunto com outras informações associadas
 a cada nó individualmente ou à árvore como um todo conforme necessário)
 podem estabelecer alguma relação entre um nó e seus ancestrais
