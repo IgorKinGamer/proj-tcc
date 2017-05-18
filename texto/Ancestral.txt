@@ -31,9 +31,7 @@ Ela é uma das funções implementadas no hwloc com complexidade O(altura) e est
 Na seção a seguir, será discutido como essa função poderia ser implementada de forma mais eficiente e quais as implicações de diferentes abordagens.
 
 
-SEÇÂO
-
- um método 
+SEÇÃO - Implementações da função ACMP
 
 A função que encontra o ancestral comum mais próximo recebe dois nós como entrada (e possivelmente algumas estruturas adicionais, se houver necessidade)
 e retorna um nó (o ancestral) como saída.
@@ -41,27 +39,36 @@ Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
 
 (Definir ancestral e descendente?)
 
-Abordagem simples - complexidade - questões relacionadas à memória
-A maneira provavelmente mais intuitiva para se descobrir o ACMP é "subir" pela árvore, isto é.
-No entanto, é necessário 
-Por ser uma , será referida como método simples.
-O(altura) - A altura geralmente não deve ser muito grande
-Tratamento de hierarquias assimétricas
+(SEÇÃO - Abordagem inicial)
+
+(Abordagem simples - complexidade - questões relacionadas à memória)
+A maneira provavelmente mais intuitiva de se descobrir o ACMP é "subir" pela árvore, isto é, a partir dos dois nós dos quais se deseja encontrar o ACMP,
+seguir as ligações em direção aos pais até se chegar ao mesmo nó.
+Por ser um método que utiliza apenas a estrutura de árvore em si, sem adição de outras informações, será referido como método simples.
+Sua complexidade é O(altura).
+Para que esse método funcione, é necessário subir de forma sincronizada -- a cada passo, devem-se comparar ancestrais dos dois nós iniciais que estejam no mesmo nível.
+No caso do hwloc, o algoritmo se torna um pouco mais complicado, pois ele trata hierarquias assimétricas (pode haver ramos sem nó em algum nível).
+Neste caso, mesmo que se tenham dois nós no mesmo nível, seus pais podem estar em níveis diferentes.
+Um ponto que pode afetar o desempenho deste algoritmo é o fato de que é necessário acessar cada nó
+(os nós iniciais e todos os seus ancestrais até o ACMP), e os nós estão espalhados pela memória.
+
+(Algoritmo ACMP do hwloc)
+(Algoritmo ACMP do hwloc)
 
 Considerando a estrutura de árvore apenas, a única informação que relaciona um nó aos seus ancestrais
 são as ligações entre um nó e seus filhos (ou, no outro sentido, entre cada nó e seu pai).
-Todas as sequências de uma ou mais ligações de filho para pai a partir de um nó (ou seja,
+Assim, todas as sequências de uma ou mais ligações de filho para pai a partir de um nó (ou seja,
 entre o nó e seu pai, entre este e o pai dele, e assim por diante) definem os ancestrais do nó.
 Isso indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
 para ser possível encontrar o ACMP com algum método além do simples.
-Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
-Para uma dada árvore, que representa uma topologia:
+!Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
+Para uma dada árvore que representa uma topologia:
 - Atribuir um valor (chamado de ID) a cada nó da árvore
-- Definir uma função ACMP_{IDs} que receba o ID de dois nós distintos e tenha como resultado o nó ancestral comum mais próximo.
+- Definir uma função ACMP_{IDs} que receba o ID de dois nós distintos e tenha como resultado o nó ACMP.
 Esses IDs (em conjunto com outras informações associadas a cada nó individualmente ou à árvore como um todo conforme necessário)
 podem estabelecer alguma relação entre um nó e seus ancestrais além da que já existe por meio das ligações da árvore.
 
-Idealmente, essa função deveria ser *processada* em tempo constante.
+Idealmente, essa função ACMP_{IDs} deveria ser *processada* em tempo constante.
 Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
 No entanto, é preciso lembrar que, mesmo que a quantidade de instruções executadas pelo processador seja constante,
 a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
@@ -70,41 +77,55 @@ a maneira como a memória é acessada pode aumentar o tempo de execução, espec
 Com isso em mente, podemos definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
 tais como as operações aritméticas e operações lógicas bit-a-bit.
 
+(SEÇÃO - Matriz)
+
 Uma possibilidade é relacionar cada par de nós ao seu ACMP por meio de uma matriz
 em que cada linha representa um nó da árvore, assim como cada coluna, e o cruzamento contém o ACMP entre o nó da linha e o nó da coluna.
 Para isso, pode-se atribuir a cada um dos n nós da árvore um ID único entre 0 e n-1 e usar esses IDs como índices na matriz,
 que terá, na posição A(i,j), o ACMP entre o nó de ID i e o nó de ID j.
 No entanto, esta é uma estratégia ingênua, pois esse espaço O(n^2) ocupado na memória resultaria em problemas como sujar a cache da aplicação.
 
+(Algoritmo matriz)
+
+(SEÇÃO - Função de espalhamento)
+
 Outra possibilidade foi idealizada, dividindo a função ACMP_{IDs} em dois passos:
 - dados os IDs de dois nós, descobrir o ID do ancestral,
 - encontrar o nó que possui esse ID.
-Em linhas gerais, o funcionamento se baseia no seguinte:
+Em linhas gerais, o funcionamento do primeiro passo se baseia no seguinte:
 - O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
-- O ID de um nó é mais comprido que o de todos os nós de todos os níveis acima
 - O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo que, dados dois nós a e b, b descendente de a,
 os n bits menos significativos de b são iguais ao ID de a, onde n é o comprimento do ID de a.
-- Desse modo, dados dois descendentes de um nó c, todos os bits menos significativos deles que coincidem
+Desse modo, dados dois descendentes de um nó c, todos os bits menos significativos deles que coincidem
 (todos os que vêm antes do primeiro que difere) são iguais ao ID de c (ignorando zeros à esquerda).
-- Usando apenas as operações ???,
-para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais,
-pode-se descobrir o ID do ancestral comum
+Usando apenas as operações que podem ser vistas nos algoritmos [X] e [Y],
+para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP
 - A quantidade de instruções é fixa, portanto, a complexidade é constante
 
-Encontrar o nó a partir do ID
+Falta, então, apenas o segundo passo, o de encontrar o nó a partir do ID.
 - Usar os IDs como índices em um arranjo seria simples, mas impraticável:
-poderiam ser necessários arranjos com milhões de posições e apenas algumas centenas ocupadas.
-- Usar uma função de espalhamento (hash): podem haver colisões
-- Buscar uma função que não cause colisões
+poderiam ser necessários arranjos com milhões de posições (devido a como os IDs são formados) e apenas algumas centenas ocupadas.
+- Usar uma função de espalhamento (hash): a maneira mais simples seria apenas aplicar a operação módulo com algum m (id mod m).
+No entanto, podem haver colisões (dois IDs diferentes podem ser congruentes módulo m).
+Isso pode ser tratado, mas acarretaria acessos adicionais à memória, o que não é desejável.
+- Buscar uma função que não cause colisões: o mesmo que a função de espalhamento, porém utilizando um valor de módulo que não cause colisões.
+Pode exigir arranjos cujo tamanho é algumas vezes maior que a quantidade de nós, mas aparenta compensar quando comparado a tratar colisões de outros modos.
+Este foi o método escolhido.
+
+
 
 Detalhes de como os IDs são formados
 Função (algoritmo) em si
 Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve
 
-Medições de tempo (repetições):
+
+SEÇÃO
+
+(Medições de tempo (repetições):
 Resultados, comparação
 O novo método se mostrou, em geral, mais demorado que o método simples, mas mais rápido que o hwloc.
-No entanto, ele funciona em casos de hierarquias assimétricas, assim como o hwloc, diferentemente do método simples.
+No entanto, ele funciona em casos de hierarquias assimétricas, assim como o hwloc, diferentemente do método simples.)
+O desempenho do algoritmo desenvolvido foi comparado com o algoritmo simples e
 
 Outras medições?
 
