@@ -28,66 +28,62 @@ identificado que ela é uma
 
 Diante dessas considerações, a função que encontra o ancestral comum mais próximo entre dois nós foi escolhida como alvo de otimizações.
 Ela é uma das funções implementadas no hwloc com complexidade O(altura) e está entre as de uso mais significativo no HieSchella.
+Na seção a seguir, será discutido como essa função poderia ser implementada de forma mais eficiente e quais as implicações de diferentes abordagens.
 
 
+SEÇÂO
 
  um método 
 
-A função que encontra o ancestral comum mais próximo
-recebe dois nós como entrada (e possivelmente algumas estruturas adicionais, se houver necessidade)
+A função que encontra o ancestral comum mais próximo recebe dois nós como entrada (e possivelmente algumas estruturas adicionais, se houver necessidade)
 e retorna um nó (o ancestral) como saída.
-Cada par de nós em uma árvore tem exatamente um ancestral mais próximo.
+Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
 
 (Definir ancestral e descendente?)
 
 Abordagem simples - complexidade - questões relacionadas à memória
-A maneira provavelmente mais intuitiva para se descobrir o nó ancestral desejado
-é "subir" pela árvore, isto é.
+A maneira provavelmente mais intuitiva para se descobrir o ACMP é "subir" pela árvore, isto é.
 No entanto, é necessário 
 Por ser uma , será referida como método simples.
+O(altura) - A altura geralmente não deve ser muito grande
 Tratamento de hierarquias assimétricas
 
 Considerando a estrutura de árvore apenas, a única informação que relaciona um nó aos seus ancestrais
 são as ligações entre um nó e seus filhos (ou, no outro sentido, entre cada nó e seu pai).
-Todas as sequências de uma ou mais ligações de filho para pai a partir de um nó, ou seja,
-entre o nó e seu pai, entre este e o pai dele, e assim por diante, definem os ancestrais do nó dado.
-Isto indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
-para haver outra maneira além da simples de se encontrar o ancestral comum ACMP
+Todas as sequências de uma ou mais ligações de filho para pai a partir de um nó (ou seja,
+entre o nó e seu pai, entre este e o pai dele, e assim por diante) definem os ancestrais do nó.
+Isso indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
+para ser possível encontrar o ACMP com algum método além do simples.
 Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
 Para uma dada árvore, que representa uma topologia:
-- Atribuir um valor (chamado de ID) a cada nó da árvore.
-- Definir uma função que receba o ID de dois nós distintos e tenha como resultado o nó ancestral comum mais próximo.
-Esses IDs (em conjunto com outras informações associadas
-a cada nó individualmente ou à árvore como um todo conforme necessário)
-podem estabelecer alguma relação entre um nó e seus ancestrais
-além da que já existe por meio das ligações da árvore.
+- Atribuir um valor (chamado de ID) a cada nó da árvore
+- Definir uma função ACMP_{IDs} que receba o ID de dois nós distintos e tenha como resultado o nó ancestral comum mais próximo.
+Esses IDs (em conjunto com outras informações associadas a cada nó individualmente ou à árvore como um todo conforme necessário)
+podem estabelecer alguma relação entre um nó e seus ancestrais além da que já existe por meio das ligações da árvore.
 
 Idealmente, essa função deveria ser *processada* em tempo constante.
 Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
-Ressalva: mesmo que a quantidade de instruções executadas pelo processador
-seja constante, a maneira como a memória é acessada pode aumentar o tempo,
-especialmente quando há outras tarefas fazendo uso da memória.
-(? Isso ser visto... (exemplo à frente))
+No entanto, é preciso lembrar que, mesmo que a quantidade de instruções executadas pelo processador seja constante,
+a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
+(? Isso pode ser visto... (exemplo à frente com matriz?))
 
-Com isso em mente, podemos definir tais funções usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais.
+Com isso em mente, podemos definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
+tais como as operações aritméticas e operações lógicas bit-a-bit.
 
-Uma tentativa possível é atribuir a cada um dos n nós da árvore um ID único entre 0 e n-1
-e usar esses IDs como índices em uma matriz n x n A que possui, na posição A(i,j),
-o ancestral comum entre o nó de ID i e o nó de ID j.
-No entanto, ingênua, pois esse espaço O(n^2) ocupado na memória resultaria em problemas
-como sujar a cache da aplicação.
+Uma possibilidade é relacionar cada par de nós ao seu ACMP por meio de uma matriz
+em que cada linha representa um nó da árvore, assim como cada coluna, e o cruzamento contém o ACMP entre o nó da linha e o nó da coluna.
+Para isso, pode-se atribuir a cada um dos n nós da árvore um ID único entre 0 e n-1 e usar esses IDs como índices na matriz,
+que terá, na posição A(i,j), o ACMP entre o nó de ID i e o nó de ID j.
+No entanto, esta é uma estratégia ingênua, pois esse espaço O(n^2) ocupado na memória resultaria em problemas como sujar a cache da aplicação.
 
-Outra possibilidade idealizada:
-Dois passos:
+Outra possibilidade foi idealizada, dividindo a função ACMP_{IDs} em dois passos:
 - dados os IDs de dois nós, descobrir o ID do ancestral,
 - encontrar o nó que possui esse ID.
-
-Em linhas gerais
+Em linhas gerais, o funcionamento se baseia no seguinte:
 - O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
-- O ID de um dado nó é mais comprido que o de todos os nós de todos os níveis acima
-- Os IDs são formados de maneira que, dados dois nós a e b, b descendente de a,
-os n bits menos significativos de a são iguais ao ID de b,
-onde n é o comprimento do ID de b.
+- O ID de um nó é mais comprido que o de todos os nós de todos os níveis acima
+- O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo que, dados dois nós a e b, b descendente de a,
+os n bits menos significativos de b são iguais ao ID de a, onde n é o comprimento do ID de a.
 - Desse modo, dados dois descendentes de um nó c, todos os bits menos significativos deles que coincidem
 (todos os que vêm antes do primeiro que difere) são iguais ao ID de c (ignorando zeros à esquerda).
 - Usando apenas as operações ???,
@@ -113,6 +109,15 @@ No entanto, ele funciona em casos de hierarquias assimétricas, assim como o hwl
 Outras medições?
 
 Culpado é o módulo! Módulo sem divisões.
+
+
+#######
+
+Código em C++
+Testes usando templates, o que permite a otimização das chamadas para não afetarem as medições com indireções.
+
+
+#######
 
 Melhorias e alternativas não testadas:
 - Eliminar multiplicações (mas testes feitos mostram que não têm grande custo)
