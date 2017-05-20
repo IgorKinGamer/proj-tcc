@@ -1,0 +1,43 @@
+% Seção sobre testes de desempenho
+
+
+POR QUÊ
+
+Comparar algoritmos
+Foram realizados testes de desempenho para comparar o tempo tomado ao se encontrar repetidamente o ACMP entre os nós folhas de uma árvore
+
+COMO
+
+Um programa foi desenvolvido, também na linguagem C++, para realizar os testes de desempenho.
+Código template - facilitar a definição equivalente dos testes para todos os algoritmos, mas ainda assim permitir que o compilador otimizasse as chamadas, evitando custos adicionais durante os testes devido à hierarquia de classes utilizada.
+
+Os testes consistem em encontrar repetidamente o ACMP entre os nós folhas de uma dada árvore com os diferentes algoritmos -- o existente no hwloc e os implementados.
+Cada vez que as estruturas necessárias são criadas e os testes são executados sobre elas com um determinado algoritmo, obtém-se uma observação, que é o tempo que levou para realizar a quantidade especificada de repetições da função ACMP entre os nós folhas da árvore com o algoritmo.
+
+Para cada algoritmo, uma árvore de estrutura equivalente é criada (as estruturas de dados dependem do algoritmo) a partir dos graus fornecidos como entrada.
+(Como os graus são usados para montar a árvore -- se não for explicado antes)
+Para obter uma observação de um algoritmo, uma lista contendo todos os pares possíveis de nós folhas (todas as combinações de duas folhas) é criada.
+Esta lista é embaralhada, usando uma semente fixa, de modo que a ordem pseudo-aleatória é a mesma para todas as execuções de todos os algoritmos sobre esta árvore.
+
+Uma observação é obtida por meio de uma etapa de aquecimento seguida de uma de medição, na qual o tempo total das repetições da função ACMP é medido.
+Ambas as etapas consistem em algum número de rodadas, o qual geralmente deve estar na casa de alguns milhares, dependendo do tamanho da árvore, para que o tempo medido seja significativo.
+Em cada rodada, a lista previamente embaralhada de pares de folhas é varrida e, para cada par, o ACMP é encontrado usando o algoritmo em questão.
+
+As observações dos diferentes algoritmos são realizadas de forma intercalada.
+O número de observações obtidas para cada algoritmo em uma execução do programa depende de dois parâmetros, número de iterações externas e de iterações internas.
+O número de iterações internas é a quantidade de observações que serão obtidas para um dos algoritmos antes de passar para outro.
+A execução da quantidade de iterações internas para cada algorimo compõe uma iteração externa.
+Esta forma de especificar a quantidade de observações originou-se nas etapas iniciais dos testes, para facilitar a visualização dos resultados, mas foi mantida.
+No entanto, julga-se melhor usar poucas iterações internas e mais externas para evitar que eventuais condições temporárias da máquina, causadas por elementos externos ao programa, afetem diversas observações de apenas um dos algoritmos.
+
+O programa também permite escolher quais algoritmos serão testados.
+Saída - arquivo
+
+(Tabela com os parâmetros?)
+
+
+RESULTADOS
+
+Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido (apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
+Nessas condições e na máquina A, os resultados apresentados (na tabela [X]) foram obtidos.
+
