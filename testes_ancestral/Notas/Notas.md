@@ -14,6 +14,7 @@ Graus de algumas hierarquias:
 - [2 1 1 8 1 1 1 2](https://www.open-mpi.org/projects/hwloc/lstopo/images/2XeonE5+2ocl.v1.11.png)
 - [2 2 1 5 1 1 1 1 8](https://www.open-mpi.org/projects/hwloc/lstopo/images/2Power8.v1.11.png)
 - [1 4 1 1 9 2 1 1 4](https://www.open-mpi.org/projects/hwloc/lstopo/images/KNL.SNC4.H50.v1.11.png) (ignorando `MCDRAM`s)
+- [1 61 (sessenta e um!) 1 1 1 4](https://www.open-mpi.org/projects/hwloc/lstopo/images/KNC.v1.11.png)
 
 A princípio, os testes parecem mostrar que a abordagem simples para encontrar
 o ancestral comum tem desempenho melhor que as outras em geral, e a nova
