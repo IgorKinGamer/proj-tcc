@@ -36,8 +36,23 @@ Saída - arquivo
 (Tabela com os parâmetros?)
 
 
-RESULTADOS
+Os resultados de testes feitos indicaram que a operação mais custosa no novo método era o módulo.
+No entanto, 
+Divisão com denominador previamente conhecido [referência]
+Não em tempo de compilação, mas quando se está montando as estruturas.
+Portanto, é possível substituir essa operação de módulo por outras operações mais baratas, a saber, duas multiplicações, um deslocamento e uma subtração.
+Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X]
+
+
+\subsection{RESULTADOS}
 
 Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido (apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
 Nessas condições e na máquina A, os resultados apresentados (na tabela [X]) foram obtidos.
 
+Comparação - O desempenho do algoritmo desenvolvido foi comparado com o do algoritmo simples, o do hwloc (e o que usa a matriz)(?)
+
+As árvores utilizadas nos testes correspondem à hierarquia de memória de máquinas reais, apresentadas no site do projeto hwloc, como representadas pelo programa lstopo.
+Assim, os resultados refletem a diferença dos algoritmos quando operando sobre hierarquias reais.
+(Referência: The Best of lstopo - https://www.open-mpi.org/projects/hwloc/lstopo/)
+
+Outras medições?

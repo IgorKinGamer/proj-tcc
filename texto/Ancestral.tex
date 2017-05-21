@@ -10,16 +10,11 @@
 
 \begin{document} %%%
 
-Motivação
+\chapter{Implementação}
 
-(Analisei hwloc
-Vi complexidade das funções
-Em geral $O(1)$ ou $O(altura)$
-Uso no HieSchella)
-
-Conceitos:
+(Conceitos:
 - Grau de um nível: o maior entre os graus dos nós de um nível.
-É comum todos os graus dos nós de um nível serem iguais, mas, em hierarquias assimétricas, isso não ocorre.
+É comum todos os graus dos nós de um nível serem iguais, mas, em hierarquias assimétricas, isso não ocorre.)
 
 O hwloc possui diversas funções de percorrimento.
 Estas permitem acessar nós da árvore que representa a hierarquia de forma absoluta ou relativa a outros nós.
@@ -35,8 +30,6 @@ cujo objetivo é prover portabilidade de performance, característica presente q
 uma mesma aplicação rode em diferentes plataformas utilizando os núcleos com eficiência.
 Foram identificadas as chamadas mais importantes a funções do hwloc no HieSchella para se ter uma referência
 de quais funções são mais relevantes para o desempenho dentro de um projeto real.
-
-identificado que ela é uma
 
 Diante dessas considerações, a função que encontra o ancestral comum mais próximo entre dois nós foi escolhida como alvo de otimizações.
 Ela é uma das funções implementadas no hwloc com complexidade $O(altura)$ e está entre as de uso mais significativo no HieSchella.
@@ -129,25 +122,11 @@ Este foi o método escolhido.
 Detalhes de como os IDs são formados
 Função (algoritmo) em si
 Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve
+Funciona em casos de hierarquias assimétricas, simples não
+Limitação: Quantidade de bits necessária - Solução parcial: 'Esconder' níveis cujos nós têm só um filho (níveis de grau um).
 
-
-SEÇÃO
 
 Código em C++
-Testes usando templates, o que permite a otimização das chamadas para não afetarem as medições com indireções.
-
-
-SEÇÃO Testes
-
-(Medições de tempo (repetições):
-Resultados, comparação
-O novo método se mostrou, em geral, mais demorado que o método simples, mas mais rápido que o hwloc.
-No entanto, ele funciona em casos de hierarquias assimétricas, assim como o hwloc, diferentemente do método simples.)
-O desempenho do algoritmo desenvolvido foi comparado com o algoritmo simples e
-
-Outras medições?
-
-Culpado é o módulo! Módulo sem divisões.
 
 
 SEÇÃO Futuro
