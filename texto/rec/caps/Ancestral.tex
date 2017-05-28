@@ -1,14 +1,10 @@
 \chapter{Implementação}
 
-(Conceitos:
-- Grau de um nível: o maior entre os graus dos nós de um nível.
-É comum todos os graus dos nós de um nível serem iguais, mas, em hierarquias assimétricas, isso não ocorre.)
-
 O hwloc possui diversas funções de percorrimento.
 Estas permitem acessar nós da árvore que representa a hierarquia de forma absoluta ou relativa a outros nós.
 Por exemplo, é possível encontrar o nó com um determinado índice dentro de um dado nível,
 ou, a partir de algum nó, o próximo no mesmo nível.
-*
+\tratar{Listar funções}
 
 Essas funções foram analisadas quanto à complexidade com o objetivo de identificar pontos que poderiam ser melhorados do ponto de vista do desempenho.
 Essa análise revelou que, em geral, elas têm tempo constante ($O(1)$) ou linear na altura da árvore ($O(altura)$).
@@ -19,7 +15,7 @@ Foram identificadas as chamadas mais importantes a funções do hwloc no HieSche
 de quais funções são mais relevantes para o desempenho dentro de um projeto real.
 
 Diante dessas considerações, a função que encontra o ancestral comum mais próximo entre dois nós foi escolhida como alvo de otimizações.
-Ela é uma das funções implementadas no hwloc com complexidade $O(altura)$ e está entre as de uso mais significativo no HieSchella.
+Ela é uma das funções implementadas no hwloc com complexidade $O(\mathit{altura})$ e está entre as de uso mais significativo no HieSchella.
 Na seção a seguir, será discutido como essa função poderia ser implementada de forma mais eficiente e quais as implicações de diferentes abordagens.
 
 
@@ -29,11 +25,9 @@ A função que encontra o ancestral comum mais próximo recebe dois nós como en
 e retorna um nó (o ancestral) como saída.
 Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
 
-(Definir ancestral e descendente?)
-
 \subsection{Abordagem inicial}
 
-A maneira provavelmente mais intuitiva de se descobrir o ACMP é "subir" pela árvore, isto é, a partir dos dois nós dos quais se deseja encontrar o ACMP,
+A maneira provavelmente mais intuitiva de se descobrir o ACMP é ``subir'' pela árvore, isto é, a partir dos dois nós dos quais se deseja encontrar o ACMP,
 seguir as ligações em direção aos pais até se chegar ao mesmo nó.
 Por ser um método que utiliza apenas a estrutura de árvore em si, sem adição de outras informações, será referido como método simples.
 Sua complexidade é $O(altura)$.
@@ -55,15 +49,15 @@ para ser possível encontrar o ACMP com algum método além do simples.
 Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
 Para uma dada árvore que representa uma topologia:
 - Atribuir um valor (chamado de ID) a cada nó da árvore
-- Definir uma função $ACMP_{IDs}$ que receba o ID de dois nós distintos e tenha como resultado o nó ACMP.
+- Definir uma função \ACMPIDs que receba o ID de dois nós distintos e tenha como resultado o nó ACMP.
 Esses IDs (em conjunto com outras informações associadas a cada nó individualmente ou à árvore como um todo conforme necessário)
 podem estabelecer alguma relação entre um nó e seus ancestrais além da que já existe por meio das ligações da árvore.
 
-Idealmente, essa função $ACMP_{IDs}$ deveria ser *processada* em tempo constante.
+Idealmente, essa função \ACMPIDs deveria ser \textit{processada} em tempo constante.
 Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
 No entanto, é preciso lembrar que, mesmo que a quantidade de instruções executadas pelo processador seja constante,
 a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
-(? Isso pode ser visto... (exemplo à frente com matriz?))
+\tratar{(? Isso pode ser visto... (exemplo à frente com matriz?))}
 
 Com isso em mente, podemos definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
 tais como as operações aritméticas e operações lógicas bit-a-bit.
@@ -72,8 +66,8 @@ tais como as operações aritméticas e operações lógicas bit-a-bit.
 
 Uma possibilidade é relacionar cada par de nós ao seu ACMP por meio de uma matriz
 em que cada linha representa um nó da árvore, assim como cada coluna, e o cruzamento contém o ACMP entre o nó da linha e o nó da coluna.
-Para isso, pode-se atribuir a cada um dos n nós da árvore um ID único entre 0 e n-1 e usar esses IDs como índices na matriz,
-que terá, na posição A(i,j), o ACMP entre o nó de ID i e o nó de ID j.
+Para isso, pode-se atribuir a cada um dos $n$ nós da árvore um ID único entre $0$ e $n-1$ e usar esses IDs como índices na matriz,
+que terá, na posição $A(i,j)$, o ACMP entre o nó de ID $i$ e o nó de ID $j$.
 No entanto, esta é uma estratégia ingênua, pois esse espaço $O(n^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
 Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
 Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o [algoritmo X].
@@ -85,34 +79,38 @@ Isto, no entanto, não altera a complexidade espacial.
 
 Outra possibilidade foi idealizada, dividindo a função $ACMP_{IDs}$ em dois passos:
 \begin{enumerate}
-	\item dados os IDs de dois nós, descobrir o ID do ancestral,
+	\item dados os IDs de dois nós, descobrir o ID do ancestral;
 	\item encontrar o nó que possui esse ID.
 \end{enumerate}
 Em linhas gerais, o funcionamento do primeiro passo se baseia no seguinte:
-- O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
-- O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo que, dados dois nós a e b, b descendente de a,
-os n bits menos significativos de b são iguais ao ID de a, onde n é o comprimento do ID de a.
-Desse modo, dados dois descendentes de um nó c, todos os bits menos significativos deles que coincidem
-(todos os que vêm antes do primeiro que difere) são iguais ao ID de c (ignorando zeros à esquerda).
+%- O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
+O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo que, dados dois nós \no{a} e \no{b}, \no{b} descendente de \no{a},
+os bits menos significativos de \no{b} são iguais ao ID de \no{a}.
+Desse modo, dados dois descendentes de um nó \no{c}, todos os bits menos significativos deles que coincidem
+(todos os que vêm antes do primeiro que difere) são iguais ao ID de \no{c} (ignorando zeros à esquerda).
 Usando apenas as operações que podem ser vistas nos algoritmos [X] e [Y],
-para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP
-- A quantidade de instruções é fixa, portanto, a complexidade é constante
+para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
+A quantidade de instruções é fixa, portanto, a complexidade é constante.
 
 \input{rec/caps/FormaIds}
 
 Falta, então, apenas o segundo passo, o de encontrar o nó a partir do ID.
-- Usar os IDs como índices em um arranjo seria simples, mas impraticável:
-poderiam ser necessários arranjos com milhões de posições (devido a como os IDs são formados) e apenas algumas centenas ocupadas.
-- Usar uma função de espalhamento (hash): a maneira mais simples seria apenas aplicar a operação módulo com algum m (id mod m).
-No entanto, podem haver colisões (dois IDs diferentes podem ser congruentes módulo m).
-Isso pode ser tratado, mas acarretaria acessos adicionais à memória, o que não é desejável.
-- Buscar uma função que não cause colisões: o mesmo que a função de espalhamento, porém utilizando um valor de módulo que não cause colisões.
-Pode exigir arranjos cujo tamanho é algumas vezes maior que a quantidade de nós, mas aparenta compensar quando comparado a tratar colisões de outros modos.
-Este foi o método escolhido.
+Algumas opções para isso seriam:
+\begin{itemize}
+	\item Usar os IDs como índices em um arranjo: Seria simples, mas impraticável -- poderiam ser necessários arranjos com milhões de posições (devido a como os IDs são formados) e apenas algumas centenas ocupadas.
+	\item Usar uma função de espalhamento (\textit{hash}): a maneira mais simples seria apenas aplicar a operação módulo com algum $m$ ($\mathrm{id} \bmod m$).
+	No entanto, podem haver colisões (dois IDs diferentes podem ser congruentes módulo m).
+	Isso pode ser tratado, mas acarretaria acessos adicionais à memória, o que não é desejável.
+	\tratar{Exemplo}
+	\item Buscar uma função que não cause colisões: o mesmo que a função de espalhamento, porém utilizando um valor de módulo que não cause colisões.
+	Pode exigir arranjos cujo tamanho é algumas vezes maior que a quantidade de nós, mas aparenta compensar quando comparado a tratar colisões de outros modos.
+	\tratar{Exemplo}
+	Este foi o método escolhido.
+\end{itemize}
 
 
 
-Detalhes de como os IDs são formados
+%Detalhes de como os IDs são formados
 Função (algoritmo) em si
 Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve
 Funciona em casos de hierarquias assimétricas, simples não
@@ -122,11 +120,11 @@ Limitação: Quantidade de bits necessária - Solução parcial: 'Esconder' nív
 Código em C++
 
 
-SEÇÃO Futuro
+%SEÇÃO Futuro
 
-Melhorias e alternativas não testadas:
-- Eliminar multiplicações (mas testes feitos mostram que não têm grande custo)
-- Todos os nós em um só arranjo
-- Máscaras Ou e OuExclusivo
+%Melhorias e alternativas não testadas:
+%- Eliminar multiplicações (mas testes feitos mostram que não têm grande custo)
+%- Todos os nós em um só arranjo
+%- Máscaras Ou e OuExclusivo; Outras maneiras de diminuir o tamanho
 
-HieSchella - hwloc\_get\_ancestor\_obj\_by\_type
+%HieSchella - hwloc\_get\_ancestor\_obj\_by\_type
