@@ -84,8 +84,10 @@ Isto, no entanto, não altera a complexidade espacial.
 \subsection{Função de espalhamento}
 
 Outra possibilidade foi idealizada, dividindo a função $ACMP_{IDs}$ em dois passos:
-- dados os IDs de dois nós, descobrir o ID do ancestral,
-- encontrar o nó que possui esse ID.
+\begin{enumerate}
+	\item dados os IDs de dois nós, descobrir o ID do ancestral,
+	\item encontrar o nó que possui esse ID.
+\end{enumerate}
 Em linhas gerais, o funcionamento do primeiro passo se baseia no seguinte:
 - O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
 - O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo que, dados dois nós a e b, b descendente de a,
@@ -96,7 +98,7 @@ Usando apenas as operações que podem ser vistas nos algoritmos [X] e [Y],
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP
 - A quantidade de instruções é fixa, portanto, a complexidade é constante
 
-\input{FormaIds}
+\input{rec/caps/FormaIds}
 
 Falta, então, apenas o segundo passo, o de encontrar o nó a partir do ID.
 - Usar os IDs como índices em um arranjo seria simples, mas impraticável:

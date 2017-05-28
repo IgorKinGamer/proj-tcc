@@ -1,0 +1,69 @@
+\documentclass[a5paper]{ufsc-thesis}
+
+% UTF-8
+\usepackage[utf8]{inputenc}
+% Fonte
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+% Português
+\usepackage[brazil]{babel}
+
+%
+\usepackage{amsmath}
+%
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+%
+\usepackage{xparse}
+
+%
+\DeclareMathOperator \pai {pai}
+\newcommand \id[1]    {\ensuremath{\mathrm{id}_{#1}}}
+\newcommand \idstr[1] {\ensuremath{\id{#1}^{\mathrm{str}}}}
+
+
+%\usepackage{cmap}
+%\usepackage[alf]{abntex2cite}
+
+\usepackage[printonlyused]{acronym} 
+
+% Preâmbulo
+\titulo{ROTM}
+\autor{Eu}
+\data{\today}
+\instituicao{Universidade Federal de Santa Catarina}
+\local{Florianópolis, SC}
+\tipotrabalho{TCC}
+\orientador{Orientador}
+%\coorientador{José {}da Silva Sauro}
+\programa{Programa de Graduação em Ciências da Computação}
+\preambulo{Trabalho}
+\centro{Centro Tecnológico -- CTC}
+\assuntos{Ciências da Computação,Modelos,Teses,OpenSource,LaTeX}
+
+\begin{document} %%%
+
+% Inicia parte pré-textual do documento capa, folha de rosto, folha de
+% aprovação, aprovação, resumo, lista de tabelas, lista de figuras, etc.
+\imprimircapa
+\imprimirfolhaderosto*
+
+\begin{siglas}
+	\item[tst] tst
+	\item[etc] ...
+\end{siglas}
+
+%\include{init/pretextuais}
+%\clearpage
+%\imprimirfichacatalografica
+%\tableofcontents
+
+\textual
+
+%\include{rec/caps/introducao}
+\include{rec/caps/Ancestral}
+%\include{rec/caps/Testes}
+
+\bibliography{ref}
+
+\end{document}
