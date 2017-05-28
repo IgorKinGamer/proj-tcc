@@ -1,21 +1,31 @@
 % Seção sobre testes de desempenho
 
+\chapter{Testes de desempenho}
+%POR QUÊ
 
-POR QUÊ
-
-Comparar algoritmos
-Foram realizados testes de desempenho para comparar o tempo tomado ao se encontrar repetidamente o ACMP entre os nós folhas de uma árvore
-
-COMO
+Com o objetivo de avaliar o desempenho do algoritmo desenvolvido, foram realizados testes
+que permitiram comparar o desempenho das diferentes abordagens.
+Foi medido o tempo tomado pelos algoritmos
+ao se encontrar repetidamente o ACMP entre os nós folhas de uma árvore.
+Com esses dados, analisados
 
 Um programa foi desenvolvido, também na linguagem C++, para realizar os testes de desempenho.
-Código template - facilitar a definição equivalente dos testes para todos os algoritmos, mas ainda assim permitir que o compilador otimizasse as chamadas, evitando custos adicionais durante os testes devido à hierarquia de classes utilizada.
+Foi utilizada a funcionalidade de templates da linguagem para facilitar a definição equivalente dos testes para todos os algoritmos, mas ainda assim permitir que o compilador otimizasse as chamadas, evitando custos adicionais durante os testes devido à hierarquia de classes utilizada.
+O programa depende da biblioteca do hwloc.
+Os valores medidos são escritos em um arquivo no formato CSV (Valores Separados por Vírgula -- {\it Comma-Separated Values})
+
+%COMO
+\section{Estrutura dos testes}
 
 Os testes consistem em encontrar repetidamente o ACMP entre os nós folhas de uma dada árvore com os diferentes algoritmos -- o existente no hwloc e os implementados.
 Cada vez que as estruturas necessárias são criadas e os testes são executados sobre elas com um determinado algoritmo, obtém-se uma observação, que é o tempo que levou para realizar a quantidade especificada de repetições da função ACMP entre os nós folhas da árvore com o algoritmo.
 
 Para cada algoritmo, uma árvore de estrutura equivalente é criada (as estruturas de dados dependem do algoritmo) a partir dos graus fornecidos como entrada.
-(Como os graus são usados para montar a árvore -- se não for explicado antes)
+%(Como os graus são usados para montar a árvore -- se não for explicado antes)
+Os graus são recebidos como uma lista de inteiros positivos.
+O i-ésimo será o grau do nível $i-1$.
+Deste modo, se os graus recebidos são $(g_1, g_2, ..., g_n)$, a raiz terá $g_1$ filhos, cada um com $g_2$ filhos, e assim por diante, até os nós do nível $n-1$, que terão $g_n$ filhos cada.
+
 Para obter uma observação de um algoritmo, uma lista contendo todos os pares possíveis de nós folhas (todas as combinações de duas folhas) é criada.
 Esta lista é embaralhada, usando uma semente fixa, de modo que a ordem pseudo-aleatória é a mesma para todas as execuções de todos os algoritmos sobre esta árvore.
 
@@ -31,17 +41,17 @@ Esta forma de especificar a quantidade de observações originou-se nas etapas i
 No entanto, julga-se melhor usar poucas iterações internas e mais externas para evitar que eventuais condições temporárias da máquina, causadas por elementos externos ao programa, afetem diversas observações de apenas um dos algoritmos.
 
 O programa também permite escolher quais algoritmos serão testados.
-Saída - arquivo
+Os possíveis são o simples, o que utiliza as novas estruturas, o que utiliza uma matriz e o implementado no hwloc.
 
 (Tabela com os parâmetros?)
 
 
-Os resultados de testes feitos indicaram que a operação mais custosa no novo método era o módulo.
+(Os resultados de testes feitos indicaram que a operação mais custosa no novo método era o módulo.
 No entanto, 
 Divisão com denominador previamente conhecido [referência]
 Não em tempo de compilação, mas quando se está montando as estruturas.
 Portanto, é possível substituir essa operação de módulo por outras operações mais baratas, a saber, duas multiplicações, um deslocamento e uma subtração.
-Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X]
+Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X])
 
 
 \subsection{RESULTADOS}

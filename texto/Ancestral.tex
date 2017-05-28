@@ -1,15 +1,3 @@
-\documentclass{ufsc-thesis}
-
-% UTF-8
-\usepackage[utf8]{inputenc}
-% Fonte
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-% Português
-\usepackage[brazil]{babel}
-
-\begin{document} %%%
-
 \chapter{Implementação}
 
 (Conceitos:
@@ -20,11 +8,10 @@ O hwloc possui diversas funções de percorrimento.
 Estas permitem acessar nós da árvore que representa a hierarquia de forma absoluta ou relativa a outros nós.
 Por exemplo, é possível encontrar o nó com um determinado índice dentro de um dado nível,
 ou, a partir de algum nó, o próximo no mesmo nível.
+*
+
 Essas funções foram analisadas quanto à complexidade com o objetivo de identificar pontos que poderiam ser melhorados do ponto de vista do desempenho.
 Essa análise revelou que, em geral, elas têm tempo constante ($O(1)$) ou linear na altura da árvore ($O(altura)$).
-. [(Nota?) Em análises de complexidade, a altura de uma árvore é comumente associada com log N, onde N é o número de nós.
-. Entretanto, isso é válido para árvores com o mesmo grau em todos os níveis.
-. Em árvores que representam hierarquias, os níveis podem ter graus diferentes, logo, essa associação não é possível.]
 Além disso, foi analisado um projeto de código aberto que utiliza o hwloc, HieSchella [ref],
 cujo objetivo é prover portabilidade de performance, característica presente quando se consegue que
 uma mesma aplicação rode em diferentes plataformas utilizando os núcleos com eficiência.
@@ -46,7 +33,6 @@ Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
 
 \subsection{Abordagem inicial}
 
-(Abordagem simples - complexidade - questões relacionadas à memória)
 A maneira provavelmente mais intuitiva de se descobrir o ACMP é "subir" pela árvore, isto é, a partir dos dois nós dos quais se deseja encontrar o ACMP,
 seguir as ligações em direção aos pais até se chegar ao mesmo nó.
 Por ser um método que utiliza apenas a estrutura de árvore em si, sem adição de outras informações, será referido como método simples.
@@ -66,7 +52,7 @@ Assim, todas as sequências de uma ou mais ligações de filho para pai a partir
 entre o nó e seu pai, entre este e o pai dele, e assim por diante) definem os ancestrais do nó.
 Isso indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
 para ser possível encontrar o ACMP com algum método além do simples.
-!Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
+Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
 Para uma dada árvore que representa uma topologia:
 - Atribuir um valor (chamado de ID) a cada nó da árvore
 - Definir uma função $ACMP_{IDs}$ que receba o ID de dois nós distintos e tenha como resultado o nó ACMP.
@@ -89,6 +75,9 @@ em que cada linha representa um nó da árvore, assim como cada coluna, e o cruz
 Para isso, pode-se atribuir a cada um dos n nós da árvore um ID único entre 0 e n-1 e usar esses IDs como índices na matriz,
 que terá, na posição A(i,j), o ACMP entre o nó de ID i e o nó de ID j.
 No entanto, esta é uma estratégia ingênua, pois esse espaço $O(n^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
+Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
+Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o [algoritmo X].
+Isto, no entanto, não altera a complexidade espacial.
 
 (Algoritmo matriz)
 
@@ -106,6 +95,8 @@ Desse modo, dados dois descendentes de um nó c, todos os bits menos significati
 Usando apenas as operações que podem ser vistas nos algoritmos [X] e [Y],
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP
 - A quantidade de instruções é fixa, portanto, a complexidade é constante
+
+\input{FormaIds}
 
 Falta, então, apenas o segundo passo, o de encontrar o nó a partir do ID.
 - Usar os IDs como índices em um arranjo seria simples, mas impraticável:
@@ -137,5 +128,3 @@ Melhorias e alternativas não testadas:
 - Máscaras Ou e OuExclusivo
 
 HieSchella - hwloc\_get\_ancestor\_obj\_by\_type
-
-\end{document} %%%
