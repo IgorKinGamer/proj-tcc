@@ -1,0 +1,14 @@
+% Matriz
+\begin{algorithm}
+	\caption{Ancestral usando matriz}
+	\label{alg:matriz}
+	\newcommand \linha {\mathrm{linha}}
+	\newcommand \coluna {\mathrm{coluna}}
+	\begin{algorithmic}
+		\Function{ancestral\_matriz}{Matriz$\langle$Nó$\rangle$ $M$, Nó \no{a}, Nó \no{b}}
+			\State $\linha  \gets \max(\id{a}, \id{b})$
+			\State $\coluna \gets \min(\id{a}, \id{b})$
+			\State retornar $M(\linha, \coluna)$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
