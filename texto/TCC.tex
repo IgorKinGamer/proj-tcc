@@ -19,12 +19,24 @@
 %
 \newcommand \tratar[1] {\textcolor{red}{!!! #1 !!!}}
 %
+\DeclareMathOperator \bigO {O}
+\newcommand \Oalt {$\bigO(\mathit{altura})$}
+%
 \newcommand \no[1] {$#1$}
 \DeclareMathOperator \pai {pai}
 \newcommand \id[1]    {\ensuremath{\mathrm{id}_{#1}}}
 \newcommand \idstr[1] {\ensuremath{\id{#1}^{\mathrm{str}}}}
-\newcommand \ACMPIDs {$ACMP_{IDs}$}
+\newcommand \fACMP {$\mathrm{ACMP}$}
+\newcommand \ACMPIDs {$\mathrm{ACMP}_{\mathrm{IDs}}$}
 
+%%%%%%% Algoritmos %%%%%%%
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\floatname{algorithm}{Algoritmo}
+\newcommand \var[1] {\mathrm{#1}}
+\newcommand \Cmnt[1] {\textcolor{green!50!black}{// #1}} %alg
+\DeclareMathOperator \OuExBit {\mathbf{OuEx_{bit-a-bit}}}
+\DeclareMathOperator \EBit {\mathbf{E_{bit-a-bit}}}
 
 %\usepackage{cmap}
 %\usepackage[alf]{abntex2cite}
