@@ -73,6 +73,8 @@ As árvores utilizadas nos testes correspondem à hierarquia de memória de máq
 Assim, os resultados refletem a diferença dos algoritmos quando operando sobre hierarquias reais.
 %\tratar{(Referência: The Best of lstopo - https://www.open-mpi.org/projects/hwloc/lstopo/)}
 
+\tratar{especificar parâmetros utilizados}
+
 Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido.
 %(apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
 No entanto, em cenários reais, os nós seriam buscados para se obter alguma informação sobre eles, portanto, foi adicionado um acesso a um valor qualquer de cada ACMP encontrado para simular isso.
@@ -100,4 +102,6 @@ Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algor
 
 %Comparação - O desempenho do algoritmo desenvolvido foi comparado com o do algoritmo simples, o do hwloc (e o que usa a matriz)(?)
 
-Outras medições?
+%Outras medições?
+
+\tratar{Outras análises: comparações entre as máquinas, comparar tempo médio por acesso do novo algoritmo entre topologias de tamanhos diferentes}
