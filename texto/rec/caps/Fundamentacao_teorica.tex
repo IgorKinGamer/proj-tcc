@@ -1,0 +1,39 @@
+\chapter{Fundamentação Teórica}
+\label{cap:fundamentacao_teorica}
+\acresetall
+
+
+%Uma parte muito importante das hierarquias a ser considerada em questões de desempenho são as memórias cache.
+As hierarquias de memória possuem várias características que afetam o desempenho de aplicações e precisam, portanto, ser conhecidas ao se trabalhar com aplicações de alto desempenho.
+A seguir são apresentados alguns conceitos importantes nesse contexto.
+
+
+
+\section{Memórias Cache}
+\label{sec:memorias_cache}
+
+Caches são memórias com o próposito de diminuir o tempo médio de acesso a outros níveis de memória. Mais especificamente, é comum haver dois ou três níveis de cache entre as unidades de processamento e a memória principal. Elas são construídas com tecnologias que as tornam mais rápidas que outros níveis abaixo \cite{Patterson}. Porém, essa velocidade vem em troca de custo mais elevado. Por isso, elas têm espaço de armazenamento menor, além de que memórias maiores podem ter sua velocidade de acesso diminuída, o que também motiva a existência de vários níveis de cache.
+
+O princípio de sua funcionalidade é manter à disposição dos programas, de forma rápida, aqueles dados dos quais eles precisam ou que estão usando no momento. Esses dados são disponibilizados conforme a capacidade de armazenamento da cache. Esta comumente é menor que o conjunto de todos os dados sobre os quais o programa opera, resultando na necessidade de remover alguns dados para acomodar outros.
+
+\subsection{Localidade Espacial}
+\label{subsec:localidade_espacial}
+
+Quando um programa referencia determinada posição da memória, é comum que logo em seguida os dados nas posições de memória adjacentes sejam necessários também. Assim é definida a localidade espacial: endereços próximos tendem a ser referenciados um após o outro com pouco tempo de diferença \cite{Patterson}. As caches levam isso em conta para beneficiar as aplicações, trazendo dos níveis de memória abaixo não só o dado requisitado, mas também os dados que o rodeiam, constituindo um bloco. Assim, do ponto de vista da cache, a memória é uma sequência de blocos que, quando necessários, são carregados em algum espaço disponível, ou substituem um bloco carregado previamente se não houver espaços disponíveis.
+
+Analisar as caches ajuda a entender por que um esquema que usasse estruturas muito espaçosas para reduzir a quantidade de operações e acessos poderia não funcionar bem.
+No pior caso, acessos consecutivos poderiam ser todos a blocos diferentes, ocasionando o custo de trazer cada um para a cache e resultando na poluição da cache das aplicações, ou seja, diversos blocos com dados das aplicações seriam substituídos, tornando maior o tempo para acessá-los na próxima vez.
+
+
+\section{\textit{Non-Uniform Memory Access}}
+\label{sec:numa}
+
+\ac{numa} é um tipo de multiprocessador com espaço de endereçamento único em que diferentes partes da memória estão mais próximas de alguns núcleos do que dos outros \cite{Patterson}.
+Deste modo, o tempo de acesso depende do núcleo e da memória acessada.
+Sistemas desse tipo possuem boa escalabilidade, pois é possível adicionar nós sem prejudicar o tempo de acesso dos núcleos às memórias mais próximas.
+Estas características diferem das de outro tipo de multiprocessador existente, \ac{uma}, em que o tempo de acesso independe do núcleo e da memória, e não há a vantagem de memórias locais com tempo de acesso reduzido.
+
+O modo como os nós são interconectados determina os custos de comunicação entre quaisquer dois núcleos em nós distintos.
+Além disso, ele define os níveis que existirão a mais na hierarquia, ou seja, a sua profundidade.
+Essas informações são de grande valia e devem ser fornecidas por representações da topologia com precisão.
+Mesmo poucos níveis a mais na rede de interconexão podem resultar em diferenças de desempenho significativas \cite{MPITopFunc}.

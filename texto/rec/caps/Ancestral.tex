@@ -74,7 +74,7 @@ Para isso, pode-se atribuir a cada um dos $n$ nós da árvore um ID único entre
 que terá, na posição $A(i,j)$, o ACMP entre o nó de ID $i$ e o nó de ID $j$.
 No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(n^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
 Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
-Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o \tratar{[algoritmo X]}.
+Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o \tratar{Algoritmo \ref{alg:matriz} (refazer com entrada e saída enunciadas}.
 Isso, no entanto, não altera a complexidade espacial.
 
 \input{rec/algs/Matriz}
@@ -92,11 +92,13 @@ O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo
 os bits menos significativos de \no{b} são iguais ao ID de \no{a}.
 Desse modo, dados dois descendentes de um nó \no{c}, todos os bits menos significativos deles que coincidem
 (todos os que vêm antes do primeiro que difere) são iguais ao ID de \no{c} (ignorando zeros à esquerda).
-Usando apenas as operações que podem ser vistas \tratar{nos algoritmos [X] e [Y] mais adiante},
+Usando apenas as operações que podem ser vistas \tratar{nos algoritmos [X] (ancestral comum novo) e [Y] (função de espalhamento) mais adiante},
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
 A quantidade de instruções é fixa, portanto, a complexidade é constante.
 
-\input{rec/caps/FormaIds} % Explicação de como os IDs são formados
+\input{rec/caps/Forma_ids} % Explicação de como os IDs são formados
+
+\tratar{Algoritmo ancestral comum novo}
 
 Falta, então, apenas o segundo passo, o de encontrar o nó a partir do ID.
 Algumas opções para isso seriam:
@@ -112,11 +114,20 @@ Algumas opções para isso seriam:
 	Este foi o método escolhido.
 \end{itemize}
 
-O \tratar{Algoritmo X} apresenta como esta 
+\tratar{O Algoritmo X apresenta como este método funciona. Explicar}
 
-\tratar{[Algoritmo]}
+\tratar{[Algoritmo da função sem colisões]}
 
 \tratar{Estruturas foram testadas}
+
+Testes feitos indicaram que a operação mais custosa no novo método era o módulo.
+No entanto, existem técnicas para realizar de maneira menos custosa a divisão com denominador previamente conhecido \tratar{[referência]}, e com o resultado da divisão pode-se calcular o módulo.
+Esta otimizações são usadas, por exemplo, por compiladores.
+Aqui, no entanto, a ideia não é realizá-las em tempo de compilação, mas quando se está montando as estruturas para uma hierarquia específica.
+Isso continua sendo vantajoso pois a montagem ocorre uma vez e esta operação de módulo com o mesmo valor será realizada uma grande quantidade de vezes.
+Portanto, é possível substituir a operação de módulo por outras operações que se mostraram mais baratas, a saber, duas multiplicações, um deslocamento e uma subtração.
+%Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X])
+
 
 %Detalhes de como os IDs são formados
 \tratar{Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve

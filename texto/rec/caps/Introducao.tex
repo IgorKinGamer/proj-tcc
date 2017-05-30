@@ -1,0 +1,218 @@
+\chapter{Introdução}
+\label{cap:introducao}
+\acresetall
+
+
+Atualmente, arquiteturas de computadores são construídas de forma hierárquica quanto à memória.
+Essa hierarquia diz respeito à passagem de dados entre os diferentes níveis, ou seja, quais caminhos existem para que dados sejam comunicados entre pontos dessa hierarquia.
+O que motiva sua existência é o fato de que diferentes tipos de memória possuem tamanhos, velocidades de acesso e custos distintos, e ela permite que o espaço das memórias maiores esteja disponível sem que se perca a velocidade das menores e mais rápidas \cite{Patterson}.
+Níveis de memória mais baixos possuem maior capacidade de armazenamento, porém seu tempo de acesso é maior.
+Parte dessa hierarquia é composta por um ou mais níveis de cache, memórias com capacidade reduzida, mas maior velocidade, permitindo que, em um dado momento, um conjunto de dados qualquer possa ser acessado mais rapidamente.
+No nível mais alto dessas hierarquias estão as unidades de processamento, acessando e operando sobre os dados em memória.
+Quanto mais próximo for o nível de memória em que esse dados estiverem, menor o tempo de acesso.
+Quando essas unidades precisam se comunicar entre si, elas fazem uso da hierarquia de memória.
+
+A hierarquia pode ser organizada de várias formas, podendo se tornar complexa e de grande profundidade.
+Uma possibilidade na organização é o compartilhamento de alguns níveis de cache, ou seja, duas unidades de processamento ou mais estarão acima de uma mesma cache na hierarquia.
+Isso permite, por exemplo, realizar comunicações com eficiência, pois o tempo entre algum dado ser atualizado e o novo valor ser visto é determinado pelo tempo de acesso à cache compartilhada.
+Uma grande variedade de organizações pode ser encontrada ao se considerar arquiteturas como multicore, em que várias unidades de processamento chamadas de núcleos (\textit{cores}) fazem parte de um mesmo circuito integrado, ou \ac{numa}, em que mais níveis são acrescentados à hierarquia, compondo a rede de interconexão. Esta rede, por si só, também pode ser organizada de várias formas distintas.
+Essa organização compreendendo hierarquia de memória e unidades de processamento, na sua totalidade, define uma topologia de máquina.
+
+A necessidade de plataformas para rodar aplicações de alto desempenho tem dado origem às diversas arquiteturas paralelas modernas existentes.
+Suas topologias são as mais variadas, visando atender às necessidades de várias classes de aplicações com características e comportamentos distintos.
+Diante da crescente complexidade das topologias dessas máquinas, as suas organizações e as demais características dos elementos que compõe a hierarquia de memória são aspectos de muita relevância para o desempenho de aplicações.
+
+Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou na degradação do desempenho.
+Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o tamanho das caches, que podem comportar ou não todos os dados simultaneamente, ou os padrões de troca de mensagens entre tarefas e a localização delas, além dos meios existentes para realizar essas comunicações, que podem resultar em maior ou menor eficiência \cite{Sequoia}. Um estudo de caso apresentado por \citeonline{LIKWID} mostra como uma certa distribuição de tarefas faz o desempenho cair aproximadamente pela metade.
+
+Ainda, em arquiteturas NUMA, nas quais a memória é composta de várias partes que estão diretamente ligadas a nós distintos, de modo que diferentes regiões da memória possuem diferentes tempos de acesso, é importante que haja proximidade entre os dados acessados por uma thread e o núcleo em que ela reside.
+Portanto, é essencial o conhecimento da topologia da máquina, que possibilita o devido ajuste das aplicações a ela, de modo a aproveitar ao máximo os recursos disponíveis.
+
+Disso vem a necessidade de haver alguma representação da topologia para fornecer as informações necessárias sobre ela, seja diretamente às aplicações ou a outras partes do sistema, que usarão tais informações para realizar otimizações estática ou dinamicamente.
+Como exemplo de uso estático, pode-se citar compilação de algoritmos com conhecimento da hierarquia \cite{Sequoia}, ou posicionamento de processos MPI \cite{hwloc2010}; e, quanto ao uso dinâmico, posicionamento de threads e dados OpenMP \cite{FGOMP}.
+
+%[hwloc2010] http://www.open-mpi.de/papers/pdp-2010/hwloc-pdp-2010.pdf
+%[FGOMP] https://hal.inria.fr/inria-00496295/document
+
+No entanto, a disponibilização de tais informações gera custos adicionais, além de ter outras implicações relacionadas ao tamanho das estruturas de dados que podem afetar o desempenho.
+Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
+Tempos de acesso muito grandes podem acabar anulando os ganhos das otimizações.
+Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos padrões de referência aos dados em acessos consecutivos.
+Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia quanto no acesso pelas aplicações aos seus próprios dados.
+Entretanto, é possível que a adição de algumas informações facilitem certas consultas sobre a topologia sem causar tais prejuízos, que é o desejado.
+
+
+
+\section{Motivação}
+\label{sec:motivacao}
+
+Os exemplos de usos estáticos e dinâmicos dados acima, além de vários outros existentes, com o uso de benchmarks, servem como justificativa para a realização de esforços para desenvolver reprentações com as características citadas, isto é, bom tempo de acesso e uso eficiente da memória.
+
+Para as aplicações, o ideal é que os dados estejam sempre nos níveis de cache os mais próximos possíveis, de modo que seu uso nas computações seja mais eficiente.
+Diante disso, compilação com conhecimento da hierarquia \cite{Sequoia} se vale do fato de que frequentemente problemas podem ser dividos em problemas menores de tamanho variável, e ajustar esses tamanhos à capacidade das caches torna o uso delas mais efetivo, pois todos os dados usados nessas partes menores da computação caberão nelas.
+Ainda, quando é possível haver vários níveis de subdivisão do problema, formando também uma espécie de hierarquia de subdivisões, os tamanhos das partes em diferentes níveis podem ser ajustados aos níveis de cache consecutivos.
+Isso pode ser visualizado com facilidade no exemplo de multiplicação de grandes matrizes presente no artigo referenciado.
+
+A velocidade de níveis de cache mais próximos também beneficia a comunicação.
+Isso pode ser visto no uso de \ac{mpi}, um padrão utilizado no desenvolvimento de programas paralelos que seguem o modelo de passagem de mensagens.
+Em conjunto com dados sobre os padrões de comunicação entre processos, as informações sobre compartilhamento de caches podem ser usadas para definir um posicionamento de processos MPI que favoreça as comunicações \cite{hwloc2010}.
+Outra otimização possível é o uso de metódos específicos do hardware para realizar comunicações dentro de um nó.
+
+No contexto de arquiteturas NUMA, para diminuir o número de acessos a memórias remotas, há a possibilidade de mover os dados para outro nó ou as threads para outros núcleos.
+Uma combinação dessas opções foi desenvolvida no ForestGOMP \cite{FGOMP}, uma extensão de uma implementação de OpenMP, padrão utilizado no desenvolvimento de programas paralelos para sistemas com memória compartilhada.
+Seguindo o princípio de realizar essa combinação com base nos níveis da topologia, o posicionamento dinâmico de threads e dados desenvolvido no ForestGOMP se mostrou efetivo.
+Um cenário apresentado é a existência de vários conjuntos de threads e dados com grande afinidade, em que a migração de uma thread para outro núcleo só ocorreria se houvesse um nível de cache compartilhado, de modo a manter a thread próxima dos seus dados, enquanto em outros casos poderia haver a migração de todas as threads e dados relacionados.
+
+Esses exemplos ilustram como informações sobre a hierarquia podem efetivamente ser usadas para melhorar o desempenho de aplicações que seguem modelos ou estratégias em uso real, ou seja, os benchmarks utilizados possuem características encontradas na solução de problemas reais.
+Isso diz respeito a, por exemplo, padrões de comunicação ou distribuição de carga, que podem apresentar irregularidades e outras características presentes em aplicações científicas de diversas áreas.
+
+
+
+\section{Objetivos}
+\label{sec:objetivos}
+
+Este trabalho tem como objetivo o desenvolvimento de uma representação de topologias de máquina, compreendendo as estruturas de dados utilizadas e os métodos de acesso, que mantenha o compromisso necessário entre tempo de acesso e espaço ocupado na memória pelas estruturas de dados.
+
+\subsection{Objetivos Específicos}
+\label{subsec:objetivos_especificos}
+
+Os objetivos específicos são:
+\begin{itemize}
+	\item Analisar fatores relevantes para a eficiência na representação de topologias
+	\item Desenvolver representações (estruturas de dados e métodos de acesso)
+	\item Testar as representações desenvolvidas, por meio de experimentos em diferentes máquinas, observando o uso da memória e o tempo de execução
+	\item Disponibilizar uma nova ferramenta para a representação de topologias de máquina
+\end{itemize}
+
+
+
+\section{Metodologia}
+\label{sec:metodologia}
+
+\begin{itemize}
+	\item Estudar organização de computadores com foco na hierarquia de memória
+	\item Estudar como topologias de máquina são representadas em trabalhos e ferramentas do estado da arte
+	\item Entender o protótipo utilizado no \ac{ecl} até o momento
+	\item Implementar novos métodos de armazenamento e acesso às informações
+	\item Testar os novos métodos e estruturas de dados utilizando máquinas com topologias diferentes e avaliar os resultados
+\end{itemize}
+
+
+
+\section{Organização do Trabalho}
+\label{sec:organizacao_do_trabalho}
+
+As seções restantes estão organizadas da seguinte forma:
+No capítulo \ref{cap:fundamentacao_teorica}, serão apresentados alguns conceitos fundamentais relevantes para o trabalho.
+No capítulo \ref{cap:estado_da_arte}, será fornecida uma visão geral do estado da arte em representação de topologias de máquina.
+No capítulo \ref{cap:andamento_do_trabalho} constam o progresso atual do trabalho e o planejamento do seu prosseguimento.
+
+
+
+
+% \section{ORGANIZAÇÃO DO TRABALHO} % (fold)
+% \label{sec:organiza_o_do_trabalho}
+% Este trabalho está organizado da seguinte forma:
+% No ca\-pí\-tu\-lo \ref{cha:conceitos_fundamentais} serão apresentados os conceitos fundamentais para a compreensão desta monografia.
+% No capítulo \ref{cha:revisao_bibliografica} será feita uma revisão de trabalhos correlatos.
+% No quinto capítulo serão apresentados os resultados deste trabalho, bem como os pos\-sí\-veis trabalhos futuros.
+
+% section organiza_o_do_trabalho (end)
+
+
+%O projeto e validação dos \acp{ci} ... ferramentas de \ac{eda}, mostrado de maneira simplificada na Figura \ref{fig:fluxoProjeto}. ... em \textit{software} e \textit{hardware} e a arquitetura da parte de \textit{hardware} é definida. A seguir, é criada a descrição no \ac{rtl}, ... do \ac{ci}. 
+
+%\begin{figure}[ht]
+%    \centering
+    %\includegraphics[width = \linewidth]{images/majorStepsOfHardwareDesign}
+%    \includegraphics[width = \linewidth]{images/TopDownHardwareFlow_guntzel}
+%    \caption{ Principais etapas no fluxo de projeto de  cirvuitos \textit{Very-Large-Scale Integration} (VLSI).\\ Adaptado de \citeonline{KahngLivro} p. 7.}
+%    \label{fig:fluxoProjeto}
+%\end{figure}
+
+%A Figura \ref{fig:fluxoProjeto} descreve, de forma simplificada, o desenvolvimento \textit{top-down} de um \ac{ci}. O processo de concepção de um \ac{ci} em grande escala é altamente complexo. Ele pode ser dividido em passos distintos \cite{KahngLivro}. Este fluxo de projeto começa com uma especificação da arquitetura, com maior nível de abstração, descrevendo funcionalidades e temporizações do circuito antes de nível \ac{rtl}. Passa por etapa de síntese lógica e mapeamento para uma determinada tecnologia. Então a etapa de síntese física gera o leiaute do chip, bem como as interconexões das células e suas posições. Na etapa de fabricação, os leiautes são mandados para a manufatura. Por fim os chips são testados e encapsulados para sua utilização \cite{coussy2010high}.
+
+%\section{ETAPA DE SÍNTESE FÍSICA}
+%\label{sec:etapa_de_sntese_fisica}
+
+
+%... bibliotecas de \textit{standard cells} \cite{KahngLivro}.
+
+%Segundo \citeonline{KahngLivro} ... Figura \ref{fig:fluxoProjeto}.
+
+%os locais dos blocos com IP (Propriedade Intelectual)\footnote{Blocos com propriedade intelectual são partes do circuito em que não se tem o direito de alterar seu leiaute ou interconexões internas.} e portas externas ou blocos macro.
+
+%.. detalhado na seção \ref{sec:etapa_de_sintese_da_rede_de_distribuicao_de_relogio}.
+
+%... serão explanados na Seção \ref{sec:restricao_setup_hold}.
+%Esta fase é responsável por sintetizar a rede de distribuição de relógio. O objetivo de toda rede de distribuição de relógio (CDN) é a distribuição de um sinal de relógio respeitando as restrições temporais como \textit{setup}\footnote{\textit{Setup:} quantidade de tempo que um sinal precisa estar estável antes da transição de relógio. Ver Seção \ref{sec:restricao_setup_hold}} e \textit{hold}\footnote{\textit{Hold:} quantidade de tempo que um sinal precisa estar estável após da transição de relógio. Ver Seção \ref{sec:restricao_setup_hold}}, minimizando o \textit{skew}\footnote{\textit{Skew} é a máxima diferença nos tempos de chegada do sinal de relógio entre dois \textit{sinks}.} e o \textit{jitter}\footnote{\textit{Jitter} é a variação de um sinal em relação ao tempo.}.
+
+
+%... reformulação do projeto \cite{Guthaus_Wilke}.
+% Para satisfazer a inequação de \textit{setup} (equação \ref{eq.setup}), podemos aumentar o período ($T_{cyc}$), porém uma violação no tempo de \textit{hold} (equação \ref{eq.hold}) não pode ser corrigida, implicando muitas vezes em reformulação do projeto \cite{Guthaus_Wilke}.
+
+%árvore com ligações cruzadas \cite{Yeh:2006}. 
+
+%No projeto de \ac{vlsi}, ... de forma pictórica na Figura \ref{fig:clock_hierarquia}, a mesma encontra sem escala.
+
+%\begin{figure}[ht]
+%    \centering
+%    \includegraphics[scale = .8]{images/clock_hierarquia}
+%    \caption{Típica arquitetura da Rede de Relógio global, regional e local. Sem escala. Fonte: \cite[Revisiting Automated Physical Synthesis of High-Performance Clock Networks]{Guthaus_Wilke}}
+%    \label{fig:clock_hierarquia}
+%\end{figure}
+
+%\subsection{DISTRIBUIÇÃO GLOBAL E REGIONAL}
+%\label{ssub:distribuicao_global_e_regional}
+
+%\subsection{DISTRIBUIÇÃO LOCAL}
+%\label{ssub:distribuicao_local}
+
+%... ou mais elementos sequenciais \cite{Kozhaya:2011, Xanthopoulos:2001}.
+
+%Mais detalhes serão explanados na seção \ref{sec:skew}.} associado as mesmas. Para melhorar o posicionamento global, utiliza-se incrementalmente as estimativas da mesma e reposiciona-se os blocos, repetindo estas etapas por um número fixo de vezes.
+
+%\section{OBJETIVOS}
+%\label{sec:objetivos}
+
+%\subsection{OBJETIVOS GERAIS} % (fold) OBJETIVO GERAL
+%\label{ssub:objetivos_gerais}
+
+%\subsection{OBJETIVOS ESPECÍFICOS}
+%\label{ssub:objetivos_especificos}
+
+% 	\begin{itemize}
+% 		\item Implementar o algoritmo Method of Means and Medians \cite{Michael90}
+% 		\item Implementar o algoritmo Recursive Geometric Matching \cite{Kahng1991_RGM}
+% 		\item Implementar o algoritmo Deferred-Merge Embedding \cite{Boese1992_DME}
+% 		\item Avaliar os algoritmos utilizando a infraestrutura da Competição de CAD do ICCAD2015 \cite{iccad_kim2015}, comparando o \textit{wirelength} e \textit{skew} com o algoritmo \textit{FLUTE} \cite{flute}, o qual foi adotado na referida infraestrutura.
+% 		\item Utilizando a infraestrutura da Competição de CAD do ICCAD2015 \cite{iccad_kim2015}, comparar os três algoritmos entre si em termos de \textit{wirelength} e \textit{skew}. Comparar também os três algoritmos com o algoritmo \textit{FLUTE} \cite{flute}
+% 	\end{itemize}
+
+% subsubsection objetivos_especificos (end)
+% section objetivos (end)
+
+%\section{MÉTODO DE PESQUISA} % (fold)
+%\label{sec:metodo_de_pesquisa}
+%Inicialmente, serão realizados estudos sobre trabalhos científicos na literatura correlata, bem como estudos sobre o fluxo do desenvolvimento de \acp{ci}. A partir do conhecimento adquirido através do estudo da área, serão implementados e avaliados os três algoritmos (\textit{MMM, RGM, DME}). Os algoritmos serão implementados em linguagem de alto nível (C++) e utilizando infraestrutura disponível no \ac{ecl}. Posteriormente, será feita uma avaliação experimental sobre estes algoritmos.
+% Estes passos metodológicos podem ser visualizados no fluxograma abaixo \ref{fig:fluxograma_metodo_pesquisa}.
+
+%A Figura \ref{fig:fluxograma_avaliacao_experimental} apresenta ... implementados:
+%\begin{itemize}
+%	\item \textbf{Identificação do conjunto de registradores da árvore de relógio local:} este passo consiste em identificar quais elementos síncronos pertencem a  mesma região do \ac{lcb}\footnote{\ac{lcb} são os \textit{buffers} que fornecem o sinal de relógio das árvores regionais de relógio para as árvores locais de relógio. Mais detalhes serão explanados no capítulo \ref{cha:conceitos_fundamentais}.}. \textbf{Entrada:} circuito (\textit{bechmark}) utilizado no \ac{iccad} (2015). \textbf{Saída:} conjunto de elementos sequenciais de um mesmo \ac{lcb}.
+
+%	\item \textbf{Roteamento das árvores de relógio locais utilizando algoritmos clássicos:} nesta etapa, serão implementados os três algoritmos clássicos \ac{mmm} de \citeonline{Michael90}, \ac{rgm} de \citeonline{Kahng1991_RGM} e \ac{dme} de \citeonline{Boese1992_DME}. Estes algoritmos vão ser adicionados na infraestrutura do \ac{iccad} Contest (2015) \cite{iccad_kim2015}. \textbf{Entrada:} conjunto de elementos sequenciais de um mesmo \ac{lcb}. \textbf{Saída:} grafo das interconexões da árvore local de relógio.
+	
+%	\item \textbf{Extração dos dados para comparação:} este passo consiste em calcular as estimativas de comprimento de interconexões e \textit{skew} pertencentes ao roteamento das árvores de relógio locais geradas no passo anterior. Estas estimativas serão avaliadas e comparadas no passo subsequente. Para se obter o comprimento das interconexões, é somado o comprimento de todas as interconexões presentes na árvore local de relógio. Para determinação do \textit{skew}, será utilizada a equação \ref{eq.skew}. \textbf{Entrada:} grafo das interconexões da árvore local de relógio. \textbf{Saída:} \textit{wirelength} e \textit{skew} da árvore local de relógio.
+	
+%	\item \textbf{Comparação dos resultados:} nesta etapa serão confrontados os resultados gerados pelo algoritmo FLUTE de \citeonline{flute}, com os algoritmos \ac{mmm}, \ac{rgm} e \ac{dme}. \textbf{Entrada:} comprimento das interconexões e \textit{skew} da árvore local de relógio. \textbf{Saída:} análise dos resultados. %detalhada no Capítulo \ref{cha:esperimentos_realizados}.
+%\end{itemize}
+
+%\begin{figure}[ht]
+%    \centering
+%    \includegraphics[width=\textwidth]{images/fluxograma_avaliacao_experimental_comparativo}
+%    \caption{Fluxograma da Avaliação Experimental.}
+%    \label{fig:fluxograma_avaliacao_experimental}
+%\end{figure}
+
+% chapter introducao (end)

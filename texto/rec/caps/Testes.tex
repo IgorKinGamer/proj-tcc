@@ -14,6 +14,27 @@ Foi utilizada a funcionalidade de templates da linguagem para facilitar a defini
 O programa depende da biblioteca do hwloc.
 Os valores medidos são escritos em um arquivo no formato CSV (Valores Separados por Vírgula -- \textit{Comma-Separated Values})
 
+
+\section{Máquinas utilizadas nos testes}
+
+Os testes foram executados sobre duas máquinas (notebooks), que serão identificadas como Máquina A e Máquina B, para as quais o programa lstopo gera as representações de hierarquia apresentadas na Figura \ref{img:maquinas}. Estas representações revelam o tamanho das memórias cache, que podem ter efeito nos resultados dos testes. Ambas possuem o sistema operacional Windows 10. \tratar{Mais detalhes (processador)?}
+
+\begin{figure}
+	\centering
+	\caption{Saída do programa lstopo sobre as máquinas utilizadas}
+	\label{img:maquinas}
+	\begin{subfigure}{.4\textwidth}
+		\caption{Máquina A}
+		\includegraphics[width=\textwidth]{rec/img/MaqA}
+	\end{subfigure}
+	~
+	\begin{subfigure}{.4\textwidth}
+		\caption{Máquina B}
+		\includegraphics[width=\textwidth]{rec/img/MaqB}
+	\end{subfigure}
+
+\end{figure}
+
 %COMO
 \section{Estrutura dos testes}
 
@@ -43,26 +64,40 @@ No entanto, julga-se melhor usar poucas iterações internas e mais externas par
 O programa também permite escolher quais algoritmos serão testados.
 Os possíveis são o simples, o que utiliza as novas estruturas, o que utiliza uma matriz e o implementado no hwloc.
 
-(Tabela com os parâmetros?)
-
-
-(Os resultados de testes feitos indicaram que a operação mais custosa no novo método era o módulo.
-No entanto, 
-Divisão com denominador previamente conhecido [referência]
-Não em tempo de compilação, mas quando se está montando as estruturas.
-Portanto, é possível substituir essa operação de módulo por outras operações mais baratas, a saber, duas multiplicações, um deslocamento e uma subtração.
-Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X])
+%(Tabela com os parâmetros?)
 
 
 \subsection{RESULTADOS}
 
-Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido (apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
-Nessas condições e na máquina A, os resultados apresentados (na tabela [X]) foram obtidos.
-
-Comparação - O desempenho do algoritmo desenvolvido foi comparado com o do algoritmo simples, o do hwloc (e o que usa a matriz)(?)
-
-As árvores utilizadas nos testes correspondem à hierarquia de memória de máquinas reais, apresentadas no site do projeto hwloc, como representadas pelo programa lstopo.
+As árvores utilizadas nos testes correspondem à hierarquia de memória de máquinas reais, apresentadas no site do projeto hwloc, como representadas pelo programa lstopo \cite{lstopo}.
 Assim, os resultados refletem a diferença dos algoritmos quando operando sobre hierarquias reais.
-(Referência: The Best of lstopo - https://www.open-mpi.org/projects/hwloc/lstopo/)
+%\tratar{(Referência: The Best of lstopo - https://www.open-mpi.org/projects/hwloc/lstopo/)}
+
+Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido.
+%(apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
+No entanto, em cenários reais, os nós seriam buscados para se obter alguma informação sobre eles, portanto, foi adicionado um acesso a um valor qualquer de cada ACMP encontrado para simular isso.
+A Figura \ref{fig:box_sem_com} compara o desempenho dos quatro algoritmos na Máquina A para a árvore com os graus $(1, 4, 1, 1, 9, 2, 1, 1, 4)$ antes e depois do acréscimo desse acesso.
+Sem o acesso foram feitas 300 observações de cada algoritmo e, com o acesso, 150 observações.
+Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algoritmo menos afetado foi o novo e o mais afetado foi o da matriz, considerando a porcentagem de aumento do valor mediano após acrescentar o acesso, conforme a Tabela \ref{tab:aumento_mediana}.
+
+\begin{figure}
+	\caption{Tempos com e sem acesso ao ACMP}
+	\label{fig:box_sem_com}
+	\resizebox{\textwidth}{!}{\input{rec/img/opa}}
+\end{figure}
+
+\begin{table}[htb]
+	\IBGEtab{\caption{Aumento (\%) do tempo mediano}%
+		\label{tab:aumento_mediana}}
+	{\begin{tabular}{cccc}
+		\toprule
+		Simples & Novo & hwloc & Matriz \\
+		\midrule 
+		14,04 & 10,08 & 14,92 & 27,93 \\
+		\bottomrule
+	\end{tabular}}{}%  \fonte{Produzido pelos autores.}%
+\end{table}
+
+%Comparação - O desempenho do algoritmo desenvolvido foi comparado com o do algoritmo simples, o do hwloc (e o que usa a matriz)(?)
 
 Outras medições?

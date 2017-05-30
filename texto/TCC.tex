@@ -8,20 +8,33 @@
 % Português
 \usepackage[brazil]{babel}
 
-%
+
+%%% BIBLIOGRAFIA %%%
+% Indicar páginas com as citações na bibliografia
+%\usepackage[brazilian,hyperpageref]{backref}
+% Citações padrão ABNT
+\usepackage[alf]{abntex2cite}
+
+
+%%% OUTRAS PACOTES %%%
+% Matemática
 \usepackage{amsmath}
-%
+% TikZ
 \usepackage{tikz}
 \usetikzlibrary{positioning}
-%
+% Novos comands
 \usepackage{xparse}
+% Sub-figuras
+\usepackage{subcaption}
 
-%
+
+%%% NOVOS COMANDOS %%%
+% Destaque - coisas a tratar
 \newcommand \tratar[1] {\textcolor{red}{!!! #1 !!!}}
-%
+% Notação O
 \DeclareMathOperator \bigO {O}
 \newcommand \Oalt {$\bigO(\mathit{altura})$}
-%
+% ...
 \newcommand \no[1] {$#1$}
 \DeclareMathOperator \pai {pai}
 \newcommand \id[1]    {\ensuremath{\mathrm{id}_{#1}}}
@@ -29,7 +42,8 @@
 \newcommand \fACMP {$\mathrm{ACMP}$}
 \newcommand \ACMPIDs {$\mathrm{ACMP}_{\mathrm{IDs}}$}
 
-%%%%%%% Algoritmos %%%%%%%
+
+%%% ALGORITMOS %%%
 \usepackage{algpseudocode}
 \usepackage{algorithm}
 \floatname{algorithm}{Algoritmo}
@@ -38,8 +52,9 @@
 \DeclareMathOperator \OuExBit {\mathbf{OuEx_{bit-a-bit}}}
 \DeclareMathOperator \EBit {\mathbf{E_{bit-a-bit}}}
 
-%\usepackage{cmap}
-%\usepackage[alf]{abntex2cite}
+
+%\usepackage{cmap} ???
+
 
 \usepackage[printonlyused]{acronym} 
 
@@ -56,7 +71,12 @@
 \centro{Centro Tecnológico -- CTC}
 \assuntos{Ciências da Computação,Modelos,Teses,OpenSource,LaTeX}
 
+
 \begin{document} %%%
+
+%%%%%%%%%%%%%%%%%
+%%% PRÉ-TEXTO %%%
+%%%%%%%%%%%%%%%%%
 
 % Inicia parte pré-textual do documento capa, folha de rosto, folha de
 % aprovação, aprovação, resumo, lista de tabelas, lista de figuras, etc.
@@ -64,7 +84,7 @@
 \imprimirfolhaderosto*
 
 \begin{siglas}
-	\item[tst] tst
+	\item[tst] tst \cite{Sequoia}
 	\item[etc] ...
 \end{siglas}
 
@@ -73,12 +93,25 @@
 %\imprimirfichacatalografica
 %\tableofcontents
 
+
+%%%%%%%%%%%%%%%%%
+%%%   TEXTO   %%%
+%%%%%%%%%%%%%%%%%
 \textual
 
-%\include{rec/caps/introducao}
+\include{rec/caps/Introducao}
+\include{rec/caps/Fundamentacao_teorica}
+\include{rec/caps/Estado_da_arte}
+\include{rec/caps/Conceitos}
 \include{rec/caps/Ancestral}
 \include{rec/caps/Testes}
 
-\bibliography{ref}
+
+%%%%%%%%%%%%%%%%%
+%%% PÓS-TEXTO %%%
+%%%%%%%%%%%%%%%%%
+\postextual
+
+\bibliography{rec/ref}
 
 \end{document}
