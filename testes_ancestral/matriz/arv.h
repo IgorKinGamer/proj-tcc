@@ -21,7 +21,7 @@ namespace matriz
 	struct estr_No
 	{
 		// "Preenchimento" para testes
-		char preenchimento[ConfigDebug::No::PREENCHIMENTO];
+		//char preenchimento[ConfigDebug::No::PREENCHIMENTO];
 		
 		// Id usado para encontrar ancestral mais próximo
 		ID id;
