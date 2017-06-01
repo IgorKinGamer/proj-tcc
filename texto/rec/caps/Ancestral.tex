@@ -10,15 +10,15 @@ ou, a partir de algum nó, o próximo no mesmo nível.
 \tratar{Listar funções}
 
 Essas funções foram analisadas quanto à complexidade com o objetivo de identificar pontos que poderiam ser melhorados do ponto de vista do desempenho.
-Essa análise revelou que, em geral, elas têm tempo constante ($\bigO(1)$) ou linear na altura da árvore (\Oalt).
-Além disso, foi analisado um projeto de código aberto que utiliza o hwloc, HieSchella \tratar{[ref]},
-cujo objetivo é prover portabilidade de performance, característica presente quando se consegue que
+Essa análise revelou que, em geral, elas têm tempo constante ($\bigO(1)$) ou linear na altura da árvore (\Oalt), que é o mesmo que $\bigO(\log N)$, onde $N$ é a quantidade de nós da árvore.
+Além disso, foi analisado um projeto de código aberto que utiliza o hwloc, HieSchella \cite{HieSchella},
+cujo objetivo é prover portabilidade de desempenho, característica presente quando se consegue que
 uma mesma aplicação rode em diferentes plataformas utilizando os núcleos com eficiência.
 Foram identificadas as chamadas mais importantes a funções do hwloc no HieSchella para se ter uma referência
 de quais funções são mais relevantes para o desempenho dentro de um projeto real.
 
 Diante dessas considerações, a função que encontra o ancestral comum mais próximo (\fACMP) entre dois nós foi escolhida como alvo de otimizações.
-Ela é uma das funções implementadas no hwloc com complexidade \Oalt e está entre as de uso mais significativo no HieSchella.
+Ela é uma das funções implementadas no hwloc com complexidade \Oalt\ (ou $\bigO(\log N)$) e está entre as de uso mais significativo no HieSchella.
 Na seção a seguir, será discutido como essa função poderia ser implementada de forma mais eficiente e quais as implicações de diferentes abordagens.
 
 
@@ -33,7 +33,7 @@ Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
 A maneira provavelmente mais intuitiva de se descobrir o ACMP é ``subir'' pela árvore, isto é, a partir dos dois nós dos quais se deseja encontrar o ACMP,
 seguir as ligações em direção aos pais até se chegar ao mesmo nó.
 Por ser um método que utiliza apenas a estrutura de árvore em si, sem adição de outras informações, será referido como método simples.
-Sua complexidade é \Oalt.
+Sua complexidade é $\bigO(\log N)$.
 Para que esse método funcione, é necessário subir de forma sincronizada -- a cada passo, devem-se comparar ancestrais dos dois nós iniciais que estejam no mesmo nível.
 No caso do hwloc, o algoritmo se torna um pouco mais complicado, pois ele trata hierarquias assimétricas (pode haver ramos sem nó em algum nível).
 Neste caso, mesmo que se tenham dois nós no mesmo nível, seus pais podem estar em níveis diferentes.
@@ -42,22 +42,22 @@ Um ponto que pode afetar o desempenho deste algoritmo é o fato de que é necess
 
 \tratar{(Algoritmo ACMP do hwloc)}
 
-Considerando a estrutura de árvore apenas, a única informação que relaciona um nó aos seus ancestrais
-são as ligações entre um nó e seus filhos (ou, no outro sentido, entre cada nó e seu pai).
-Assim, todas as sequências de uma ou mais ligações de filho para pai a partir de um nó (ou seja,
-entre o nó e seu pai, entre este e o pai dele, e assim por diante) definem os ancestrais do nó.
+Considerando a estrutura de árvore apenas, a única informação que relaciona um nó aos seus ancestrais são as ligações.
+% entre um nó e seus filhos (ou, no outro sentido, entre cada nó e seu pai).
+%Assim, todas as sequências de uma ou mais ligações de filho para pai a partir de um nó (ou seja,
+%entre o nó e seu pai, entre este e o pai dele, e assim por diante) definem os ancestrais do nó.
 Isso indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
 para ser possível encontrar o ACMP com algum método além do simples.
 Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
 Para uma dada árvore que representa uma topologia,
 \begin{enumerate}
 	\item Atribuir um valor (chamado de ID) a cada nó da árvore;
-	\item Definir uma função \ACMPIDs que receba o ID de dois nós distintos e tenha como resultado o nó ACMP.
+	\item Definir uma função \ACMPIDs\ que receba o ID de dois nós distintos e tenha como resultado o nó ACMP.
 \end{enumerate}
 Esses IDs (em conjunto com outras informações associadas a cada nó individualmente ou à árvore como um todo conforme necessário)
 podem estabelecer alguma relação entre um nó e seus ancestrais além da que já existe por meio das ligações da árvore.
 
-Idealmente, essa função \ACMPIDs deveria ser \textit{processada} em tempo constante.
+Idealmente, essa função \ACMPIDs\ deveria ser \textit{processada} em tempo constante.
 Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
 No entanto, é preciso lembrar que, mesmo que a quantidade de instruções executadas pelo processador seja constante,
 a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
@@ -70,18 +70,21 @@ tais como as operações aritméticas e operações lógicas bit-a-bit.
 
 Uma possibilidade é relacionar cada par de nós ao seu ACMP por meio de uma matriz
 em que cada linha representa um nó da árvore, assim como cada coluna, e o cruzamento contém o ACMP entre o nó da linha e o nó da coluna.
-Para isso, pode-se atribuir a cada um dos $n$ nós da árvore um ID único entre $0$ e $n-1$ e usar esses IDs como índices na matriz,
+Para isso, pode-se atribuir a cada um dos $N$ nós da árvore um ID único entre $0$ e $N-1$ e usar esses IDs como índices na matriz,
 que terá, na posição $A(i,j)$, o ACMP entre o nó de ID $i$ e o nó de ID $j$.
-No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(n^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
+No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(N^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
+A Tabela \ref{tab:dif_arvore_matriz} sumariza a diferença entre a utilização de uma árvore (método simples) e de uma matriz (método matricial).
 Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
 Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o \tratar{Algoritmo \ref{alg:matriz} (refazer com entrada e saída enunciadas}.
 Isso, no entanto, não altera a complexidade espacial.
+
+\input{rec/tab/dif_arvore_matriz}
 
 \input{rec/algs/Matriz}
 
 \subsection{Função de espalhamento}
 
-Outra possibilidade foi idealizada, dividindo a função \ACMPIDs em dois passos:
+Outra possibilidade foi idealizada, dividindo a função \ACMPIDs\ em dois passos:
 \begin{enumerate}
 	\item dados os IDs de dois nós, descobrir o ID do ancestral;
 	\item encontrar o nó que possui esse ID.

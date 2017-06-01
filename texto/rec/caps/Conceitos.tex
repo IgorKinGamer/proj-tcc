@@ -1,33 +1,59 @@
 % Seção de conceitos
-\chapter{Conceitos}
-\tratar{Só está listando os pontos}
+\section{Estruturas de dados}
 
-Alguns conceitos tradicionais e outros que serão usados especificamente neste trabalho.
+%Esta seção lista alguns conceitos tradicionais e outros que serão usados especificamente neste trabalho.
+%Esta seção apresenta alguns conceitos que serão utilizados neste trabalho.
 
-Árvores (estrutura de dados) - representar hierarquias de memória
-Nós e ligações
-Cada nó conectado 
-Pode ter qualquer quantidade de filhos; se nenhum, folha.
+%Árvores (estrutura de dados) - representar hierarquias de memória
+Uma \textit{árvore} é uma estrutura de dados que define uma hierarquia, logo, é conveniente para representar hierarquias de memória.
 
-Para se realizar operações sobre essa estrutura de árvore
-Seguir(?) uma ligação
+%Nós e ligações
+Árvores são compostas por nós e ligações que relacionam esses nós.
+Cada nó possui dados que dependem do que a árvore representa e de com que propósito ela será usada.
+Cada ligação relaciona dois nós, um com papel de \textit{pai}, e o outro com papel de \textit{filho}.
+Ou seja, uma ligação estabelece que um nó $a$ é pai de outro nó $b$, e, equivalentemente, que o nó $b$ é filho do nó $a$.
 
-Filhos ordenados
-Ordem não necessariamente reflete algum atributo  o que os nós estão representando.
+Em uma árvore, existe um único nó que não possui pai, o qual é chamado de \textit{nó raiz} (ou simplesmente \textit{raiz}).
+Todos os demais nós possuem exatamente um pai.
+%Cada nó conectado 
+%Pode ter qualquer quantidade de filhos; se nenhum, folha.
+Cada nó pode ter qualquer quantidade de filhos.
+Se não possui nenhum, é chamado de \textit{nó folha} (ou \textit{folha}). %, caso contrário, de \textit{nó interno}.
+%Filhos ordenados
+Os filhos de um nó são ordenados.
+Essa ordem não necessariamente reflete algum atributo ou característica daquilo que os nós estão representando.
 
-Ancestral e descendente
+%Para se realizar operações sobre essa estrutura de árvore
+Para se realizar operações sobre essa estrutura de árvore, é possível seguir as ligações para descobrir os nós adjacentes (pai e filhos).
+Visto que árvores geralmente são visualizadas com o nó raiz no topo, \textit{subir} uma ligação significa obter o pai de algum nó, e \textit{descer}, obter um dos filhos de um nó.
+%O pai de um nó é obtido \textit{subindo} a ligação entre ele e seu pai
+%Seguir(?) uma ligação
 
-Níveis (nível/profundidade de um nó)
-Ordem
+%Ancestral e descendente
+%Ancestral - Todos os nós aos quais se pode chegar subindo ligações
+Todos os nós que podem ser obtidos subindo, em sequência, uma ou mais ligações a partir de um nó são chamados de \textit{ancestrais} desse nó.
+Semelhantemente, nós que podem ser obtidos apenas descendo ligações são \textit{descendentes}.
+%Uma árvore não possui ciclos -- 
+Nenhum nó é ancestral de si mesmo.
 
-O grau de um nó é a quantidade de filhos que ele possui
-- Grau de um nível: o maior entre os graus dos nós de um nível.
-É comum os graus de todos os nós de um nível serem iguais, mas, em hierarquias assimétricas(?), isso não ocorre.
+%Níveis (nível/profundidade de um nó)
+Uma árvore é dividida em \textit{níveis}, cada um composto por um ou mais nós.
+O nível 0 é composto pela raiz.
+O nível $i$ é composto por todos os nós que podem ser obtidos descendo $i$ ligações em sequência a partir da raiz.
+O nível em que um nó está é também chamado de sua \textit{profundidade}.
+%Ordem?
+%A ordem dos filhos de cada nó da árvore define implicitamente uma ordem em cada nível.
+
+%O grau de um nó é a quantidade de filhos que ele possui
+A quantidade de filhos que um nó possui é chamada de \textit{grau do nó}.
+%- Grau de um nível: o maior entre os graus dos nós de um nível.
+O maior entre os graus dos nós que compõe um nível é chamado de \textit{grau do nível}.
+%É comum os graus de todos os nós de um nível serem iguais, mas, em hierarquias assimétricas(?), isso não ocorre.
 
 
---- Encaixar ---
+%--- Encaixar ---
 
-Assimetria - hwloc
-Simetria - todas folhas no mesmo nível (e com graus diferentes?)
+%Assimetria - hwloc
+%Simetria - todas folhas no mesmo nível (e com graus diferentes?)
 
-Nós de um mesmo nível  graus diferentes
+%Nós de um mesmo nível  graus diferentes

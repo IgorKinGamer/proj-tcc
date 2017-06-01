@@ -17,7 +17,11 @@ Os valores medidos são escritos em um arquivo no formato CSV (Valores Separados
 
 \section{Máquinas utilizadas nos testes}
 
-Os testes foram executados sobre duas máquinas (notebooks), que serão identificadas como Máquina A e Máquina B, para as quais o programa lstopo gera as representações de hierarquia apresentadas na Figura \ref{img:maquinas}. Estas representações revelam o tamanho das memórias cache, que podem ter efeito nos resultados dos testes. Ambas possuem o sistema operacional Windows 10. \tratar{Mais detalhes (processador)?}
+Os testes foram executados sobre duas máquinas (\textit{notebooks}), que serão identificadas como Máquina~A e Máquina~B, para as quais o programa lstopo gera as representações de hierarquia apresentadas na Figura \ref{img:maquinas}.
+Estas representações revelam o tamanho das memórias cache, que podem ter efeito nos resultados dos testes.
+A Tabela \ref{tab:maquinas} apresenta mais detalhes de ambas.
+
+\input{rec/tab/maqs}
 
 \begin{figure}
 	\centering
@@ -35,20 +39,36 @@ Os testes foram executados sobre duas máquinas (notebooks), que serão identifi
 
 \end{figure}
 
+
+\section{Configurações}
+
+Em ambas as máquinas, os testes foram compilados usando a versão 5.3.0 do compilador GCC (\textit{GNU Compiler Collection}) \cite{gcc}, inclusa no projeto Cygwin \cite{cygwin}, o qual emula um sistema Unix em versões atuais do sistema operacional Windows.
+Esta versão do GCC era a única disponível no Cygwin durante o desenvolvimento do trabalho com a qual não foram encontrados problemas com funcionalidades da linguagem C++.
+Foram usadas as seguintes \textit{flags} de compilação:
+\begin{itemize}
+	\item \texttt{-std=c++11}: Utiliza funcionalidades do padrão C++11 da linguagem C++
+	\item \texttt{-O3}: Ativa diversas otimizações
+	\item \textit{flags} obtidas com os comandos \texttt{pkg-config --cflags hwloc} e \texttt{pkg-config --libs hwloc} no Cygwin, que imprimem as \textit{flags} necessárias para utilizar o hwloc
+\end{itemize}
+%\input{rec/tab/flags}
+
+
 %COMO
 \section{Estrutura dos testes}
 
 Os testes consistem em encontrar repetidamente o ACMP entre os nós folhas de uma dada árvore com os diferentes algoritmos -- o existente no hwloc e os implementados.
-Cada vez que as estruturas necessárias são criadas e os testes são executados sobre elas com um determinado algoritmo, obtém-se uma observação, que é o tempo que levou para realizar a quantidade especificada de repetições da função ACMP entre os nós folhas da árvore com o algoritmo.
+Cada vez que as estruturas necessárias são criadas e os testes são executados sobre elas com um determinado algoritmo, obtém-se uma observação, que é o tempo que levou para realizar a quantidade especificada de repetições da função \fACMP entre os nós folhas da árvore com o algoritmo.
+É usada uma grande quantidade de repetições pois não é possível medir corretamente o tempo de apenas uma chamada à função, o qual é menor que a resolução das chamadas de temporização no processador.
 
 Para cada algoritmo, uma árvore de estrutura equivalente é criada (as estruturas de dados dependem do algoritmo) a partir dos graus fornecidos como entrada.
 %(Como os graus são usados para montar a árvore -- se não for explicado antes)
 Os graus são recebidos como uma lista de inteiros positivos.
-O i-ésimo será o grau do nível $i-1$.
+O $i$-ésimo será o grau do nível $i-1$.
 Deste modo, se os graus recebidos são $(g_1, g_2, ..., g_n)$, a raiz terá $g_1$ filhos, cada um com $g_2$ filhos, e assim por diante, até os nós do nível $n-1$, que terão $g_n$ filhos cada.
 
 Para obter uma observação de um algoritmo, uma lista contendo todos os pares possíveis de nós folhas (todas as combinações de duas folhas) é criada.
 Esta lista é embaralhada, usando uma semente fixa, de modo que a ordem pseudo-aleatória é a mesma para todas as execuções de todos os algoritmos sobre esta árvore.
+Isto é feito para evitar que o desempenho dos algoritmos seja beneficiado pelo acesso repetido dos mesmos nós, o que não corresponde a situações reais.
 
 Uma observação é obtida por meio de uma etapa de aquecimento seguida de uma de medição, na qual o tempo total das repetições da função ACMP é medido.
 Ambas as etapas consistem em algum número de rodadas, o qual geralmente deve estar na casa de alguns milhares, dependendo do tamanho da árvore, para que o tempo medido seja significativo.
@@ -75,27 +95,37 @@ Assim, os resultados refletem a diferença dos algoritmos quando operando sobre 
 
 \tratar{especificar parâmetros utilizados}
 
+%Acredita-se que a presença de diversos \textit{outliers} de valor significativamente mais baixo nas observações obtidas se deva a momentos em que os processos do sistema operacional em conjunto tenham coincidentemente requerido pouco processamento.
+Notou-se a presença de diversos \textit{outliers} de valor significativamente mais baixo nas observações obtidas.
+Acredita-se que isso se deva a momentos em que os processos do sistema operacional em segundo plano em conjunto tenham coincidentemente requerido pouco processamento.
+
 Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido.
 %(apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
 No entanto, em cenários reais, os nós seriam buscados para se obter alguma informação sobre eles, portanto, foi adicionado um acesso a um valor qualquer de cada ACMP encontrado para simular isso.
-A Figura \ref{fig:box_sem_com} compara o desempenho dos quatro algoritmos na Máquina A para a árvore com os graus $(1, 4, 1, 1, 9, 2, 1, 1, 4)$ antes e depois do acréscimo desse acesso.
+A~Figura~\ref{fig:box_sem_com} compara o desempenho dos quatro algoritmos na Máquina~A para a árvore com os graus $(1, 4, 1, 1, 9, 2, 1, 1, 4)$ antes e depois do acréscimo desse acesso.
+%Neste \textit{boxplo}
 Sem o acesso foram feitas 300 observações de cada algoritmo e, com o acesso, 150 observações.
 Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algoritmo menos afetado foi o novo e o mais afetado foi o da matriz, considerando a porcentagem de aumento do valor mediano após acrescentar o acesso, conforme a Tabela \ref{tab:aumento_mediana}.
 
-\begin{figure}
+\begin{figure}[h]
 	\caption{Tempos com e sem acesso ao ACMP}
 	\label{fig:box_sem_com}
-	\resizebox{\textwidth}{!}{\input{rec/img/opa}}
+	\resizebox{\textwidth}{!}{\input{rec/img/box_sem_com}}
+	Cada retângulo representa o intervalo onde estão as 50\% observações centrais.
+	A linha vermelha dentro do retângulo indica a mediana.
+	O símbolo ``\texttt{+}'' indica observações distantes da mediana em comparação com as demais (\textit{outliers}), e o símbolo ``\texttt{o}'', observações ainda mais distantes.
 \end{figure}
 
 \begin{table}[htb]
 	\IBGEtab{\caption{Aumento (\%) do tempo mediano}%
 		\label{tab:aumento_mediana}}
-	{\begin{tabular}{cccc}
+	{\begin{tabular}{ccccc}
 		\toprule
-		Simples & Novo & hwloc & Matriz \\
+		& Simples & Novo & hwloc & Matriz \\
 		\midrule 
-		14,04 & 10,08 & 14,92 & 27,93 \\
+		Mediana sem acesso & 8373.99 & 8540.89 & 20274.45 & 3841.80 \\
+		Mediana com acesso & 9549.51 & 9401.76 & 23300.20 & 4914.60 \\
+		Aumento (\%)       & 14,04 & 10,08 & 14,92 & 27,92 \\
 		\bottomrule
 	\end{tabular}}{}%  \fonte{Produzido pelos autores.}%
 \end{table}

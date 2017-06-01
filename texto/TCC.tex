@@ -16,7 +16,7 @@
 \usepackage[alf]{abntex2cite}
 
 
-%%% OUTRAS PACOTES %%%
+%%% OUTROS PACOTES %%%
 % Matemática
 \usepackage{amsmath}
 % TikZ
@@ -26,6 +26,10 @@
 \usepackage{xparse}
 % Sub-figuras
 \usepackage{subcaption}
+% Frescura (®, TM)
+\usepackage{textcomp}
+% Multilinha
+\usepackage{multirow}
 
 
 %%% NOVOS COMANDOS %%%
@@ -58,18 +62,8 @@
 
 \usepackage[printonlyused]{acronym} 
 
-% Preâmbulo
-\titulo{REPRESENTAÇÃO OTIMIZADA DE TOPOLOGIAS DE MÁQUINA}
-\autor{Igor da Silva Solecki}
-\data{\today}
-\instituicao{Universidade Federal de Santa Catarina}
-\local{Florianópolis, SC}
-\tipotrabalho{TCC}
-\orientador{Prof. Dr. Laércio Lima Pilla\\Universidade Federal de Santa Catarina}
-\programa{Programa de Graduação em Ciências da Computação}
-\preambulo{Trabalho de Conclusão de Curso submetido ao Curso de Bacharelado em Ciências da Computação para a obtenção do Grau de Bacharel em Ciências da Computação.}
-\centro{Centro Tecnológico -- CTC}
-\assuntos{Ciências da Computação,Modelos,Teses,OpenSource,LaTeX}
+
+\input{rec/Especificacoes}
 
 
 \begin{document} %%%
@@ -77,16 +71,11 @@
 %%%%%%%%%%%%%%%%%
 %%% PRÉ-TEXTO %%%
 %%%%%%%%%%%%%%%%%
+\pretextual
 
 % Inicia parte pré-textual do documento capa, folha de rosto, folha de
 % aprovação, aprovação, resumo, lista de tabelas, lista de figuras, etc.
-\imprimircapa
-\imprimirfolhaderosto*
-
-\begin{siglas}
-	\item[tst] tst \cite{Sequoia}
-	\item[etc] ...
-\end{siglas}
+\include{rec/Pre}
 
 %\include{init/pretextuais}
 %\clearpage
@@ -102,7 +91,7 @@
 \include{rec/caps/Introducao}
 \include{rec/caps/Fundamentacao_teorica}
 \include{rec/caps/Estado_da_arte}
-\include{rec/caps/Conceitos}
+%\include{rec/caps/Conceitos}
 \include{rec/caps/Ancestral}
 \include{rec/caps/Testes}
 

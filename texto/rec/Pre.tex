@@ -1,0 +1,67 @@
+% Coisas pré-textuais
+
+% Capa
+\imprimircapa
+% Folha de rosto
+\imprimirfolhaderosto%*
+% Ficha catalográfica (COLOCAR * no \imprimirfolhaderosto!!!)
+% ...
+% Folha de aprovação
+% ...
+
+% Resumo
+%\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}
+%Segundo a \citeonline[3.1-3.2]{NBR6028:2003}, o resumo deve ressaltar o
+%objetivo, o método, os resultados e as conclusões do documento. A ordem e a extensão
+%destes itens dependem do tipo de resumo (informativo ou indicativo) e do
+%tratamento que cada item recebe no documento original. O resumo deve ser
+%precedido da referência do documento, com exceção do resumo inserido no
+%próprio documento. (\ldots) As palavras-chave devem figurar logo abaixo do
+%resumo, antecedidas da expressão Palavras-chave:, separadas entre si por
+%ponto e finalizadas também por ponto.
+
+%No cenário atual da computação, existem diversas arquiteturas paralelas em uso. Cada arquitetura possui uma organização de hierarquia de memória, de modo que existem várias topologias de máquina distintas. O conhecimento dessas topologias é essencial para que aplicações tenham alto desempenho e portabilidade de desempenho. Portanto, os dados da topologia devem ser representados de forma compacta e que permita rápido acesso por parte de algoritmos.
+
+%O objetivo deste trabalho é desenvolver novas formas otimizadas de representar esses dados.
+	O objetivo deste trabalho é desenvolver novas formas otimizadas de representar e disponibilizar informações sobre topologias de máquinas para o uso em aplicações de alto desempenho. O projeto Hardware Locality (hwloc), estado da arte em representação de topologias, foi analisado para identificar pontos passíveis de otimizações. Os algoritmos e estruturas desenvolvidos foram testados e comparados com outras abordagens.
+	
+	\vspace{\onelineskip}
+	
+	\textbf{Palavras-chave}: hierarquia de memória. topologia de máquina. computação de alto desempenho.
+\end{resumo}
+
+% resumo em inglês
+\begin{resumo}[Abstract]
+	\begin{otherlanguage*}{english}
+		The goal of this project is to develop new optimized ways of representing and ??? informations about machine topologies for the use in high performance applications.
+		The Hardware Locality (hwloc) project, state of the art in topologies representation, was analised in order to identify points that could be optimized. The developed algorithms and structures were tested and compared with other approaches.
+		% that of other approaches.
+		
+		\vspace{\onelineskip}
+		
+		%\noindent 
+		\textbf{Keywords}: memory hierarchy. machine topology. high performance computing.
+	\end{otherlanguage*}
+\end{resumo}
+
+% Figuras
+\listoffigures*
+\cleardoublepage
+% Tabelas
+\listoftables*
+\cleardoublepage
+% Siglas
+\begin{siglas}
+	\item[ACMP] Ancestral Comum Mais Próximo
+	\item[ECL]  Laboratório de Computação Embarcada - \textit{Embedded Computing Lab}
+	\item[hwloc] Hardware Locality
+	\item[MPI]  \textit{Message Passing Interface}
+	\item[NUMA] \textit{Non-Uniform Memory Access}
+	\item[UMA]  \textit{Uniform Memory Access}
+%	\item[] 
+\end{siglas}
+
+% Sumário
+\tableofcontents*
+\cleardoublepage
