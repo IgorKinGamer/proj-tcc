@@ -1,14 +1,24 @@
 % Matriz
-\begin{algorithm}
-	\caption{Ancestral usando matriz}
+\begin{algorithm}[h]
+	\caption{\textsc{MatrizACMP}}%Ancestral usando matriz}
 	\label{alg:matriz}
+	
 	\newcommand \linha {\mathrm{linha}}
 	\newcommand \coluna {\mathrm{coluna}}
-	\begin{algorithmic}
-		\Function{ancestral\_matriz}{Matriz$\langle$Nó$\rangle$ $M$, Nó \no{a}, Nó \no{b}}
-			\State $\linha  \gets \max(\id{a}, \id{b})$
-			\State $\coluna \gets \min(\id{a}, \id{b})$
-			\State retornar $M(\linha, \coluna)$
-		\EndFunction
-	\end{algorithmic}
+	
+	\Entrada{Uma matriz $M$ que possui na linha $i$ e coluna $j$ ($M(i, j)$),
+	          $i > j$, o ACMP entre os nós de ID $i$ e $j$ \newline
+	         Dois nós $a$ e $b$}
+	\Saida{O ACMP entre $a$ e $b$}
+	
+	%\BlankLine
+	%\tcp{A matriz é simétrica, elementos acima da diagonal principal não são utilizados}
+	
+	\BlankLine
+	%Matriz$\langle$Nó$\rangle$ $M$, Nó \no{a}, Nó \no{b}
+	$\linha  \gets \max(\id{a}, \id{b})$ \\
+	$\coluna \gets \min(\id{a}, \id{b})$ \\
+	\Retorna $M(\linha, \coluna)$ \\
+	%\EndFunction
+	
 \end{algorithm}

@@ -1,0 +1,23 @@
+% Simples (ascendente)
+\begin{algorithm}
+	\caption{ACMP Ascendente}
+	\label{alg:simples}
+	
+	\Entrada{Dois nós $a$ e $b$}
+	\Saida{O ACMP entre $a$ e $b$}
+	\BlankLine
+	
+	\tcp{Inicialmente, encontra ancestrais de $a$ e $b$ no mesmo nível}
+	\Enqto {$nível_a > nível_b$}
+		{$a \gets \pai(a)$}
+	\Enqto {$nível_b > nível_a$}
+		{$b \gets \pai(b)$}
+		
+	\BlankLine
+	\Enqto {$a \not= b$}
+	{
+		$a \gets \pai(a)$ \\
+		$b \gets \pai(b)$ \\
+	}
+	\Retorna {$a$}
+\end{algorithm}

@@ -27,6 +27,9 @@ Na seção a seguir, será discutido como essa função poderia ser implementada
 A função que encontra o ancestral comum mais próximo recebe dois nós como entrada (e possivelmente algumas estruturas adicionais, se houver necessidade)
 e retorna um nó (o ancestral) como saída.
 Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
+Existem algumas situações especiais.
+Em geral, o caso em que os dois nós são o mesmo (\fACMP($a$, $a$)) não será tratado.
+Se um nó $a$ for ancestral de outro nó $b$, \fACMP($a$, $b$) terá como resultado $a$.
 
 \subsection{Abordagem inicial}
 
@@ -73,9 +76,9 @@ em que cada linha representa um nó da árvore, assim como cada coluna, e o cruz
 Para isso, pode-se atribuir a cada um dos $N$ nós da árvore um ID único entre $0$ e $N-1$ e usar esses IDs como índices na matriz,
 que terá, na posição $A(i,j)$, o ACMP entre o nó de ID $i$ e o nó de ID $j$.
 No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(N^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
-A Tabela \ref{tab:dif_arvore_matriz} sumariza a diferença entre a utilização de uma árvore (método simples) e de uma matriz (método matricial).
+A Tabela~\ref{tab:dif_arvore_matriz} sumariza a diferença entre a utilização de uma árvore (método simples) e de uma matriz (método matricial).
 Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
-Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o \tratar{Algoritmo \ref{alg:matriz} (refazer com entrada e saída enunciadas}.
+Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o Algoritmo~\ref{alg:matriz}.
 Isso, no entanto, não altera a complexidade espacial.
 
 \input{rec/tab/dif_arvore_matriz}
@@ -95,13 +98,13 @@ O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo
 os bits menos significativos de \no{b} são iguais ao ID de \no{a}.
 Desse modo, dados dois descendentes de um nó \no{c}, todos os bits menos significativos deles que coincidem
 (todos os que vêm antes do primeiro que difere) são iguais ao ID de \no{c} (ignorando zeros à esquerda).
-Usando apenas as operações que podem ser vistas \tratar{nos algoritmos [X] (ancestral comum novo) e [Y] (função de espalhamento) mais adiante},
+Usando apenas as operações que podem ser vistas nas linhas 1 -- 4 do Algoritmo~\ref{alg:novo} mais adiante,
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
 A quantidade de instruções é fixa, portanto, a complexidade é constante.
 
 \input{rec/caps/Forma_ids} % Explicação de como os IDs são formados
 
-\tratar{Algoritmo ancestral comum novo}
+\input{rec/algs/Novo}
 
 Falta, então, apenas o segundo passo, o de encontrar o nó a partir do ID.
 Algumas opções para isso seriam:
@@ -117,19 +120,27 @@ Algumas opções para isso seriam:
 	Este foi o método escolhido.
 \end{itemize}
 
-\tratar{O Algoritmo X apresenta como este método funciona. Explicar}
+As linhas 5~--~7 do Algoritmo~\ref{alg:novo} apresentam como este método funciona.
+Quanto à implementação da função \bpn, os processadores atuais possuem uma instrução que encontra a posição do primeiro bit 1 em um número, a qual pode ser usada como índice em um pequeno arranjo contendo o devido resultado da função \bpn.
+Se os IDs têm até $b$ bits, esse arranjo precisar ter $b$ posições.
+A função \Espalha\ (Algoritmo~\ref{alg:espalha}) utiliza dados específicos para a árvore, que devem ser descobertos previamente.
 
-\tratar{[Algoritmo da função sem colisões]}
-
-\tratar{Estruturas foram testadas}
-
-Testes feitos indicaram que a operação mais custosa no novo método era o módulo.
-No entanto, existem técnicas para realizar de maneira menos custosa a divisão com denominador previamente conhecido \tratar{[referência]}, e com o resultado da divisão pode-se calcular o módulo.
+Testes feitos indicaram que a operação mais custosa no \Novo\ era o módulo, usado na função \Espalha.
+No entanto, existem técnicas para realizar de maneira mais barata a divisão com denominador previamente conhecido \cite{reciproco}, e com o resultado da divisão pode-se calcular o módulo.
 Esta otimizações são usadas, por exemplo, por compiladores.
 Aqui, no entanto, a ideia não é realizá-las em tempo de compilação, mas quando se está montando as estruturas para uma hierarquia específica.
-Isso continua sendo vantajoso pois a montagem ocorre uma vez e esta operação de módulo com o mesmo valor será realizada uma grande quantidade de vezes.
+Isso continua sendo vantajoso pois a montagem ocorre apenas uma vez e esta operação de módulo com o mesmo valor será realizada uma grande quantidade de vezes.
 Portanto, é possível substituir a operação de módulo por outras operações que se mostraram mais baratas, a saber, duas multiplicações, um deslocamento e uma subtração.
 %Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X])
+
+Para se encontrarem valores apropriados para a função \Espalha, são testados valores cada vez maiores para $m$, até que não haja colisões.
+Ao se encontrar um $m$ válido, se busca um $\mathit{ad}$ que minimize o maior resultado de $\mathrm{id} \bmod m$, minimizando o tamanho necessário do arranjo.
+Então, são descobertos os valores de $\mathit{mult}$ e $\mathit{desl}$, usando a técnica descrita em \citeonline{reciproco}, para evitar a operação de módulo.
+
+%\tratar{Estruturas foram testadas}
+A corretude das estruturas utilizadas na implementação do \Novo\ foi testada.
+O programa de testes cria uma árvore e compara o resultado do \Simples\ com o do \Novo\ para algumas buscas, além de verificar se todos os nós estão realmente na posição retornada pela função \Espalha.
+Também é causada uma mutação em uma árvore e é verificado se o erro é detectado por esse código de verificação.
 
 
 %Detalhes de como os IDs são formados

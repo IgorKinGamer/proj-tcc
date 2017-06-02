@@ -30,7 +30,11 @@
 \usepackage{textcomp}
 % Multilinha
 \usepackage{multirow}
-
+% Hifenação
+%\usepackage{hyphenat}
+%
+\usepackage{microtype}
+\emergencystretch 3em
 
 %%% NOVOS COMANDOS %%%
 % Destaque - coisas a tratar
@@ -45,16 +49,37 @@
 \newcommand \idstr[1] {\ensuremath{\id{#1}^{\mathrm{str}}}}
 \newcommand \fACMP {$\mathrm{ACMP}$}
 \newcommand \ACMPIDs {$\mathrm{ACMP}_{\mathrm{IDs}}$}
+% Nome dos algoritmos
+\newcommand \nomeSimples {AscendACMP}
+\newcommand \nomeNovo    {CombinACMP}
+\newcommand \nomeHwloc   {OndulACMP}
+\newcommand \nomeMatriz  {MatrizACMP}
+\newcommand \Simples {\mbox{\textsc{\nomeSimples}}}
+\newcommand \Novo    {\mbox{\textsc{\nomeNovo}}}
+\newcommand \Hwloc   {\mbox{\textsc{\nomeHwloc}}}
+\newcommand \Matriz  {\mbox{\textsc{\nomeMatriz}}}
+\newcommand \Espalha {\mbox{\textsc{Espalhamento}}}
+%\hyphenation{\nomeSimples}
+%\hyphenation{\nomeNovo}
+%\hyphenation{\nomeHwloc}
+%\hyphenation{\nomeMatriz}
+%\hyphenation{Espalhamento}
+% Funções
+\newcommand \bpn {\mbox{\textsc{BitParaNível}}}
 
 
 %%% ALGORITMOS %%%
-\usepackage{algpseudocode}
-\usepackage{algorithm}
-\floatname{algorithm}{Algoritmo}
+\usepackage[portuguese, ruled, vlined]{algorithm2e}
+%\usepackage{algpseudocode}
+%\usepackage{algorithm}
+%\floatname{algorithm}{Algoritmo}
 \newcommand \var[1] {\mathrm{#1}}
 \newcommand \Cmnt[1] {\textcolor{green!50!black}{// #1}} %alg
-\DeclareMathOperator \OuExBit {\mathbf{OuEx_{bit-a-bit}}}
-\DeclareMathOperator \EBit {\mathbf{E_{bit-a-bit}}}
+\DeclareMathOperator \OuExBit {\ \mathbf{OuEx_{bit-a-bit}}\ }
+\DeclareMathOperator \EBit    {\ \mathbf{E_{bit-a-bit}}\ }
+\DeclareMathOperator \Desl    {\ \mathbf{Desl_{direita}}\ }
+\newcommand \fonteCmnt[1] {\ttfamily\textcolor{gray}{#1}}
+\SetCommentSty{fonteCmnt}
 
 
 %\usepackage{cmap} ???
