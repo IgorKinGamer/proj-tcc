@@ -56,8 +56,8 @@ Foram usadas as seguintes \textit{flags} de compilação:
 %COMO
 \section{Estrutura dos testes}
 
-Os testes consistem em encontrar repetidamente o ACMP entre os nós folhas de uma dada árvore com os diferentes algoritmos -- o existente no hwloc e os implementados.
-Cada vez que as estruturas necessárias são criadas e os testes são executados sobre elas com um determinado algoritmo, obtém-se uma observação, que é o tempo que levou para realizar a quantidade especificada de repetições da função \fACMP entre os nós folhas da árvore com o algoritmo.
+Os testes consistem em encontrar repetidamente o ACMP entre os nós folhas de uma dada árvore com os diferentes algoritmos.
+Cada vez que as estruturas necessárias são criadas e os testes são executados sobre elas com um determinado algoritmo, obtém-se uma observação, que é o tempo que levou para realizar a quantidade especificada de repetições da função \fACMP\ entre os nós folhas da árvore com o algoritmo.
 É usada uma grande quantidade de repetições pois não é possível medir corretamente o tempo de apenas uma chamada à função, o qual é menor que a resolução das chamadas de temporização no processador.
 
 Para cada algoritmo, uma árvore de estrutura equivalente é criada (as estruturas de dados dependem do algoritmo) a partir dos graus fornecidos como entrada.
@@ -81,8 +81,7 @@ A execução da quantidade de iterações internas para cada algorimo compõe um
 Esta forma de especificar a quantidade de observações originou-se nas etapas iniciais dos testes, para facilitar a visualização dos resultados, mas foi mantida.
 No entanto, julga-se melhor usar poucas iterações internas e mais externas para evitar que eventuais condições temporárias da máquina, causadas por elementos externos ao programa, afetem diversas observações de apenas um dos algoritmos.
 
-O programa também permite escolher quais algoritmos serão testados.
-Os possíveis são o simples, o que utiliza as novas estruturas, o que utiliza uma matriz e o implementado no hwloc.
+O programa também permite escolher quais algoritmos serão testados dentre os quatro analisados.
 
 %(Tabela com os parâmetros?)
 
@@ -94,13 +93,12 @@ Assim, os resultados refletem a diferença dos algoritmos quando operando sobre 
 %\tratar{(Referência: The Best of lstopo - https://www.open-mpi.org/projects/hwloc/lstopo/)}
 
 \tratar{especificar parâmetros utilizados}
+Foram usadas, em todas as execuções, mil rodadas na etapa de aquecimento e dez mil, na etapa de medição.
 
-%Acredita-se que a presença de diversos \textit{outliers} de valor significativamente mais baixo nas observações obtidas se deva a momentos em que os processos do sistema operacional em conjunto tenham coincidentemente requerido pouco processamento.
 Notou-se a presença de diversos \textit{outliers} de valor significativamente mais baixo nas observações obtidas.
 Acredita-se que isso se deva a momentos em que os processos do sistema operacional em segundo plano em conjunto tenham coincidentemente requerido pouco processamento.
 
 Inicialmente, os testes foram feitos sem acessar o ACMP obtido a cada execução, ou seja, para cada par de folhas, simplesmente se encontrava o ponteiro para o ancestral, mas nenhum dado do ancestral era obtido.
-%(apenas era feito algo com o ponteiro retornado para evitar otimizações que descartassem tudo devido ao resultado não ser usado).
 No entanto, em cenários reais, os nós seriam buscados para se obter alguma informação sobre eles, portanto, foi adicionado um acesso a um valor qualquer de cada ACMP encontrado para simular isso.
 A~Figura~\ref{fig:box_sem_com} compara o desempenho dos quatro algoritmos na Máquina~A para a árvore com os graus $(1, 4, 1, 1, 9, 2, 1, 1, 4)$ antes e depois do acréscimo desse acesso.
 %Neste \textit{boxplo}
@@ -117,15 +115,20 @@ Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algor
 \end{figure}
 
 \begin{table}[htb]
-	\IBGEtab{\caption{Aumento (\%) do tempo mediano}%
+	\IBGEtab{\centering\caption{Aumento (\%) do tempo mediano}%
 		\label{tab:aumento_mediana}}
-	{\begin{tabular}{ccccc}
+	{\setlength\tabcolsep{1ex}
+	\begin{tabular}{ccccc}
 		\toprule
-		& Simples & Novo & hwloc & Matriz \\
+		& \Simples & \Novo & \Hwloc & \Matriz \\
 		\midrule 
-		Mediana sem acesso & 8373.99 & 8540.89 & 20274.45 & 3841.80 \\
-		Mediana com acesso & 9549.51 & 9401.76 & 23300.20 & 4914.60 \\
-		Aumento (\%)       & 14,04 & 10,08 & 14,92 & 27,92 \\
+		\begin{tabular}{@{}c@{}}Mediana\\sem acesso\end{tabular}
+			& 8373.99 & 8540.89 & 20274.45 & 3841.80 \\
+		\begin{tabular}{@{}c@{}}Mediana\\com acesso\end{tabular}
+			& 9549.51 & 9401.76 & 23300.20 & 4914.60 \\
+		\midrule
+		Aumento (\%)
+			& 14,04 & 10,08 & 14,92 & 27,92 \\
 		\bottomrule
 	\end{tabular}}{}%  \fonte{Produzido pelos autores.}%
 \end{table}

@@ -1,6 +1,6 @@
 % Simples (ascendente)
 \begin{algorithm}
-	\caption{ACMP Ascendente}
+	\caption{\Simples\ -- \fACMP\ subindo as ligações}
 	\label{alg:simples}
 	
 	\Entrada{Dois nós $a$ e $b$}
@@ -8,9 +8,9 @@
 	\BlankLine
 	
 	\tcp{Inicialmente, encontra ancestrais de $a$ e $b$ no mesmo nível}
-	\Enqto {$nível_a > nível_b$}
+	\Enqto {$\var{nível}_a > \var{nível}_b$}
 		{$a \gets \pai(a)$}
-	\Enqto {$nível_b > nível_a$}
+	\Enqto {$\var{nível}_b > \var{nível}_a$}
 		{$b \gets \pai(b)$}
 		
 	\BlankLine

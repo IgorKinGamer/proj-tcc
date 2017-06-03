@@ -27,7 +27,7 @@ Na seção a seguir, será discutido como essa função poderia ser implementada
 A função que encontra o ancestral comum mais próximo recebe dois nós como entrada (e possivelmente algumas estruturas adicionais, se houver necessidade)
 e retorna um nó (o ancestral) como saída.
 Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
-Existem algumas situações especiais.
+%Existem algumas situações especiais.
 Em geral, o caso em que os dois nós são o mesmo (\fACMP($a$, $a$)) não será tratado.
 Se um nó $a$ for ancestral de outro nó $b$, \fACMP($a$, $b$) terá como resultado $a$.
 
@@ -35,23 +35,27 @@ Se um nó $a$ for ancestral de outro nó $b$, \fACMP($a$, $b$) terá como result
 
 A maneira provavelmente mais intuitiva de se descobrir o ACMP é ``subir'' pela árvore, isto é, a partir dos dois nós dos quais se deseja encontrar o ACMP,
 seguir as ligações em direção aos pais até se chegar ao mesmo nó.
-Por ser um método que utiliza apenas a estrutura de árvore em si, sem adição de outras informações, será referido como método simples.
+Por ser um método que funciona subindo as ligações, será referido como método \Simples\ (Algoritmo~\ref{alg:simples}).
+%que utiliza apenas a estrutura de árvore em si, sem adição de outras informações, será referido como método simples.
 Sua complexidade é $\bigO(\log N)$.
 Para que esse método funcione, é necessário subir de forma sincronizada -- a cada passo, devem-se comparar ancestrais dos dois nós iniciais que estejam no mesmo nível.
 No caso do hwloc, o algoritmo se torna um pouco mais complicado, pois ele trata hierarquias assimétricas (pode haver ramos sem nó em algum nível).
 Neste caso, mesmo que se tenham dois nós no mesmo nível, seus pais podem estar em níveis diferentes.
-Um ponto que pode afetar o desempenho deste algoritmo é o fato de que é necessário acessar cada nó
+Ao fim de cada iteração, um dos nós pode estar ``mais alto'' (nível menor), portanto, este método será chamado de \Hwloc\ (Algoritmo~\ref{alg:hwloc}), em analogia a uma superfície ondulada.
+Um ponto que pode afetar o desempenho destes algoritmos é o fato de que é necessário acessar cada nó
 (os nós iniciais e todos os seus ancestrais até o ACMP), e os nós estão espalhados pela memória.
 
-\tratar{(Algoritmo ACMP do hwloc)}
+\input{rec/algs/Simples}
+
+\input{rec/algs/Hwloc}
 
 Considerando a estrutura de árvore apenas, a única informação que relaciona um nó aos seus ancestrais são as ligações.
 % entre um nó e seus filhos (ou, no outro sentido, entre cada nó e seu pai).
 %Assim, todas as sequências de uma ou mais ligações de filho para pai a partir de um nó (ou seja,
 %entre o nó e seu pai, entre este e o pai dele, e assim por diante) definem os ancestrais do nó.
 Isso indica que outras estruturas associadas aos nós ou à árvore como um todo se fazem necessárias
-para ser possível encontrar o ACMP com algum método além do simples.
-Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função de ancestral comum:
+para ser possível encontrar o ACMP com algum método além dos mencionados.
+Podemos considerar a seguinte ideia para encontrar outra maneira de implementar a função \fACMP:
 Para uma dada árvore que representa uma topologia,
 \begin{enumerate}
 	\item Atribuir um valor (chamado de ID) a cada nó da árvore;
@@ -76,7 +80,7 @@ em que cada linha representa um nó da árvore, assim como cada coluna, e o cruz
 Para isso, pode-se atribuir a cada um dos $N$ nós da árvore um ID único entre $0$ e $N-1$ e usar esses IDs como índices na matriz,
 que terá, na posição $A(i,j)$, o ACMP entre o nó de ID $i$ e o nó de ID $j$.
 No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(N^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
-A Tabela~\ref{tab:dif_arvore_matriz} sumariza a diferença entre a utilização de uma árvore (método simples) e de uma matriz (método matricial).
+A Tabela~\ref{tab:dif_arvore_matriz} sumariza a diferença entre a utilização de uma árvore e de uma matriz para a função \fACMP.
 Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
 Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o Algoritmo~\ref{alg:matriz}.
 Isso, no entanto, não altera a complexidade espacial.
@@ -98,7 +102,7 @@ O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo
 os bits menos significativos de \no{b} são iguais ao ID de \no{a}.
 Desse modo, dados dois descendentes de um nó \no{c}, todos os bits menos significativos deles que coincidem
 (todos os que vêm antes do primeiro que difere) são iguais ao ID de \no{c} (ignorando zeros à esquerda).
-Usando apenas as operações que podem ser vistas nas linhas 1 -- 4 do Algoritmo~\ref{alg:novo} mais adiante,
+Usando apenas as operações que podem ser vistas nas linhas 1~--~4 do Algoritmo~\ref{alg:novo} mais adiante,
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
 A quantidade de instruções é fixa, portanto, a complexidade é constante.
 
@@ -127,14 +131,14 @@ A função \Espalha\ (Algoritmo~\ref{alg:espalha}) utiliza dados específicos pa
 
 Testes feitos indicaram que a operação mais custosa no \Novo\ era o módulo, usado na função \Espalha.
 No entanto, existem técnicas para realizar de maneira mais barata a divisão com denominador previamente conhecido \cite{reciproco}, e com o resultado da divisão pode-se calcular o módulo.
-Esta otimizações são usadas, por exemplo, por compiladores.
+Essas otimizações são usadas, por exemplo, por compiladores, sendo chamadas de Redução de Força.
 Aqui, no entanto, a ideia não é realizá-las em tempo de compilação, mas quando se está montando as estruturas para uma hierarquia específica.
 Isso continua sendo vantajoso pois a montagem ocorre apenas uma vez e esta operação de módulo com o mesmo valor será realizada uma grande quantidade de vezes.
 Portanto, é possível substituir a operação de módulo por outras operações que se mostraram mais baratas, a saber, duas multiplicações, um deslocamento e uma subtração.
 %Com esta alteração, os tempos diminuiram consideravelmente, conforme mostra a tabela [X])
 
 Para se encontrarem valores apropriados para a função \Espalha, são testados valores cada vez maiores para $m$, até que não haja colisões.
-Ao se encontrar um $m$ válido, se busca um $\mathit{ad}$ que minimize o maior resultado de $\mathrm{id} \bmod m$, minimizando o tamanho necessário do arranjo.
+Ao se encontrar um $m$ válido, se busca um $\mathit{ad}$ que minimize o maior resultado de $(\mathrm{id} + \mathit{ad}) \bmod m$, minimizando o tamanho do arranjo usado.
 Então, são descobertos os valores de $\mathit{mult}$ e $\mathit{desl}$, usando a técnica descrita em \citeonline{reciproco}, para evitar a operação de módulo.
 
 %\tratar{Estruturas foram testadas}
@@ -144,9 +148,25 @@ Também é causada uma mutação em uma árvore e é verificado se o erro é det
 
 
 %Detalhes de como os IDs são formados
-\tratar{Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve
-Funciona em casos de hierarquias assimétricas, simples não
-Limitação: Quantidade de bits necessária - Solução parcial: 'Esconder' níveis cujos nós têm só um filho (níveis de grau um).}
+%\tratar{Pode falhar se os dois nós de entrada são, na verdade, o mesmo nó. If resolve
+%A Tabela~\ref{tab:compara} apresenta a comparação entre algumas características dos métodos discutidos.
+O \Novo, assim como o \Hwloc\ e o \Matriz, trata corretamente hierarquias assimétricas, diferentemente do \Simples.
+No entanto, ele possui uma limitação: % devido a como os IDs são formados:
+A quantidade de bits do ID de um nó pode chegar até o somatório dos graus de todos os níveis.
+Se esta quantidade ultrapassar o tamanho de uma palavra (geralmente 32 ou 64 bits), o método terá problemas, limitando as árvores que podem ser usadas.
+Além disso, a técnica usada na função \Espalha\ para otimizar o módulo inclui uma multiplicação cujo resultado pode ter até cerca do dobro da quantidade de bits do penúltimo nível (o último nível não possui espalhamento, pois seus nós nunca serão ACMP).
+Como uma solução parcial, níveis de grau um podem ser omitidos na definição dos IDs, visto que seus nós também nunca serão ACMP.
+Atribuindo a cada nó desses níveis e ao seu filho o mesmo ID, eles continuam podendo ser usados em buscas de ACMP.
+Deste modo, o tamanho máximo seria o somatório dos graus de todos os níveis de grau diferente de 1.
+
+%Isto pode ser contornado isto utilizando o resultado, por exemplo, se for possível acessar o resultado de 128 bits de uma multiplicação de 64 bits $\times$ 64 bits.
+%limitando o tamanho das árvores que podem ser usadas
+%Não é necessário  atribuir os níveis de grau um, 
+O método poderia ser adaptado para usar mais palavras se necessário, teoricamente deixando de ser $\bigO(1)$ e se tornando $\bigO(\log N)$, mas, na prática, nenhuma árvore deve ser tão grande que exija uma quantidade significativa.
+%Funciona em casos de hierarquias assimétricas, simples não
+%Limitação: Quantidade de bits necessária - Solução parcial: 'Esconder' níveis cujos nós têm só um filho (níveis de grau um).}
+
+O código implementado tem suporte à aplicação das operações \texttt{Ou} e \texttt{Ou-Exclusivo} ao ID no início da função \Espalha, com valores que também precisariam ser descobertos previamente, o que poderia reduzir ainda mais o tamanho dos arranjos usados. No entanto, devido a restrições de tempo, a busca desses valores não foi implementada.
 
 
 

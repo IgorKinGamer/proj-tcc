@@ -5,14 +5,14 @@
 
 %Uma parte muito importante das hierarquias a ser considerada em questões de desempenho são as memórias cache.
 As hierarquias de memória possuem várias características que afetam o desempenho de aplicações e precisam, portanto, ser conhecidas ao se trabalhar com aplicações de alto desempenho.
-Nas seções a seguir são apresentados alguns conceitos importantes nesse contexto, e, ao final, alguns conceitos relacionados a estruturas de dados.
+Nas seções a seguir são apresentados alguns conceitos importantes nesse contexto, e, ao final, alguns conceitos relacionados a estruturas de dados relevantes.
 
 
 
 \section{Memórias Cache}
 \label{sec:memorias_cache}
 
-Caches são memórias com o próposito de diminuir o tempo médio de acesso a outros níveis de memória. Mais especificamente, é comum haver dois ou três níveis de cache entre as unidades de processamento e a memória principal. Elas são construídas com tecnologias que as tornam mais rápidas que outros níveis abaixo \cite{Patterson}. Porém, essa velocidade vem em troca de custo mais elevado. Por isso, elas têm espaço de armazenamento menor, além de que memórias maiores podem ter sua velocidade de acesso diminuída, o que também motiva a existência de vários níveis de cache.
+Caches são memórias com o próposito de diminuir o tempo médio de acesso aos dados. Mais especificamente, é comum haver dois ou três níveis de cache entre as unidades de processamento e a memória principal. Elas são construídas com tecnologias que as tornam mais rápidas que outros níveis abaixo \cite{Patterson}. Porém, essa velocidade vem em troca de custo mais elevado. Por isso, elas têm espaço de armazenamento menor, além de que memórias maiores podem ter sua velocidade de acesso diminuída, o que também motiva a existência de vários níveis de cache.
 
 O princípio de sua funcionalidade é manter à disposição dos programas, de forma rápida, aqueles dados dos quais eles precisam ou que estão usando no momento. Esses dados são disponibilizados conforme a capacidade de armazenamento da cache. Esta comumente é menor que o conjunto de todos os dados sobre os quais o programa opera, resultando na necessidade de remover alguns dados para acomodar outros.
 
@@ -28,12 +28,14 @@ No pior caso, acessos consecutivos poderiam ser todos a blocos diferentes, ocasi
 \section{\textit{Non-Uniform Memory Access}}
 \label{sec:numa}
 
-\ac{numa} é um tipo de multiprocessador com espaço de endereçamento único em que diferentes partes da memória estão mais próximas de alguns núcleos do que dos outros \cite{Patterson}.
+\textit{Non-Uniform Memory Access} (NUMA) é um tipo de multiprocessador com espaço de endereçamento único em que diferentes partes da memória estão mais próximas de alguns núcleos do que dos outros \cite{Patterson}.
 Deste modo, o tempo de acesso depende do núcleo e da memória acessada.
 Sistemas desse tipo possuem boa escalabilidade, pois é possível adicionar nós sem prejudicar o tempo de acesso dos núcleos às memórias mais próximas.
-Estas características diferem das de outro tipo de multiprocessador existente, \ac{uma}, em que o tempo de acesso independe do núcleo e da memória, e não há a vantagem de memórias locais com tempo de acesso reduzido.
+Estas características diferem das de outro tipo de multiprocessador existente, \textit{Uniform Memory Access} (UMA), em que o tempo de acesso independe do núcleo e da memória, e não há a vantagem de memórias locais com tempo de acesso reduzido.
+Um problema com arquiteturas UMA é a contenção: vários núcleos disputam pelo barramento para acessar a memória, podendo fazer com que alguns fiquem ociosos enquanto esperam, diminuindo o desempenho.
+Além disso, a escalabilidade é reduzida -- ao aumentar a quantidade de núcleos, o tempo de acesso à memória também cresce, seja qual for a região acessada, podendo se tornar inaceitável.
 
-O modo como os nós são interconectados determina os custos de comunicação entre quaisquer dois núcleos em nós distintos.
+O modo como os nós NUMA são interconectados determina os custos de comunicação entre quaisquer dois núcleos em nós distintos.
 Além disso, ele define os níveis que existirão a mais na hierarquia, ou seja, a sua profundidade.
 Essas informações são de grande valia e devem ser fornecidas por representações da topologia com precisão.
 Mesmo poucos níveis a mais na rede de interconexão podem resultar em diferenças de desempenho significativas \cite{MPITopFunc}.

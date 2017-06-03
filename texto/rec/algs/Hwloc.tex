@@ -1,0 +1,23 @@
+% Hwloc (ondulado)
+\begin{algorithm}
+	\caption{\Hwloc\ -- \fACMP\ implementado no hwloc}
+	\label{alg:hwloc}
+	
+	\Entrada{Dois nós $a$ e $b$}
+	\Saida{O ACMP entre $a$ e $b$}
+	\BlankLine
+	
+	\Enqto {$a \not= b$}
+	{
+		\Enqto {$\var{nível}_a > \var{nível}_b$}
+			{$a \gets \pai(a)$}
+		\Enqto {$\var{nível}_b > \var{nível}_a$}
+			{$b \gets \pai(b)$}
+		\Se {$a \not= b$ e $\var{nível}_a = \var{nível}_b$}
+		{
+			$a \gets \pai(a)$ \\
+			$b \gets \pai(b)$ \\
+		}
+	}
+	\Retorna {$a$}
+\end{algorithm}

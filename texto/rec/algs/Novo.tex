@@ -54,17 +54,19 @@
 	\caption{\Espalha\ -- Função de espalhamento}
 	\label{alg:espalha}
 	
-	\Entrada{Um nível (inteiro não negativo) $n$ \newline
+	\Entrada{Um nível $n$ ($n \in \mathbb{Z}$, $n \ge 0$) \newline
 	         O id de um nó}
 	\Saida{A posição em que o nó deve ficar no vetor do seu nível}
 	\BlankLine
 	
-	Nota: Os valores $\var{ad}_{n}$, $\var{m}_{n}$,
+	\SetKwInput{Nota}{Nota}
+	
+	\Nota {Os valores $\var{ad}_{n}$, $\var{m}_{n}$,
 	                 $\var{mult}_{n}$ e $\var{desl}_{n}$
-	      dependem da árvore com a qual se usará esta função
-	      e do nível recebido ($n$).
-	      $x \Desl b$ é o valor $x$ deslocado $b$ bits para a direita,
-	      equivalente a $\lfloor x/(2^b)\rfloor$. \\
+	        dependem da árvore com a qual se usará esta função
+	        e do nível recebido ($n$). \newline
+	       $x \Desl b$ é o valor $x$ deslocado $b$ bits para a direita,
+	       equivalente a $\lfloor x/(2^b)\rfloor$.}
 	\BlankLine
 	
 	\tcp{Minimiza o resultado ${}\bmod m_{n}$ para minimizar o tamanho do vetor}
