@@ -1,23 +1,10 @@
 \chapter{Implementação}
+\label{cap:implementacao}
 
-Esta seção apresenta como o projeto hwloc foi analisado, as considerações feitas com relação ao desempenho e as implementações resultantes.
+Esta seção apresenta as análises realizadas com foco no desempenho e os algoritmos e implementações resultantes.
 Todo o código foi desenvolvido na linguagem C++.
 
-O hwloc possui diversas funções de percorrimento.
-Estas permitem acessar nós da árvore que representa a hierarquia de forma absoluta ou relativa a outros nós.
-Por exemplo, é possível encontrar o nó com um determinado índice dentro de um dado nível,
-ou, a partir de algum nó, o próximo no mesmo nível.
-\tratar{Listar funções}
-
-Essas funções foram analisadas quanto à complexidade com o objetivo de identificar pontos que poderiam ser melhorados do ponto de vista do desempenho.
-Essa análise revelou que, em geral, elas têm tempo constante ($\bigO(1)$) ou linear na altura da árvore (\Oalt), que é o mesmo que $\bigO(\log N)$, onde $N$ é a quantidade de nós da árvore.
-Além disso, foi analisado um projeto de código aberto que utiliza o hwloc, HieSchella \cite{HieSchella},
-cujo objetivo é prover portabilidade de desempenho, característica presente quando se consegue que
-uma mesma aplicação rode em diferentes plataformas utilizando os núcleos com eficiência.
-Foram identificadas as chamadas mais importantes a funções do hwloc no HieSchella para se ter uma referência
-de quais funções são mais relevantes para o desempenho dentro de um projeto real.
-
-Diante dessas considerações, a função que encontra o ancestral comum mais próximo (\fACMP) entre dois nós foi escolhida como alvo de otimizações.
+Diante das considerações feitas sobre o projeto hwloc e o seu uso no projeto HieSchella, a função que encontra o ancestral comum mais próximo (\fACMP) entre dois nós foi escolhida como alvo de otimizações.
 Ela é uma das funções implementadas no hwloc com complexidade \Oalt\ (ou $\bigO(\log N)$) e está entre as de uso mais significativo no HieSchella.
 Na seção a seguir, será discutido como essa função poderia ser implementada de forma mais eficiente e quais as implicações de diferentes abordagens.
 
@@ -28,8 +15,8 @@ A função que encontra o ancestral comum mais próximo recebe dois nós como en
 e retorna um nó (o ancestral) como saída.
 Cada par de nós em uma árvore tem exatamente um ancestral comum mais próximo.
 %Existem algumas situações especiais.
-Em geral, o caso em que os dois nós são o mesmo (\fACMP($a$, $a$)) não será tratado.
-Se um nó $a$ for ancestral de outro nó $b$, \fACMP($a$, $b$) terá como resultado $a$.
+Em geral, o caso em que os dois nós são o mesmo (\fACMP($a$,~$a$)) não será tratado.
+Se um nó $a$ for ancestral de outro nó $b$, \fACMP($a$,~$b$) terá como resultado $a$.
 
 \subsection{Abordagem inicial}
 
@@ -68,7 +55,6 @@ Idealmente, essa função \ACMPIDs\ deveria ser \textit{processada} em tempo con
 Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
 No entanto, é preciso lembrar que, mesmo que a quantidade de instruções executadas pelo processador seja constante,
 a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
-\tratar{(? Isso pode ser visto... (exemplo à frente com matriz?))}
 
 Com isso em mente, podemos definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
 tais como as operações aritméticas e operações lógicas bit-a-bit.
@@ -105,6 +91,7 @@ Desse modo, dados dois descendentes de um nó \no{c}, todos os bits menos signif
 Usando apenas as operações que podem ser vistas nas linhas 1~--~4 do Algoritmo~\ref{alg:novo} mais adiante,
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
 A quantidade de instruções é fixa, portanto, a complexidade é constante.
+Essa estratégia será chamada de \Novo\ pelo modo como o ID do ancestral é extraído da parte dos IDs em que eles combinam.
 
 \input{rec/caps/Forma_ids} % Explicação de como os IDs são formados
 
@@ -117,10 +104,10 @@ Algumas opções para isso seriam:
 	\item Usar uma função de espalhamento (\textit{hash}): a maneira mais simples seria apenas aplicar a operação módulo com algum $m$ ($\mathrm{id} \bmod m$).
 	No entanto, podem haver colisões (dois IDs diferentes podem ser congruentes módulo $m$).
 	Isso pode ser tratado, mas acarretaria acessos adicionais à memória, o que não é desejável.
-	\tratar{Exemplo}
+	Por exemplo, para os IDs do nível 1 da Figura~\ref{img:exemplo_ids}, $(1, 2, 4)$, $m = 3$ resultaria em $(1, 2, 1)$, com dois nós mapeados para a posição 1.
 	\item Buscar uma função que não cause colisões: o mesmo que a função de espalhamento, porém utilizando um valor de módulo que não cause colisões.
 	Pode exigir arranjos cujo tamanho é algumas vezes maior que a quantidade de nós, mas aparenta compensar quando comparado a tratar colisões de outros modos.
-	\tratar{Exemplo}
+	Por exemplo, com os mesmos IDs, $m = 4$ resultaria em $(1, 2, 0)$, sem colisões (e, coincidentemente, exigiria um arranjo de apenas três posições).
 	Este foi o método escolhido.
 \end{itemize}
 
@@ -167,14 +154,3 @@ O método poderia ser adaptado para usar mais palavras se necessário, teoricame
 %Limitação: Quantidade de bits necessária - Solução parcial: 'Esconder' níveis cujos nós têm só um filho (níveis de grau um).}
 
 O código implementado tem suporte à aplicação das operações \texttt{Ou} e \texttt{Ou-Exclusivo} ao ID no início da função \Espalha, com valores que também precisariam ser descobertos previamente, o que poderia reduzir ainda mais o tamanho dos arranjos usados. No entanto, devido a restrições de tempo, a busca desses valores não foi implementada.
-
-
-
-%SEÇÃO Futuro
-
-%Melhorias e alternativas não testadas:
-%- Eliminar multiplicações (mas testes feitos mostram que não têm grande custo)
-%- Todos os nós em um só arranjo
-%- Máscaras Ou e OuExclusivo; Outras maneiras de diminuir o tamanho
-
-%HieSchella - hwloc\_get\_ancestor\_obj\_by\_type

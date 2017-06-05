@@ -3,7 +3,7 @@
 \acresetall
 
 
-No estado da arte quanto à representação de topologias de máquina encontra-se o projeto Hardware Locality (hwloc) \cite{hwloc2010}.
+No estado da arte quanto à representação de topologias de máquina encontra-se o projeto \textit{Hardware Locality} (hwloc) \cite{hwloc2010}.
 
 O hwloc é um pacote de software amplamente utilizado para a representação de topologias de máquina com grande portabilidade.
 Ele contém ferramentas de linha de comando, além de permitir que aplicações acessem as informações sobre a topologia por meio de uma API na linguagem C.
@@ -37,8 +37,8 @@ Portanto, objetos irmãos não estarão necessariamente no mesmo nível, e o con
 
 Essas relações acrescentadas à estrutura de árvore facilitam a navegação entre objetos, em troca do espaço adicional ocupado por cada ponteiro nos objetos.
 Por exemplo, como indicado na figura, a partir de qualquer objeto, é possível navegar para o próximo primo (pelo ponteiro \texttt{next\_cousin}), ou para o próximo irmão (ponteiro \texttt{next\_sibling}), se existirem.
-Além disso, todos os objetos são armazenados numa estrutura de array de arrays de objetos, semelhante a uma matriz, mas com arrays internos de tamanho variável.
-Cada um dos arrays internos contém os objetos de um nível, e eles são organizados no array externo na ordem dos níveis, de modo que é possível acessar o enésimo objeto de um dado nível diretamente usando essa estrutura.
+Além disso, todos os objetos são armazenados numa estrutura de arranjo de arranjos de objetos, semelhante a uma matriz, mas com arranjos internos de tamanho variável.
+Cada um dos arranjos internos contém os objetos de um nível, e eles são organizados no arranjo externo na ordem dos níveis, de modo que é possível acessar o enésimo objeto de um dado nível diretamente usando essa estrutura.
 
 %Figura X: https://www.open-mpi.org/projects/hwloc/doc/v1.11.2/diagram.png
 Todos os objetos que compõe a hierarquia e outras estruturas de dados utilizadas na representação da topologia são armazenados em uma estrutura (\texttt{struct~hwloc\_topology}) que é utilizada pelas funções que acessam dados da topologia.
@@ -47,15 +47,27 @@ Todos os objetos que compõe a hierarquia e outras estruturas de dados utilizada
 %?
 \section{Funções e atributos}
 
-Diversas funções podem ser utilizadas para acessar os objetos da hierarquia e informações sobre eles.
+Existem funções que podem ser utilizadas para acessar os objetos da hierarquia e informações sobre eles.
+Entre elas, o hwloc possui diversas funções de percorrimento.
+Estas permitem acessar nós da árvore que representa a hierarquia de forma absoluta ou relativa a outros nós.
+Por exemplo, é possível encontrar o nó com um determinado índice dentro de um dado nível,
+ou, a partir de algum nó, o próximo no mesmo nível.
 Alguns exemplos de funções são:
 \begin{itemize}
-	\item \texttt{hwloc\_get\_obj\_by\_type}: Informa quantos objetos de um determinado tipo existem, por exemplo, a quantidade de núcleos.
+	\item \texttt{hwloc\_get\_nbobjs\_by\_type}: Informa quantos objetos de um determinado tipo existem, por exemplo, a quantidade de núcleos.
 	\item \texttt{hwloc\_get\_cache\_covering\_cpuset}: Encontra a primeira memória cache que abrange um dado conjunto de CPUs.
-	\item \texttt{hwloc\_get\_ancestor\_obj\_by\_type}: Encontra o ancestral de um dado objeto que seja de um determinado tipo.
+	\item \texttt{hwloc\_get\_ancestor\_obj\_by\_type}: Encontra o ancestral de um objeto que seja de um determinado tipo.
 	\item \texttt{\texttt{hwloc\_get\_ancestor\_obj\_by\_depth}}: Semelhante à função anterior, procurando por nível em vez de tipo.
+	\item \texttt{hwloc\_get\_common\_ancestor\_obj}: Encontra o ancestral comum mais próximo (ACMP) entre dois objetos, isto é, o nó de maior profundidade que é ancestral de ambos.
 	%\item \texttt{}:
 \end{itemize}
+
+Essas funções foram analisadas quanto à complexidade com o objetivo de identificar pontos que poderiam ser melhorados do ponto de vista do desempenho.
+Essa análise revelou que, em geral, elas têm tempo constante ($\bigO(1)$) ou linear na altura da árvore (\Oalt), que é o mesmo que $\bigO(\log N)$, onde $N$ é a quantidade de nós da árvore.
+Além disso, foi analisado o projeto HieSchella, o qual possui código aberto e utiliza o hwloc \cite{HieSchella}.
+Foram identificadas as chamadas mais importantes a funções do hwloc no HieSchella para se ter uma referência
+de quais funções são mais relevantes para o desempenho dentro de um projeto real.
+O Capítulo~\ref{cap:implementacao} apresenta o que foi feito em decorrimento dessas análises.
 
 Os objetos ainda têm atributos que podem guardar diversas informações, como detalhes do sistema operacional ou da máquina, que podem ser coletadas automaticamente durante o descobrimento da topologia ou adicionadas manualmente.
 Além disso, há várias informações específicas de caches, como associatividade ou tamanho.

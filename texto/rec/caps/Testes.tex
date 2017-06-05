@@ -1,13 +1,14 @@
 % Seção sobre testes de desempenho
 
 \chapter{Testes de desempenho}
+\label{cap:testes}
 %POR QUÊ
 
 Com o objetivo de avaliar o desempenho do algoritmo desenvolvido, foram realizados testes
 que permitiram comparar o desempenho das diferentes abordagens.
-Foi medido o tempo tomado pelos algoritmos
+Os dados foram obtidos medindo o tempo tomado pelos algoritmos
 ao se encontrar repetidamente o ACMP entre os nós folhas de uma árvore.
-Com esses dados, analisados
+%Com esses dados, analisados
 
 Um programa foi desenvolvido, também na linguagem C++, para realizar os testes de desempenho.
 Foi utilizada a funcionalidade de templates da linguagem para facilitar a definição equivalente dos testes para todos os algoritmos, mas ainda assim permitir que o compilador otimizasse as chamadas, evitando custos adicionais durante os testes devido à hierarquia de classes utilizada.
@@ -92,8 +93,8 @@ As árvores utilizadas nos testes correspondem à hierarquia de memória de máq
 Assim, os resultados refletem a diferença dos algoritmos quando operando sobre hierarquias reais.
 %\tratar{(Referência: The Best of lstopo - https://www.open-mpi.org/projects/hwloc/lstopo/)}
 
-\tratar{especificar parâmetros utilizados}
-Foram usadas, em todas as execuções, mil rodadas na etapa de aquecimento e dez mil, na etapa de medição.
+Foram usadas, em todas as execuções, mil rodadas na etapa de aquecimento e dez mil na etapa de medição.
+Foram usadas sempre três iterações internas.
 
 Notou-se a presença de diversos \textit{outliers} de valor significativamente mais baixo nas observações obtidas.
 Acredita-se que isso se deva a momentos em que os processos do sistema operacional em segundo plano em conjunto tenham coincidentemente requerido pouco processamento.
@@ -137,4 +138,46 @@ Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algor
 
 %Outras medições?
 
-\tratar{Outras análises: comparações entre as máquinas, comparar tempo médio por acesso do novo algoritmo entre topologias de tamanhos diferentes}
+%\tratar{Outras análises: comparações entre as máquinas, comparar tempo médio por acesso do novo algoritmo entre topologias de tamanhos diferentes}
+
+Cinco árvores distintas foram usadas nos testes.
+Dados sobre elas são apresentados na Tabela \ref{tab:arvores}.
+Para cada algoritmo e com cada árvore, foram feitas 150 observações na Máquina A e 450 observações na Máquina B.
+As~Figuras~\ref{fig:t_medio_a}~e~\ref{fig:t_medio_b} apresentam o tempo médio por chamada da função \fACMP, calculado usando a mediana dos dados, para cada uma das árvores.
+É possível ver que o \Novo\ foi o que teve tempos mais estáveis, apesar da variação do tamanho das árvores.
+
+\begin{table}[htb]
+	\IBGEtab{\centering\caption{Árvores utilizadas nos testes}%
+		\label{tab:arvores}}
+	{%\setlength\tabcolsep{1ex}
+	\begin{tabular}{rcc}
+		\toprule
+		Graus & Nº de nós & Nº de folhas \\
+		\midrule 
+		%\begin{tabular}{@{}c@{}}Mediana\\sem acesso\end{tabular}
+		2 1 1 8 1 1 1 2
+			& 103 & 32 \\
+		8 1 1 6 1 1 1
+			& 217 & 48 \\
+		4 4 1 3 2 1 1 1
+			& 469 & 96 \\
+		2 2 1 5 1 1 1 1 8
+			& 271 & 160 \\
+		1 4 1 1 9 2 1 1 4
+			& 554 & 288 \\
+		\bottomrule
+	\end{tabular}}{}%  \fonte{Produzido pelos autores.}%
+\end{table}
+
+
+\begin{figure}[h]
+	\caption{Tempo médio por busca (ns) -- Máquina A}
+	\label{fig:t_medio_a}
+	\resizebox{\textwidth}{!}{\input{rec/img/tMedioA}}
+\end{figure}
+
+\begin{figure}[h]
+	\caption{Tempo médio por busca (ns) -- Máquina B}
+	\label{fig:t_medio_b}
+	\resizebox{\textwidth}{!}{\input{rec/img/tMedioB}}
+\end{figure}

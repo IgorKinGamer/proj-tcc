@@ -1,0 +1,68 @@
+\begin{apendicesenv}
+
+\chapter{Código desenvolvido}
+
+\lstset
+{
+	language=[11]C++,
+	basicstyle=\ttfamily\scriptsize,
+	numberstyle=\scriptsize,
+	numbers=left,
+	%backgroundcolor=\color{gray!10},
+	frame=single,
+	tabsize=2,
+	rulecolor=\color{black!30},
+	showstringspaces=false,
+	escapeinside={\%*}{*)},
+	breaklines=true,
+	breakatwhitespace=true,
+	framextopmargin=2pt,
+	framexbottommargin=2pt,
+	inputencoding=utf8,
+	extendedchars=true,
+	literate=
+	{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+	{Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+	{à}{{\`a}}1
+	{À}{{\`A}}1
+	{â}{{\^a}}1 {ê}{{\^e}}1 {ô}{{\^o}}1
+	{Â}{{\^A}}1 {Ê}{{\^E}}1 {Ô}{{\^O}}1
+	{ã}{{\~{a}}}1 {õ}{{\~{o}}}1
+	{Ã}{{\~{A}}}1 {Õ}{{\~{O}}}1
+	{ç}{{\c c}}1 {Ç}{{\c C}}1
+	{º}{{$^o$}}1
+}
+\newcommand \codigo[2] {\lstinputlisting[title=#2]{rec/cod/#1}}
+\newcommand \codarv[2] {\codigo{arv/#1}{arv/#2}}
+\newcommand \codmat[2] {\codigo{matriz/#1}{matriz/#2}}
+\newcommand \codtst[2] {\codigo{tst_tmp/#1}{tst\_tmp/#2}}
+
+\section{Estruturas (\Novo)}
+
+\codarv{arv.h}        {arv.h}
+\codarv{arv_mod.h}    {arv\_mod.h}
+\codarv{config_dbg.h} {config\_dbg.h}
+\codarv{constr.h}     {constr.h}
+\codarv{id.h}         {id.h}
+\codarv{percorr.h}    {percorr.h}
+\codarv{tst_estr.cpp} {tst\_estr.cpp}
+
+
+\section{Estruturas (\Matriz)}
+
+\codmat{arv.h}        {arv.h}
+\codmat{config_dbg.h} {config\_dbg.h}
+\codmat{constr.h}     {constr.h}
+\codmat{percorr.h}    {percorr.h}
+\codmat{tst_estr.cpp} {tst\_estr.cpp}
+
+
+\section{Testes de desempenho}
+
+\codtst{tst_tmp.cpp}      {tst\_tmp.cpp}
+\codtst{tst_tmp.h}        {tst\_tmp.h}
+\codtst{tst_tmp_arv.h}    {tst\_tmp\_arv.h}
+\codtst{tst_tmp_hwloc.h}  {tst\_tmp\_hwloc.h}
+\codtst{tst_tmp_matriz.h} {tst\_tmp\_matriz.h}
+
+\end{apendicesenv}

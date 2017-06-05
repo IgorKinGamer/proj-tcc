@@ -23,6 +23,8 @@
 % TikZ
 \usepackage{tikz}
 \usetikzlibrary{positioning}
+% Código fonte
+\usepackage{listings}
 % Novos comands
 \usepackage{xparse}
 % Sub-figuras
@@ -32,7 +34,8 @@
 % Multilinha
 \usepackage{multirow}
 % Hifenação
-%\usepackage{hyphenat}
+\usepackage{hyphenat}
+\hyphenation{HieSchella}
 %
 \usepackage{microtype}
 \emergencystretch 3em
@@ -119,6 +122,7 @@
 \include{rec/caps/Estado_da_arte}
 \include{rec/caps/Ancestral}
 \include{rec/caps/Testes}
+\include{rec/caps/Conclusao}
 
 
 %%%%%%%%%%%%%%%%%
@@ -127,5 +131,7 @@
 \postextual
 
 \bibliography{rec/ref}
+
+\include{rec/Apendice}
 
 \end{document}

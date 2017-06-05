@@ -1,0 +1,33 @@
+\chapter{Conclusão}
+\label{cap:conclusao}
+
+
+O objetivo deste trabalho foi desenvolver formas otimizadas de representar topologias de máquina.
+O projeto hwloc, estado da arte em representação de topologias, foi analisado e a função que encontra o ACMP foi identificada como um ponto relevante a se otimizar.
+Com essa análise,
+novas estruturas foram desenvolvidas, além de um algoritmo utilizando-as, \Novo.
+Esse algoritmo e outras abordagens foram implementados e testados.
+
+O \Novo\ mostrou características promissoras, como maior estabilidade quanto ao tempo e estruturas que devem originar acessos à memória menos esparsos do que nas outras abordagens.
+O \Matriz, apesar de ter tido tempos menores, se mostrou instável diante do aumento do tamanho das árvores utilizadas.
+Não foram feitos testes com aplicações reais, mas a instabilidade diante dos testes realizados é uma evidência de que seu uso da memória prejudicaria o desempenho.
+O desempenho do \Simples\ foi semelhante ao do \Novo, mas pode também estar sujeito à influência do padrão de acessos à memória, assim como o \Hwloc, utilizado pelo hwloc, que ainda necessita de um processamento maior.
+%O seu uso em uma aplicação real deixaria clara a sua deficiência
+
+%SEÇÃO Futuro
+
+Como trabalhos futuros,
+pode-se avaliar o desempenho dos algoritmos diante de aplicações reais
+e fazer outras análises, como acompanhar o uso da memória com mais detalhes.
+Se isto se mostrar relevante,
+outras técnicas podem ser estudadas para diminuir o tamanho das estruturas usadas no \Novo,
+incluindo a aplicação de máscaras \texttt{Ou} e \texttt{Ou-Exclusivo} aos IDs na função \Espalha,
+para o que há suporte no código desenvolvido, embora não tenha sido usado.
+
+Quanto a outras funções presentes no hwloc, pode-se estudar a possibilidade e o impacto de otimizações na representação do conjunto de CPUs dos objetos, o qual é usado, por exemplo, para determinar se um objeto está sobre outro na hierarquia de memória.
+Além disso, outra função identificada como relevante no projeto HieSchella é a \mbox{\texttt{hwloc\_get\_ancestor\_obj\_by\_type}}, que encontra o ancestral em determinado nível, também deixando espaço para se estudar se otimizações teriam efeito significativo no desempenho.
+
+%Melhorias e alternativas não testadas:
+%- Eliminar multiplicações (mas testes feitos mostram que não têm grande custo)
+
+%HieSchella - hwloc\_get\_ancestor\_obj\_by\_type
