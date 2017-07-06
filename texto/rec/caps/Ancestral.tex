@@ -57,7 +57,7 @@ No entanto, é preciso lembrar que, mesmo que a quantidade de instruções execu
 a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
 
 Com isso em mente, podemos definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
-tais como as operações aritméticas e operações lógicas bit-a-bit.
+tais como as operações aritméticas e operações lógicas \textit{bit-a-bit}.
 
 \subsection{Matriz}
 
@@ -65,7 +65,7 @@ Uma possibilidade é relacionar cada par de nós ao seu ACMP por meio de uma mat
 em que cada linha representa um nó da árvore, assim como cada coluna, e o cruzamento contém o ACMP entre o nó da linha e o nó da coluna.
 Para isso, pode-se atribuir a cada um dos $N$ nós da árvore um ID único entre $0$ e $N-1$ e usar esses IDs como índices na matriz,
 que terá, na posição $A(i,j)$, o ACMP entre o nó de ID $i$ e o nó de ID $j$.
-No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(N^2)$ ocupado na memória resultaria em problemas como sujar a cache da aplicação.
+No entanto, esta é uma estratégia ingênua, pois esse espaço $\bigO(N^2)$ ocupado na memória resultaria em problemas como sujar a \textit{cache} da aplicação.
 A Tabela~\ref{tab:dif_arvore_matriz} sumariza a diferença entre a utilização de uma árvore e de uma matriz para a função \fACMP.
 Visto que a matriz é simétrica, apenas cerca de metade dela precisa realmente ser armazenada.
 Esta otimização foi utilizada na implementação dos testes de desempenho, conforme o Algoritmo~\ref{alg:matriz}.
@@ -83,10 +83,10 @@ Outra possibilidade foi idealizada, dividindo a função \ACMPIDs\ em dois passo
 	\item encontrar o nó que possui esse ID.
 \end{enumerate}
 Em linhas gerais, o funcionamento do primeiro passo se baseia no seguinte:
-%- O comprimento de um ID é a quantidade de bits da sua representação em binário, descartando zeros à esquerda.
-O ID de um nó é formado por um ou mais bits seguidos do ID do seu pai, de modo que, dados dois nós \no{a} e \no{b}, \no{b} descendente de \no{a},
-os bits menos significativos de \no{b} são iguais ao ID de \no{a}.
-Desse modo, dados dois descendentes de um nó \no{c}, todos os bits menos significativos deles que coincidem
+%- O comprimento de um ID é a quantidade de \textit{bits} da sua representação em binário, descartando zeros à esquerda.
+O ID de um nó é formado por um ou mais \textit{bits} seguidos do ID do seu pai, de modo que, dados dois nós \no{a} e \no{b}, \no{b} descendente de \no{a},
+os \textit{bits} menos significativos de \no{b} são iguais ao ID de \no{a}.
+Desse modo, dados dois descendentes de um nó \no{c}, todos os \textit{bits} menos significativos deles que coincidem
 (todos os que vêm antes do primeiro que difere) são iguais ao ID de \no{c} (ignorando zeros à esquerda).
 Usando apenas as operações que podem ser vistas nas linhas 1~--~4 do Algoritmo~\ref{alg:novo} mais adiante,
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
@@ -112,8 +112,8 @@ Algumas opções para isso seriam:
 \end{itemize}
 
 As linhas 5~--~7 do Algoritmo~\ref{alg:novo} apresentam como este método funciona.
-Quanto à implementação da função \bpn, os processadores atuais possuem uma instrução que encontra a posição do primeiro bit 1 em um número, a qual pode ser usada como índice em um pequeno arranjo contendo o devido resultado da função \bpn.
-Se os IDs têm até $b$ bits, esse arranjo precisar ter $b$ posições.
+Quanto à implementação da função \bpn, os processadores atuais possuem uma instrução que encontra a posição do primeiro \textit{bit} 1 em um número, a qual pode ser usada como índice em um pequeno arranjo contendo o devido resultado da função \bpn.
+Se os IDs têm até $b$ \textit{bits}, esse arranjo precisar ter $b$ posições.
 A função \Espalha\ (Algoritmo~\ref{alg:espalha}) utiliza dados específicos para a árvore, que devem ser descobertos previamente.
 
 Testes feitos indicaram que a operação mais custosa no \Novo\ era o módulo, usado na função \Espalha.
@@ -139,18 +139,18 @@ Também é causada uma mutação em uma árvore e é verificado se o erro é det
 %A Tabela~\ref{tab:compara} apresenta a comparação entre algumas características dos métodos discutidos.
 O \Novo, assim como o \Hwloc\ e o \Matriz, trata corretamente hierarquias assimétricas, diferentemente do \Simples.
 No entanto, ele possui uma limitação: % devido a como os IDs são formados:
-A quantidade de bits do ID de um nó pode chegar até o somatório dos graus de todos os níveis.
-Se esta quantidade ultrapassar o tamanho de uma palavra (geralmente 32 ou 64 bits), o método terá problemas, limitando as árvores que podem ser usadas.
-Além disso, a técnica usada na função \Espalha\ para otimizar o módulo inclui uma multiplicação cujo resultado pode ter até cerca do dobro da quantidade de bits do penúltimo nível (o último nível não possui espalhamento, pois seus nós nunca serão ACMP).
+A quantidade de \textit{bits} do ID de um nó pode chegar até o somatório dos graus de todos os níveis.
+Se esta quantidade ultrapassar o tamanho de uma palavra (geralmente 32 ou 64 \textit{bits}), o método terá problemas, limitando as árvores que podem ser usadas.
+Além disso, a técnica usada na função \Espalha\ para otimizar o módulo inclui uma multiplicação cujo resultado pode ter até cerca do dobro da quantidade de \textit{bits} do penúltimo nível (o último nível não possui espalhamento, pois seus nós nunca serão ACMP).
 Como uma solução parcial, níveis de grau um podem ser omitidos na definição dos IDs, visto que seus nós também nunca serão ACMP.
 Atribuindo a cada nó desses níveis e ao seu filho o mesmo ID, eles continuam podendo ser usados em buscas de ACMP.
 Deste modo, o tamanho máximo seria o somatório dos graus de todos os níveis de grau diferente de 1.
 
-%Isto pode ser contornado isto utilizando o resultado, por exemplo, se for possível acessar o resultado de 128 bits de uma multiplicação de 64 bits $\times$ 64 bits.
+%Isto pode ser contornado isto utilizando o resultado, por exemplo, se for possível acessar o resultado de 128 \textit{bits} de uma multiplicação de 64 \textit{bits} $\times$ 64 \textit{bits}.
 %limitando o tamanho das árvores que podem ser usadas
 %Não é necessário  atribuir os níveis de grau um, 
 O método poderia ser adaptado para usar mais palavras se necessário, teoricamente deixando de ser $\bigO(1)$ e se tornando $\bigO(\log N)$, mas, na prática, nenhuma árvore deve ser tão grande que exija uma quantidade significativa.
 %Funciona em casos de hierarquias assimétricas, simples não
-%Limitação: Quantidade de bits necessária - Solução parcial: 'Esconder' níveis cujos nós têm só um filho (níveis de grau um).}
+%Limitação: Quantidade de \textit{bits} necessária - Solução parcial: 'Esconder' níveis cujos nós têm só um filho (níveis de grau um).}
 
 O código implementado tem suporte à aplicação das operações \texttt{Ou} e \texttt{Ou-Exclusivo} ao ID no início da função \Espalha, com valores que também precisariam ser descobertos previamente, o que poderia reduzir ainda mais o tamanho dos arranjos usados. No entanto, devido a restrições de tempo, a busca desses valores não foi implementada.

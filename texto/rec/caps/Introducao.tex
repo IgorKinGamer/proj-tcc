@@ -7,14 +7,14 @@ Atualmente, arquiteturas de computadores são construídas de forma hierárquica
 Essa hierarquia diz respeito à passagem de dados entre os diferentes níveis, ou seja, quais caminhos existem para que dados sejam comunicados entre pontos dessa hierarquia.
 O que motiva sua existência é o fato de que diferentes tipos de memória possuem tamanhos, velocidades de acesso e custos distintos, e ela permite que o espaço das memórias maiores esteja disponível sem que se perca a velocidade das menores e mais rápidas \cite{Patterson}.
 Níveis de memória mais baixos possuem maior capacidade de armazenamento, porém seu tempo de acesso é maior.
-Parte dessa hierarquia é composta por um ou mais níveis de cache, memórias com capacidade reduzida, mas maior velocidade, permitindo que, em um dado momento, um conjunto de dados qualquer possa ser acessado mais rapidamente.
+Parte dessa hierarquia é composta por um ou mais níveis de \textit{cache}, memórias com capacidade reduzida, mas maior velocidade, permitindo que, em um dado momento, um conjunto de dados qualquer possa ser acessado mais rapidamente.
 Sobre essas hierarquias e fazendo uso delas estão as unidades de processamento, acessando e operando sobre os dados em memória.
 Quanto mais próximo for o nível de memória em que esses dados estiverem, menor o tempo de acesso.
 Quando essas unidades precisam se comunicar entre si, elas fazem uso da hierarquia de memória.
 
 A hierarquia pode ser organizada de várias formas, podendo se tornar complexa e de grande profundidade.
-Uma possibilidade na organização é o compartilhamento de alguns níveis de cache, ou seja, duas unidades de processamento ou mais estarão acima de uma mesma cache da hierarquia.
-Isso permite, por exemplo, realizar comunicações com eficiência, pois o tempo entre algum dado ser atualizado e o novo valor ser visto é determinado pelo tempo de acesso à cache compartilhada.
+Uma possibilidade na organização é o compartilhamento de alguns níveis de \textit{cache}, ou seja, duas unidades de processamento ou mais estarão acima de uma mesma \textit{cache} da hierarquia.
+Isso permite, por exemplo, realizar comunicações com eficiência, pois o tempo entre algum dado ser atualizado e o novo valor ser visto é determinado pelo tempo de acesso à \textit{cache} compartilhada.
 Uma grande variedade de organizações pode ser encontrada ao se considerar arquiteturas como multicore, em que várias unidades de processamento chamadas de núcleos (\textit{cores}) fazem parte de um mesmo circuito integrado, ou \textit{Non-Uniform Memory Access} (NUMA), onde a rede que interconecta os nós dá origem a mais níveis de hierarquia. Esta rede, por si só, pode ser organizada de várias formas distintas.
 Essa organização compreendendo hierarquia de memória e unidades de processamento, na sua totalidade, define uma topologia de máquina.
 
@@ -25,7 +25,7 @@ Suas topologias são as mais variadas, visando atender às necessidades de vári
 Diante da crescente complexidade das topologias dessas máquinas, as suas organizações e as demais características dos elementos que compõe a hierarquia de memória são aspectos de muita relevância para o desempenho de aplicações.
 
 Certas combinações de fatores da aplicação e da arquitetura podem resultar na melhoria ou na degradação do desempenho.
-Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o tamanho das caches, que podem comportar ou não todos os dados simultaneamente, ou os padrões de troca de mensagens entre tarefas e a localização delas, além dos meios existentes para realizar essas comunicações, que podem resultar em maior ou menor eficiência \cite{Sequoia}. Um estudo de caso apresentado por \citeonline{LIKWID} mostra como uma certa distribuição de tarefas faz o desempenho cair aproximadamente pela metade.
+Tais fatores podem ser, por exemplo, a quantidade de dados manipulados e o tamanho das \textit{caches}, que podem comportar ou não todos os dados simultaneamente, ou os padrões de troca de mensagens entre tarefas e a localização delas, além dos meios existentes para realizar essas comunicações, que podem resultar em maior ou menor eficiência \cite{Sequoia}. Um estudo de caso apresentado por \citeonline{LIKWID} mostra como uma certa distribuição de tarefas faz o desempenho cair aproximadamente pela metade.
 
 Ainda, em arquiteturas NUMA, nas quais
 %a memória é composta de várias partes que estão diretamente ligadas a nós distintos,
@@ -45,7 +45,7 @@ No entanto, a disponibilização de tais informações gera custos adicionais, a
 Assim, é necessário que haja um compromisso entre o tempo de acesso e o espaço ocupado pela representação utilizada.
 Tempos de acesso muito grandes podem acabar anulando os ganhos das otimizações.
 Já se as estruturas de dados forem muito espaçosas, pode ser que não possuam boa localidade espacial, dependendo dos padrões de referência aos dados em acessos consecutivos.
-Isso pode resultar em perda de desempenho ocasionada por faltas de cache, tanto no acesso às informações da topologia quanto no acesso pelas aplicações aos seus próprios dados.
+Isso pode resultar em perda de desempenho ocasionada por faltas de \textit{cache}, tanto no acesso às informações da topologia quanto no acesso pelas aplicações aos seus próprios dados.
 Entretanto, é possível que a adição de algumas informações facilitem certas consultas sobre a topologia sem causar tais prejuízos, que é o desejado.
 
 
@@ -55,20 +55,20 @@ Entretanto, é possível que a adição de algumas informações facilitem certa
 
 Os exemplos de usos estáticos e dinâmicos dados acima, além de vários outros existentes, com o uso de benchmarks, servem como justificativa para a realização de esforços para desenvolver reprentações com as características citadas, isto é, bom tempo de acesso e uso eficiente da memória.
 
-Para as aplicações, o ideal é que os dados estejam sempre nos níveis de cache os mais próximos possíveis, de modo que seu uso nas computações seja mais eficiente.
-Diante disso, compilação com conhecimento da hierarquia \cite{Sequoia} se vale do fato de que frequentemente problemas podem ser dividos em problemas menores de tamanho variável, e ajustar esses tamanhos à capacidade das caches torna o uso delas mais efetivo, pois todos os dados usados nessas partes menores da computação caberão nelas.
-Ainda, quando é possível haver vários níveis de subdivisão do problema, formando também uma espécie de hierarquia de subdivisões, os tamanhos das partes em diferentes níveis podem ser ajustados aos níveis de cache consecutivos.
+Para as aplicações, o ideal é que os dados estejam sempre nos níveis de \textit{cache} os mais próximos possíveis, de modo que seu uso nas computações seja mais eficiente.
+Diante disso, compilação com conhecimento da hierarquia \cite{Sequoia} se vale do fato de que frequentemente problemas podem ser dividos em problemas menores de tamanho variável, e ajustar esses tamanhos à capacidade das \textit{caches} torna o uso delas mais efetivo, pois todos os dados usados nessas partes menores da computação caberão nelas.
+Ainda, quando é possível haver vários níveis de subdivisão do problema, formando também uma espécie de hierarquia de subdivisões, os tamanhos das partes em diferentes níveis podem ser ajustados aos níveis de \textit{cache} consecutivos.
 Isso pode ser visualizado com facilidade no exemplo de multiplicação de grandes matrizes presente no artigo referenciado.
 
-A velocidade de níveis de cache mais próximos também beneficia a comunicação.
+A velocidade de níveis de \textit{cache} mais próximos também beneficia a comunicação.
 Isso pode ser visto no uso de \textit{Message Passing Interface} (MPI), um padrão utilizado no desenvolvimento de programas paralelos que seguem o modelo de passagem de mensagens.
-Em conjunto com dados sobre os padrões de comunicação entre processos, as informações sobre compartilhamento de caches podem ser usadas para definir um posicionamento de processos MPI que favoreça as comunicações \cite{hwloc2010}.
+Em conjunto com dados sobre os padrões de comunicação entre processos, as informações sobre compartilhamento de \textit{caches} podem ser usadas para definir um posicionamento de processos MPI que favoreça as comunicações \cite{hwloc2010}.
 Outra otimização possível é o uso de metódos específicos do \textit{hardware} para realizar comunicações dentro de um nó.
 
 No contexto de arquiteturas NUMA, para diminuir o número de acessos a memórias remotas, há a possibilidade de mover os dados para outro nó ou as threads para outros núcleos.
 Uma combinação dessas opções foi desenvolvida no ForestGOMP \cite{FGOMP}, uma extensão de uma implementação de OpenMP, padrão utilizado no desenvolvimento de programas paralelos para sistemas com memória compartilhada.
 Seguindo o princípio de realizar essa combinação com base nos níveis da topologia, o posicionamento dinâmico de threads e dados desenvolvido no ForestGOMP se mostrou efetivo.
-Um cenário apresentado é a existência de vários conjuntos de threads e dados com grande afinidade, em que a migração de uma thread para outro núcleo só ocorreria se houvesse um nível de cache compartilhado, de modo a manter a thread próxima dos seus dados, enquanto em outros casos poderia haver a migração de todas as threads e dados relacionados.
+Um cenário apresentado é a existência de vários conjuntos de threads e dados com grande afinidade, em que a migração de uma thread para outro núcleo só ocorreria se houvesse um nível de \textit{cache} compartilhado, de modo a manter a thread próxima dos seus dados, enquanto em outros casos poderia haver a migração de todas as threads e dados relacionados.
 
 Outro projeto que se vale do conhecimento da topologia é o HieSchella \cite{HieSchella},
 cujo objetivo é prover portabilidade de desempenho, característica presente quando se consegue que

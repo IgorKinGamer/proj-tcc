@@ -8,7 +8,7 @@
 	         %Opa \newline
 	         Uma função \bpn, que retorna o nível
 	          do ancestral comum entre dois nós
-	          dado um número com apenas um bit 1,
+	          dado um número com apenas um \textit{bit} 1,
 	          na primeira posição em que o ID dos nós difere \newline
 	         A função \textsc{Espalhamento} (Algoritmo \ref{alg:espalha})
 	          com dados da árvore em questão \newline
@@ -19,18 +19,18 @@
 	\BlankLine
 	
 	%Nota: Processadores atuais possuem uma instrução cujo resultado
-	%      é a posição do primeiro bit 1 em um número,
+	%      é a posição do primeiro \textit{bit} 1 em um número,
 	%      o qual pode ser usado para acessar um arranjo
 	%\BlankLine
 	
 	\LinesNumbered
 	%\Function{ancestral}{Estruturas $\var{E}$, No $a$, No $b$}
 	%ID dif, bit, \var{masc}, id;
-	\tcp{Bits que diferem}
+	\tcp{\textit{Bits} que diferem}
 	$\var{dif} \gets \id{a} \OuExBit \id{b}$ \\
-	\tcp{Bit 1 apenas na primeira posição em que os IDs diferem}
+	\tcp{\textit{Bit} 1 apenas na primeira posição em que os IDs diferem}
 	$\var{bit} \gets \var{dif} \EBit (-\var{dif})$ \\
-	\tcp{Todos os bits antes do primeiro diferente}
+	\tcp{Todos os \textit{bits} antes do primeiro diferente}
 	$\var{\var{masc}} \gets \var{bit} - 1$ \\
 	%//\var{masc} = (((\var{dif}-1) ^ \var{dif}) >> 1);
 	\tcp{Id do ancestral comum mais próximo}
@@ -65,7 +65,7 @@
 	                 $\var{mult}_{n}$ e $\var{desl}_{n}$
 	        dependem da árvore com a qual se usará esta função
 	        e do nível recebido ($n$). \newline
-	       $x \Desl b$ é o valor $x$ deslocado $b$ bits para a direita,
+	       $x \Desl b$ é o valor $x$ deslocado $b$ \textit{bits} para a direita,
 	       equivalente a $\lfloor x/(2^b)\rfloor$.}
 	\BlankLine
 	

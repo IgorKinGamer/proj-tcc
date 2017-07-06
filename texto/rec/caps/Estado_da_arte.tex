@@ -5,7 +5,7 @@
 
 No estado da arte quanto à representação de topologias de máquina encontra-se o projeto \textit{Hardware Locality} (hwloc) \cite{hwloc2010}.
 
-O hwloc é um pacote de software amplamente utilizado para a representação de topologias de máquina com grande portabilidade.
+O hwloc é um pacote de \textit{software} amplamente utilizado para a representação de topologias de máquina com grande portabilidade.
 Ele contém ferramentas de linha de comando, além de permitir que aplicações acessem as informações sobre a topologia por meio de uma API na linguagem C.
 
 
@@ -55,7 +55,7 @@ ou, a partir de algum nó, o próximo no mesmo nível.
 Alguns exemplos de funções são:
 \begin{itemize}
 	\item \texttt{hwloc\_get\_nbobjs\_by\_type}: Informa quantos objetos de um determinado tipo existem, por exemplo, a quantidade de núcleos.
-	\item \texttt{hwloc\_get\_cache\_covering\_cpuset}: Encontra a primeira memória cache que abrange um dado conjunto de CPUs.
+	\item \texttt{hwloc\_get\_cache\_covering\_cpuset}: Encontra a primeira memória \textit{cache} que abrange um dado conjunto de CPUs.
 	\item \texttt{hwloc\_get\_ancestor\_obj\_by\_type}: Encontra o ancestral de um objeto que seja de um determinado tipo.
 	\item \texttt{\texttt{hwloc\_get\_ancestor\_obj\_by\_depth}}: Semelhante à função anterior, procurando por nível em vez de tipo.
 	\item \texttt{hwloc\_get\_common\_ancestor\_obj}: Encontra o ancestral comum mais próximo (ACMP) entre dois objetos, isto é, o nó de maior profundidade que é ancestral de ambos.
@@ -70,7 +70,7 @@ de quais funções são mais relevantes para o desempenho dentro de um projeto r
 O Capítulo~\ref{cap:implementacao} apresenta o que foi feito em decorrimento dessas análises.
 
 Os objetos ainda têm atributos que podem guardar diversas informações, como detalhes do sistema operacional ou da máquina, que podem ser coletadas automaticamente durante o descobrimento da topologia ou adicionadas manualmente.
-Além disso, há várias informações específicas de caches, como associatividade ou tamanho.
+Além disso, há várias informações específicas de \textit{caches}, como associatividade ou tamanho.
 Também é possível associar estruturas arbitrárias aos objetos, conforme for necessário, usando dados de usuário (ponteiro \texttt{userdata}).
 
 
@@ -78,6 +78,6 @@ Também é possível associar estruturas arbitrárias aos objetos, conforme for 
 \section{Conjuntos de CPUs}
 \label{sec:conjuntos_de_cpus}
 
-Cada objeto pode ter um \textit{cpuset} (conjunto de CPUs), que é um mapeamento dos núcleos existentes para bits (\textit{bitmap}), usado para determinar quais núcleos estão sob o objeto na hierarquia, implementado como uma sequência de variáveis de 32 bits, tantas quantas forem necessárias.
+Cada objeto pode ter um \textit{cpuset} (conjunto de CPUs), que é um mapeamento dos núcleos existentes para \textit{bits} (\textit{bitmap}), usado para determinar quais núcleos estão sob o objeto na hierarquia, implementado como uma sequência de variáveis de 32 \textit{bits}, tantas quantas forem necessárias.
 A implementação dos \textit{bitmaps} poderia ser otimizada para diminuir a quantidade de variáveis utilizadas em casos em que existam grandes quantidades de núcleos.
 Algo nesse sentido é citado no respectivo arquivo fonte em um comentário sobre otimizações que poderiam ser realizadas \cite{hwlocCod}.
