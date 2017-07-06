@@ -146,7 +146,7 @@ void buscarFuncaoIdeal(int numNos, ID *ids, DadosFuncao *sai_dadosFuncao)
 	dadosModulo(numNos, ids, sai_dadosFuncao);
 }
 
-/* Retorna dados para calculcar o módulo sem usar divisão */
+/* Retorna dados para calcular o módulo sem usar divisão */
 void dadosModulo(int numNos, ID *ids, DadosFuncao *dadosFuncao)
 {
 	// Conta bits
