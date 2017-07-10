@@ -8,15 +8,18 @@ Com essa análise,
 novas estruturas foram desenvolvidas, além de um algoritmo utilizando-as, \Novo.
 Esse algoritmo e outras abordagens foram implementados e testados.
 
-O \Novo\ mostrou características promissoras, como maior estabilidade quanto ao tempo e estruturas que devem originar acessos à memória menos esparsos do que nas outras abordagens.
-O \Matriz, apesar de ter tido tempos menores, se mostrou instável diante do aumento do tamanho das árvores utilizadas.
-Não foram feitos testes com aplicações reais, mas a instabilidade diante dos testes realizados é uma evidência de que seu uso da memória prejudicaria o desempenho.
+O \Novo\ mostrou características promissoras, como menor variação no tempo de execução e estruturas que devem originar acessos à memória menos esparsos do que nas outras abordagens.
+O \Matriz, apesar de ter tido tempos menores, mesmo sendo um algoritmo de complexidade constante, se mostrou sensível ao aumento do tamanho das árvores utilizadas.
+Não foram feitos testes com aplicações reais, mas a variação do tempo observada nos testes realizados é uma evidência de que seu uso da memória prejudicaria o desempenho.
 O desempenho do \Simples\ foi semelhante ao do \Novo, mas pode também estar sujeito à influência do padrão de acessos à memória, assim como o \Hwloc, utilizado pelo hwloc, que ainda necessita de um processamento maior.
 %O seu uso em uma aplicação real deixaria clara a sua deficiência
 
+Este algoritmo desenvolvido, \Novo, poderia ser utilizado no hwloc, realizando-se as devidas adaptações.
+Com base nesta otimização em conjunto com outras que possam ser realizadas, à medida que as estruturas e métodos usados se tornassem incompatíveis com a implementação do hwloc, uma nova ferramenta à parte poderia ser desenvolvida, tendo em foco considerações semelhantes às feitas neste trabalho em relação ao uso da memória.
+
 %SEÇÃO Futuro
 
-Como trabalhos futuros,
+Para isso, como trabalhos futuros,
 pode-se avaliar o desempenho dos algoritmos diante de aplicações reais
 e fazer outras análises, como acompanhar o uso da memória com mais detalhes.
 Se isto se mostrar relevante,

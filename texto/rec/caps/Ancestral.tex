@@ -28,7 +28,7 @@ Sua complexidade é $\bigO(\log N)$.
 Para que esse método funcione, é necessário subir de forma sincronizada -- a cada passo, devem-se comparar ancestrais dos dois nós iniciais que estejam no mesmo nível.
 No caso do hwloc, o algoritmo se torna um pouco mais complicado, pois ele trata hierarquias assimétricas (pode haver ramos sem nó em algum nível).
 Neste caso, mesmo que se tenham dois nós no mesmo nível, seus pais podem estar em níveis diferentes.
-Ao fim de cada iteração, um dos nós pode estar ``mais alto'' (nível menor), portanto, este método será chamado de \Hwloc\ (Algoritmo~\ref{alg:hwloc}), em analogia a uma superfície ondulada.
+Ao fim de cada iteração, um dos nós pode estar ``mais alto'' (nível menor), portanto, este método usado pelo hwloc será chamado de \Hwloc\ (Algoritmo~\ref{alg:hwloc}), em analogia a uma superfície ondulada.
 Um ponto que pode afetar o desempenho destes algoritmos é o fato de que é necessário acessar cada nó
 (os nós iniciais e todos os seus ancestrais até o ACMP), e os nós estão espalhados pela memória.
 
@@ -51,13 +51,14 @@ Para uma dada árvore que representa uma topologia,
 Esses IDs (em conjunto com outras informações associadas a cada nó individualmente ou à árvore como um todo conforme necessário)
 podem estabelecer alguma relação entre um nó e seus ancestrais além da que já existe por meio das ligações da árvore.
 
-Idealmente, essa função \ACMPIDs\ deveria ser \textit{processada} em tempo constante.
-Ou seja, é necessário encontrar um algoritmo que seja executado em tempo constante nos processadores modernos.
+Idealmente, para implementar essa função \ACMPIDs, deveria ser encontrado um algoritmo de complexidade constante.
+%que seja executado em tempo constante nos processadores modernos.
 No entanto, é preciso lembrar que, mesmo que a quantidade de instruções executadas pelo processador seja constante,
 a maneira como a memória é acessada pode aumentar o tempo de execução, especialmente quando há outras tarefas fazendo uso da memória, o que deve acontecer em cenários reais.
 
-Com isso em mente, podemos definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
-tais como as operações aritméticas e operações lógicas \textit{bit-a-bit}.
+Com isso em mente, podemos analisar diferentes formas de definir tal função para descobrir qual seria mais adequada.
+%definir tal função usando as operações básicas encontradas no conjunto de instruções das arquiteturas atuais,
+%tais como as operações aritméticas e operações lógicas \textit{bit-a-bit}.
 
 \subsection{Matriz}
 
@@ -84,10 +85,8 @@ Outra possibilidade foi idealizada, dividindo a função \ACMPIDs\ em dois passo
 \end{enumerate}
 Em linhas gerais, o funcionamento do primeiro passo se baseia no seguinte:
 %- O comprimento de um ID é a quantidade de \textit{bits} da sua representação em binário, descartando zeros à esquerda.
-O ID de um nó é formado por um ou mais \textit{bits} seguidos do ID do seu pai, de modo que, dados dois nós \no{a} e \no{b}, \no{b} descendente de \no{a},
-os \textit{bits} menos significativos de \no{b} são iguais ao ID de \no{a}.
-Desse modo, dados dois descendentes de um nó \no{c}, todos os \textit{bits} menos significativos deles que coincidem
-(todos os que vêm antes do primeiro que difere) são iguais ao ID de \no{c} (ignorando zeros à esquerda).
+O ID de um nó aparece na representação binária dos IDs de todos os seus descendentes.
+Desse modo, dados os IDs de dois descendentes, é possível identificar o ID do ACMP.
 Usando apenas as operações que podem ser vistas nas linhas 1~--~4 do Algoritmo~\ref{alg:novo} mais adiante,
 para as quais existem instruções que tomam poucos ciclos nas arquiteturas atuais, pode-se descobrir o ID do ACMP.
 A quantidade de instruções é fixa, portanto, a complexidade é constante.

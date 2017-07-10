@@ -18,27 +18,16 @@ Os valores medidos são escritos em um arquivo no formato CSV (Valores Separados
 
 \section{Máquinas utilizadas nos testes}
 
-Os testes foram executados sobre duas máquinas (\textit{notebooks}), que serão identificadas como Máquina~A e Máquina~B, para as quais o programa lstopo gera as representações de hierarquia apresentadas na Figura \ref{img:maquinas}.
-Estas representações revelam o tamanho das memórias cache, que podem ter efeito nos resultados dos testes.
-A Tabela \ref{tab:maquinas} apresenta mais detalhes de ambas.
+Os testes foram executados sobre duas máquinas (\textit{notebooks}), que serão identificadas como Máquina~A e Máquina~B.
+A Tabela \ref{tab:maquinas} apresenta detalhes de ambas.
+%para as quais o programa lstopo gera as representações de hierarquia apresentadas na Figura \ref{img:maquinas}.
+%Estas representações revelam o tamanho das memórias \textit{cache}
+A Tabela \ref{tab:caches} apresenta o tamanho das suas \textit{caches}, que podem ter efeito nos resultados dos testes.
+Outras características da topologia das máquinas, no entanto, não são relevantes, pois os testes são totalmente sequenciais
+e as buscas de ACMP são realizadas sobre uma árvore passada como argumento ao executar o programa,
+representando uma topologia arbitrária, e não a da máquina em que os testes estão rodando.
 
 \input{rec/tab/maqs}
-
-\begin{figure}
-	\centering
-	\caption{Saída do programa lstopo sobre as máquinas utilizadas}
-	\label{img:maquinas}
-	\begin{subfigure}{.4\textwidth}
-		\caption{Máquina A}
-		\includegraphics[width=\textwidth]{rec/img/MaqA}
-	\end{subfigure}
-	~
-	\begin{subfigure}{.4\textwidth}
-		\caption{Máquina B}
-		\includegraphics[width=\textwidth]{rec/img/MaqB}
-	\end{subfigure}
-
-\end{figure}
 
 
 \section{Configurações}
@@ -123,9 +112,9 @@ Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algor
 		\toprule
 		& \Simples & \Novo & \Hwloc & \Matriz \\
 		\midrule 
-		\begin{tabular}{@{}c@{}}Mediana\\sem acesso\end{tabular}
+		\begin{tabular}{@{}c@{}}Mediana (ms)\\sem acesso\end{tabular}
 			& 8373.99 & 8540.89 & 20274.45 & 3841.80 \\
-		\begin{tabular}{@{}c@{}}Mediana\\com acesso\end{tabular}
+		\begin{tabular}{@{}c@{}}Mediana (ms)\\com acesso\end{tabular}
 			& 9549.51 & 9401.76 & 23300.20 & 4914.60 \\
 		\midrule
 		Aumento (\%)
@@ -142,9 +131,11 @@ Como era esperado, os tempos aumentaram para todos os algoritmos, porém o algor
 
 Cinco árvores distintas foram usadas nos testes.
 Dados sobre elas são apresentados na Tabela \ref{tab:arvores}.
-Para cada algoritmo e com cada árvore, foram feitas 150 observações na Máquina A e 450 observações na Máquina B.
+Para cada algoritmo e com cada árvore, foram feitas 150 observações na Máquina A e 450 observações na Máquina B, que teve menores tempos de execução, possibilitando esse maior número de observações.
 As~Figuras~\ref{fig:t_medio_a}~e~\ref{fig:t_medio_b} apresentam o tempo médio por chamada da função \fACMP, calculado usando a mediana dos dados, para cada uma das árvores.
-É possível ver que o \Novo\ foi o que teve tempos mais estáveis, apesar da variação do tamanho das árvores.
+É possível ver que o \Novo\ foi o que teve a menor variação nos tempos diante do uso de árvores com características distintas, como tamanho (quantidade de nós) da árvore e quantidade média de ligações entre os nós usados nas buscas e seus respectivos ACMPs.
+O \Matriz, apesar da complexidade constante, com uma árvore com cerca de cinco vezes mais nós, teve tempos médios 73\% maior na Máquina A e 52\% maior na Máquina B.
+%tempos mais estáveis, apesar da variação do tamanho das árvores.
 
 \begin{table}[htb]
 	\IBGEtab{\centering\caption{Árvores utilizadas nos testes}%

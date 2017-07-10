@@ -45,3 +45,41 @@
 		\bottomrule
 	\end{tabular}
 \end{table}
+
+\begin{table}[htb]
+	\newcommand \mesmo[1] {\multicolumn{2}{c}{#1}}
+	\centering
+	\caption{\textit{Caches} das máquinas utilizadas nos testes}%
+	\label{tab:caches}
+	%{
+	\begin{tabular}{ccc}
+		\toprule
+		\textit{Cache} & Máquina A & Máquina B\\
+		\midrule
+		L1
+			& \mesmo{32 KB} \\
+		L2
+			& \mesmo{256 KB} \\
+		L3
+			& 3072 KB
+			& 4096 KB \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+%\begin{figure}
+%	\centering
+%	\caption{Saída do programa lstopo sobre as máquinas utilizadas}
+%	\label{img:maquinas}
+%	\begin{subfigure}{.4\textwidth}
+%		\caption{Máquina A}
+%		\includegraphics[width=\textwidth]{rec/img/MaqA}
+%	\end{subfigure}
+%	~
+%	\begin{subfigure}{.4\textwidth}
+%		\caption{Máquina B}
+%		\includegraphics[width=\textwidth]{rec/img/MaqB}
+%	\end{subfigure}
+%
+%\end{figure}

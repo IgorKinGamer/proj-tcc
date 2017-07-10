@@ -3,10 +3,25 @@
 \acresetall
 
 
-No estado da arte quanto à representação de topologias de máquina encontra-se o projeto \textit{Hardware Locality} (hwloc) \cite{hwloc2010}.
-
-O hwloc é um pacote de \textit{software} amplamente utilizado para a representação de topologias de máquina com grande portabilidade.
+No estado da arte quanto à representação de topologias de máquina encontra-se o projeto \textit{Hardware Locality} (hwloc) \cite{hwloc2010},
+um pacote de \textit{software} amplamente utilizado que possui grande portabilidade.
 Ele contém ferramentas de linha de comando, além de permitir que aplicações acessem as informações sobre a topologia por meio de uma API na linguagem C.
+
+%\tratar{Servet - estima, LIKWID}
+%
+Entre os trabalhos relacionados ao tema,
+há também o projeto LIKWID \cite{LIKWID},
+um conjunto de utilidades para auxiliar no desenvolvimento de programas com foco no desempenho.
+Suas funcionalidades são acessadas em parte por uma API, mas principalmente pela linha de comando.
+É possível, entre outros, obter informações sobre a topologia das memórias \textit{cache} e utilizar contadores de \textit{hardware}.
+%tem por objetivo melhorar o desempenho  a facilidade de uso
+O LIWKID utiliza o hwloc, como pode ser visto no código fonte \cite{LIKWIDCod}.
+%
+Outro projeto com propósito semelhante é o Servet \cite{servet}, que obtém as informações utilizando \textit{benchmarks} para estimar as características da máquina.
+
+O hwloc foi analisado neste trabalho devido ao seu uso em diversos projetos e,
+em especial, no HieSchella \cite{HieSchella}, o qual poderia ter ganhos significativos de desempenho com os resultados deste trabalho.
+As seções a seguir apresentam alguns aspectos relevantes do hwloc.
 
 
 
@@ -34,6 +49,10 @@ Ela ilustra, ainda, no ramo mais a direita, como hierarquias assimétricas (que 
 % [Deixar mais claro] Buracos na hierarquia podem surgir porque o hwloc agrupa objetos do mesmo tipo no mesmo nível.
 % Definir assimetria, segundo hwloc. Filhos com graus diferentes resulta em assimetria?
 Portanto, objetos irmãos não estarão necessariamente no mesmo nível, e o conceito de profundidade não é exatamente o usado no contexto de estruturas de árvore, sendo possível irmãos terem profundidades diferentes.
+
+Esse exemplo apenas ilustra o tratamento da assimetria.
+Em casos reais, hierarquias assimétricas geralmente surgem devido ao acréscimo de objetos (chamados de grupos) na hierarquia para representar melhor a afinidade de dispositivos de entrada e saida,
+deixando esses dispositivos mais próximos de algumas unidades de processamento do que das demais na árvore.
 
 Essas relações acrescentadas à estrutura de árvore facilitam a navegação entre objetos, em troca do espaço adicional ocupado por cada ponteiro nos objetos.
 Por exemplo, como indicado na figura, a partir de qualquer objeto, é possível navegar para o próximo primo (pelo ponteiro \texttt{next\_cousin}), ou para o próximo irmão (ponteiro \texttt{next\_sibling}), se existirem.
